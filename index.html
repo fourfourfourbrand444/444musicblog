@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="444Music Blog — Discover the freshest Afrobeats, Highlife, Gospel & more from Ghana and Africa.">
+  <meta name="theme-color" content="#f9f8f5">
+  <meta property="og:title" content="444Music Blog">
+  <meta property="og:description" content="Fresh music promos from Ghana & Africa.">
+  <title>444Music Blog</title>
+
+  <!-- Firebase v9 Compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --clr-bg:        #f9f8f5;
+  --clr-surface:   #ffffff;
+  --clr-border:    rgba(0,0,0,.08);
+  --clr-border-md: rgba(0,0,0,.13);
+  --clr-text:      #0e0e0e;
+  --clr-muted:     #6b6b6b;
+  --clr-subtle:    #9a9a9a;
+  --clr-accent:    #1a5c38;        /* deep green */
+  --clr-accent-lt: #e8f2ec;
+  --clr-accent-dk: #0f3d24;
+  --clr-spotify:   #1db954;
+  --clr-audiomack: #f5a623;
+  --clr-apple:     #fc3c44;
+  --clr-youtube:   #ff0000;
+  --clr-skeleton:  #ebebeb;
+
+  --ff-display: 'Playfair Display', Georgia, serif;
+  --ff-body:    'Plus Jakarta Sans', sans-serif;
+
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  18px;
+  --radius-xl:  24px;
+
+  --shadow-sm:  0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
+  --shadow-md:  0 4px 24px rgba(0,0,0,.09), 0 1px 3px rgba(0,0,0,.05);
+  --shadow-lg:  0 12px 48px rgba(0,0,0,.13), 0 2px 8px rgba(0,0,0,.06);
+  --shadow-card-hover: 0 20px 60px rgba(0,0,0,.14), 0 4px 16px rgba(0,0,0,.07);
+
+  --nav-h: 64px;
+  --transition: 0.22s cubic-bezier(.4,0,.2,1);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--ff-body);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+ul { list-style: none; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ============================================================
+   LAYOUT HELPERS
+   ============================================================ */
+.container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+#navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--nav-h);
+  background: rgba(249,248,245,.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--clr-border);
+  transition: box-shadow var(--transition);
+}
+#navbar.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.07); }
+
+.nav-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  letter-spacing: -.01em;
+}
+.logo-mark {
+  font-family: var(--ff-display);
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: var(--clr-accent);
+  letter-spacing: -.03em;
+}
+.logo-word {
+  font-family: var(--ff-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--clr-text);
+  margin-left: 1px;
+}
+.logo-pill {
+  font-family: var(--ff-body);
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--clr-accent);
+  background: var(--clr-accent-lt);
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: 6px;
+}
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-center::-webkit-scrollbar { display: none; }
+
+.nav-link {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: .83rem;
+  font-weight: 500;
+  color: var(--clr-muted);
+  white-space: nowrap;
+  transition: background var(--transition), color var(--transition);
+  border: 1px solid transparent;
+}
+.nav-link:hover { background: rgba(0,0,0,.05); color: var(--clr-text); }
+.nav-link.active {
+  background: var(--clr-accent);
+  color: #fff;
+  border-color: var(--clr-accent);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.admin-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--clr-muted);
+  transition: background var(--transition), color var(--transition);
+}
+.admin-link:hover { background: rgba(0,0,0,.06); color: var(--clr-text); }
+
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+.mobile-menu-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--clr-text);
+  border-radius: 2px;
+  transition: transform var(--transition), opacity var(--transition);
+}
+.mobile-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.mobile-menu-btn.open span:nth-child(2) { opacity: 0; }
+.mobile-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.nav-mobile-drawer {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--clr-border);
+  background: rgba(249,248,245,.97);
+}
+.nav-mobile-drawer.open { display: flex; }
+.nav-mobile-drawer .nav-link { width: max-content; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+#hero {
+  position: relative;
+  overflow: hidden;
+  padding: 80px 0 72px;
+  background: linear-gradient(160deg, #fff 0%, var(--clr-bg) 100%);
+  border-bottom: 1px solid var(--clr-border);
+}
+.hero-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+.hero-eyebrow {
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--clr-accent);
+  margin-bottom: 16px;
+  opacity: 0;
+  animation: fadeUp .6s .1s forwards;
+}
+.hero-headline {
+  font-family: var(--ff-display);
+  font-size: clamp(2.6rem, 6vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.06;
+  letter-spacing: -.03em;
+  color: var(--clr-text);
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp .6s .2s forwards;
+}
+.hero-headline em {
+  font-style: italic;
+  color: var(--clr-accent);
+}
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--clr-muted);
+  font-weight: 400;
+  max-width: 400px;
+  opacity: 0;
+  animation: fadeUp .6s .3s forwards;
+}
+
+/* Decorative rings */
+.hero-decoration {
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.deco-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--clr-accent);
+  opacity: .08;
+}
+.ring-1 { width: 320px; height: 320px; top: -160px; right: 0; }
+.ring-2 { width: 220px; height: 220px; top: -110px; right: 50px; opacity: .05; }
+.ring-3 { width: 480px; height: 480px; top: -240px; right: -80px; opacity: .04; }
+
+/* ============================================================
+   FEED
+   ============================================================ */
+#main { padding: 48px 0 80px; }
+
+.feed-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.feed-title {
+  font-family: var(--ff-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+.feed-count {
+  font-size: .82rem;
+  color: var(--clr-subtle);
+  font-weight: 500;
+}
+
+/* Posts grid */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+/* ── Post Card ── */
+.post-card {
+  background: var(--clr-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--clr-border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+}
+.post-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .5s ease, transform .5s ease, box-shadow var(--transition), border-color var(--transition);
+}
+.post-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--clr-border-md);
+  transform: translateY(-3px);
+}
+
+/* Card image */
+.card-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--clr-skeleton);
+}
+.card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s cubic-bezier(.4,0,.2,1);
+}
+.post-card:hover .card-img-wrap img { transform: scale(1.04); }
+
+.card-genre-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(6px);
+  color: var(--clr-accent);
+  border: 1px solid rgba(255,255,255,.6);
+}
+
+/* Card body */
+.card-body {
+  padding: 20px 20px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.card-artist {
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--clr-accent);
+}
+.card-title {
+  font-family: var(--ff-display);
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1.25;
+  color: var(--clr-text);
+}
+
+.card-caption {
+  font-size: .85rem;
+  color: var(--clr-muted);
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* Card date */
+.card-date {
+  font-size: .72rem;
+  color: var(--clr-subtle);
+  font-weight: 400;
+}
+
+/* Streaming buttons */
+.card-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 0 20px 20px;
+}
+
+.stream-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 50px;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  border: 1.5px solid;
+  transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+  white-space: nowrap;
+}
+.stream-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  opacity: .92;
+}
+.stream-btn svg { flex-shrink: 0; }
+
+.stream-btn.spotify   { background: var(--clr-spotify);   color: #fff; border-color: var(--clr-spotify);   }
+.stream-btn.audiomack { background: var(--clr-audiomack); color: #fff; border-color: var(--clr-audiomack); }
+.stream-btn.apple     { background: var(--clr-apple);     color: #fff; border-color: var(--clr-apple);     }
+.stream-btn.youtube   { background: var(--clr-youtube);   color: #fff; border-color: var(--clr-youtube);   }
+
+/* ============================================================
+   SKELETON LOADERS
+   ============================================================ */
+.skeleton {
+  background: var(--clr-skeleton);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--clr-border);
+  overflow: hidden;
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--clr-skeleton) 0%, #f5f5f5 50%, var(--clr-skeleton) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+.skel-img  { aspect-ratio: 1/1; background: #e5e5e5; }
+.skel-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.skel-line {
+  height: 12px;
+  border-radius: 6px;
+  background: #ececec;
+}
+.skel-line.skeleton-shimmer {
+  background: linear-gradient(90deg, #ececec 0%, #f5f5f5 50%, #ececec 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+/* ============================================================
+   LOAD MORE
+   ============================================================ */
+.load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+}
+.btn-load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 32px;
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  border: 1.5px solid var(--clr-border-md);
+  border-radius: 50px;
+  font-size: .88rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
+.btn-load-more:hover {
+  background: var(--clr-text);
+  color: #fff;
+  border-color: var(--clr-text);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.btn-load-more svg { transition: transform var(--transition); }
+.btn-load-more:hover svg { transform: translateY(2px); }
+
+/* ============================================================
+   EMPTY / ERROR STATES
+   ============================================================ */
+.empty-state, .error-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px 24px;
+  text-align: center;
+}
+.empty-icon { color: var(--clr-subtle); margin-bottom: 8px; }
+.empty-state h3, .error-state h3 {
+  font-family: var(--ff-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.empty-state p, .error-state p { color: var(--clr-muted); font-size: .9rem; }
+
+.btn-retry {
+  margin-top: 8px;
+  padding: 10px 24px;
+  background: var(--clr-accent);
+  color: #fff;
+  border-radius: 50px;
+  font-size: .85rem;
+  font-weight: 600;
+  border: none;
+  transition: background var(--transition), transform var(--transition);
+}
+.btn-retry:hover { background: var(--clr-accent-dk); transform: translateY(-1px); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+#footer {
+  border-top: 1px solid var(--clr-border);
+  padding: 32px 0;
+  background: var(--clr-surface);
+}
+.footer-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-logo { display: flex; align-items: center; gap: 2px; }
+.footer-copy { font-size: .8rem; color: var(--clr-subtle); }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .nav-center { display: none; }
+  .mobile-menu-btn { display: flex; }
+  .posts-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  #hero { padding: 56px 0 48px; }
+  .hero-headline { font-size: 2.2rem; }
+  .deco-ring { display: none; }
+}
+
+@media (max-width: 500px) {
+  .posts-grid { grid-template-columns: 1fr; gap: 20px; }
+  .card-links { gap: 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="444Music Blog">
+      <span class="logo-mark">444</span><span class="logo-word">Music</span>
+      <span class="logo-pill">Blog</span>
+    </a>
+    <div class="nav-center" id="nav-center">
+      <button class="nav-link active" data-filter="all">All</button>
+      <button class="nav-link" data-filter="afrobeats">Afrobeats</button>
+      <button class="nav-link" data-filter="gospel">Gospel</button>
+      <button class="nav-link" data-filter="hiphop">Hip-Hop</button>
+      <button class="nav-link" data-filter="highlife">Highlife</button>
+      <button class="nav-link" data-filter="amapiano">Amapiano</button>
+    </div>
+    <div class="nav-right">
+      <a href="admin.html" class="admin-link" aria-label="Admin" title="Admin Panel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
+          <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </a>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile-drawer" id="nav-mobile-drawer">
+    <button class="nav-link active" data-filter="all">All</button>
+    <button class="nav-link" data-filter="afrobeats">Afrobeats</button>
+    <button class="nav-link" data-filter="gospel">Gospel</button>
+    <button class="nav-link" data-filter="hiphop">Hip-Hop</button>
+    <button class="nav-link" data-filter="highlife">Highlife</button>
+    <button class="nav-link" data-filter="amapiano">Amapiano</button>
+  </div>
+</nav>
+
+<!-- ── Hero ───────────────────────────────────────── -->
+<header id="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Fresh Out Now</p>
+    <h1 class="hero-headline">
+      Ghana's Music<br>
+      <em>Promoted Right</em>
+    </h1>
+    <p class="hero-sub">New drops, promos &amp; streams — curated daily.</p>
+  </div>
+  <div class="hero-decoration" aria-hidden="true">
+    <div class="deco-ring ring-1"></div>
+    <div class="deco-ring ring-2"></div>
+    <div class="deco-ring ring-3"></div>
+  </div>
+</header>
+
+<!-- ── Feed ───────────────────────────────────────── -->
+<main id="main">
+  <div class="container">
+    <div class="feed-header">
+      <h2 class="feed-title" id="feed-title">Latest Releases</h2>
+      <span class="feed-count" id="feed-count"></span>
+    </div>
+    <div id="posts-grid" class="posts-grid" role="feed" aria-live="polite" aria-label="Music posts"></div>
+    <div class="load-more-wrap" id="load-more-wrap" style="display:none">
+      <button class="btn-load-more" id="load-more-btn">
+        <span>Load More</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M12 5v14M5 12l7 7 7-7"/>
+        </svg>
+      </button>
+    </div>
+    <div id="empty-state" class="empty-state" style="display:none">
+      <div class="empty-icon">
+        <svg viewBox="0 0 64 64" fill="none" width="64" height="64">
+          <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2" opacity=".3"/>
+          <path d="M24 32h16M32 24v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3>No posts yet</h3>
+      <p>Check back soon for fresh music drops.</p>
+    </div>
+    <div id="error-state" class="error-state" style="display:none">
+      <h3>Something went wrong</h3>
+      <p id="error-msg">Could not load posts.</p>
+      <button class="btn-retry" id="btn-retry">Try Again</button>
+    </div>
+  </div>
+</main>
+
+<!-- ── Footer ─────────────────────────────────────── -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <span class="logo-mark">444</span><span class="logo-word">Music</span>
+    </div>
+    <p class="footer-copy">Promoting authentic African sound. &copy; <span id="footer-year"></span> 444Music.</p>
+    <div></div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   FIREBASE CONFIG — Replace with your own project config
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
+  authDomain: "music-7a35b.firebaseapp.com",
+  projectId: "music-7a35b",
+  storageBucket: "music-7a35b.appspot.com",
+  messagingSenderId: "26882716946",
+  appId: "1:26882716946:web:5cc1c9e980bc6597442fcb",
+  measurementId: "G-2C0JM7V615"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const PAGE_SIZE = 9;
+let lastDoc        = null;
+let isLoading      = false;
+let activeFilter   = "all";
+let allPostsCached = [];
+
+/* ============================================================
+   DOM REFS
+   ============================================================ */
+const postsGrid     = document.getElementById("posts-grid");
+const emptyState    = document.getElementById("empty-state");
+const errorState    = document.getElementById("error-state");
+const errorMsg      = document.getElementById("error-msg");
+const loadMoreWrap  = document.getElementById("load-more-wrap");
+const loadMoreBtn   = document.getElementById("load-more-btn");
+const feedCount     = document.getElementById("feed-count");
+const feedTitle     = document.getElementById("feed-title");
+const navbar        = document.getElementById("navbar");
+const footerYear    = document.getElementById("footer-year");
+const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+const mobileDrawer  = document.getElementById("nav-mobile-drawer");
+
+/* ============================================================
+   INIT
+   ============================================================ */
+footerYear.textContent = new Date().getFullYear();
+showSkeletons(6);
+loadPosts();
+initNavbar();
+initFilters();
+initMobileMenu();
+initScrollObserver();
+
+/* ============================================================
+   NAVBAR SCROLL
+   ============================================================ */
+function initNavbar() {
+  window.addEventListener("scroll", () => {
+    navbar.classList.toggle("scrolled", window.scrollY > 10);
+  }, { passive: true });
+}
+
+/* ============================================================
+   MOBILE MENU
+   ============================================================ */
+function initMobileMenu() {
+  mobileMenuBtn.addEventListener("click", () => {
+    const open = mobileDrawer.classList.toggle("open");
+    mobileMenuBtn.classList.toggle("open", open);
+    mobileMenuBtn.setAttribute("aria-expanded", open);
+  });
+}
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
+function initFilters() {
+  const filterBtns = document.querySelectorAll(".nav-link[data-filter]");
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter;
+      if (filter === activeFilter) return;
+      activeFilter = filter;
+
+      // Sync all nav-link buttons (desktop + mobile)
+      document.querySelectorAll(".nav-link[data-filter]").forEach(b => {
+        b.classList.toggle("active", b.dataset.filter === filter);
+      });
+
+      // Update title
+      feedTitle.textContent = filter === "all"
+        ? "Latest Releases"
+        : capitalise(filter) + " Releases";
+
+      // Filter cached posts or reload
+      if (allPostsCached.length) {
+        const filtered = filter === "all"
+          ? allPostsCached
+          : allPostsCached.filter(p => p.genre === filter);
+        renderPosts(filtered, true);
+      } else {
+        postsGrid.innerHTML = "";
+        lastDoc = null;
+        showSkeletons(6);
+        loadPosts();
+      }
+
+      // Close mobile drawer
+      mobileDrawer.classList.remove("open");
+      mobileMenuBtn.classList.remove("open");
+    });
+  });
+}
+
+/* ============================================================
+   LOAD POSTS (Firestore)
+   ============================================================ */
+async function loadPosts(append = false) {
+  if (isLoading) return;
+  isLoading = true;
+  hideStates();
+
+  try {
+    let query = db.collection("posts")
+      .orderBy("createdAt", "desc")
+      .limit(PAGE_SIZE * 3); // load more for client filtering
+
+    if (append && lastDoc) query = query.startAfter(lastDoc);
+
+    const snapshot = await query.get();
+
+    if (snapshot.empty && !append) {
+      clearSkeletons();
+      showEmpty();
+      isLoading = false;
+      return;
+    }
+
+    const posts = [];
+    snapshot.forEach(doc => {
+      posts.push({ id: doc.id, ...doc.data() });
+      lastDoc = doc;
+    });
+
+    if (!append) allPostsCached = posts;
+    else allPostsCached = [...allPostsCached, ...posts];
+
+    const filtered = activeFilter === "all"
+      ? allPostsCached
+      : allPostsCached.filter(p => p.genre === activeFilter);
+
+    clearSkeletons();
+    renderPosts(filtered, !append);
+    updateCount(filtered.length);
+
+    // Show load more if there might be more
+    loadMoreWrap.style.display = snapshot.docs.length >= PAGE_SIZE ? "flex" : "none";
+
+  } catch (err) {
+    console.error("Firestore error:", err);
+    clearSkeletons();
+    showError(err.message);
+  }
+
+  isLoading = false;
+}
+
+/* ============================================================
+   RENDER POSTS
+   ============================================================ */
+function renderPosts(posts, clear = false) {
+  if (clear) postsGrid.innerHTML = "";
+
+  if (!posts.length) {
+    showEmpty();
+    return;
+  }
+
+  emptyState.style.display = "none";
+
+  posts.forEach((post, i) => {
+    const card = buildCard(post);
+    card.style.transitionDelay = `${(i % PAGE_SIZE) * 55}ms`;
+    postsGrid.appendChild(card);
+    // Trigger intersection observer on next frame
+    requestAnimationFrame(() => observeCard(card));
+  });
+}
+
+/* ============================================================
+   BUILD CARD
+   ============================================================ */
+function buildCard(post) {
+  const card = document.createElement("article");
+  card.className = "post-card";
+  card.dataset.id = post.id;
+
+  const links = post.links || {};
+  const hasLinks = links.spotify || links.audiomack || links.apple || links.youtube;
+  const date = post.createdAt?.toDate
+    ? formatDate(post.createdAt.toDate())
+    : "";
+
+  card.innerHTML = `
+    <div class="card-img-wrap">
+      <img
+        src="${post.image || ''}"
+        alt="${escHtml(post.artist)} — ${escHtml(post.title)}"
+        loading="lazy"
+        decoding="async"
+      >
+      ${post.genre ? `<span class="card-genre-badge">${escHtml(capitalise(post.genre))}</span>` : ''}
+    </div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="card-artist">${escHtml(post.artist)}</span>
+        <h2 class="card-title">${escHtml(post.title)}</h2>
+      </div>
+      <p class="card-caption">${escHtml(post.caption)}</p>
+      ${date ? `<span class="card-date">${date}</span>` : ''}
+    </div>
+    ${hasLinks ? `<div class="card-links">${buildLinkButtons(links)}</div>` : ''}
+  `;
+
+  return card;
+}
+
+/* ── Build streaming buttons ── */
+function buildLinkButtons(links) {
+  let html = '';
+  if (links.spotify) html += `
+    <a href="${escAttr(links.spotify)}" target="_blank" rel="noopener noreferrer" class="stream-btn spotify">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      Spotify
+    </a>`;
+  if (links.audiomack) html += `
+    <a href="${escAttr(links.audiomack)}" target="_blank" rel="noopener noreferrer" class="stream-btn audiomack">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
+      Audiomack
+    </a>`;
+  if (links.apple) html += `
+    <a href="${escAttr(links.apple)}" target="_blank" rel="noopener noreferrer" class="stream-btn apple">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Apple Music
+    </a>`;
+  if (links.youtube) html += `
+    <a href="${escAttr(links.youtube)}" target="_blank" rel="noopener noreferrer" class="stream-btn youtube">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+      YouTube
+    </a>`;
+  return html;
+}
+
+/* ============================================================
+   SKELETON LOADERS
+   ============================================================ */
+function showSkeletons(n) {
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "skeleton";
+    el.setAttribute("aria-hidden", "true");
+    el.innerHTML = `
+      <div class="skel-img skeleton-shimmer"></div>
+      <div class="skel-body">
+        <div class="skel-line skeleton-shimmer" style="width:50%;height:10px"></div>
+        <div class="skel-line skeleton-shimmer" style="width:80%;height:16px;margin-top:4px"></div>
+        <div class="skel-line skeleton-shimmer" style="width:100%;margin-top:8px"></div>
+        <div class="skel-line skeleton-shimmer" style="width:90%"></div>
+        <div class="skel-line skeleton-shimmer" style="width:70%"></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <div class="skel-line skeleton-shimmer" style="width:80px;height:28px;border-radius:20px;flex-shrink:0"></div>
+          <div class="skel-line skeleton-shimmer" style="width:90px;height:28px;border-radius:20px;flex-shrink:0"></div>
+        </div>
+      </div>
+    `;
+    postsGrid.appendChild(el);
+  }
+}
+
+function clearSkeletons() {
+  postsGrid.querySelectorAll(".skeleton").forEach(el => el.remove());
+}
+
+/* ============================================================
+   INTERSECTION OBSERVER (fade-in on scroll)
+   ============================================================ */
+let observer;
+function initScrollObserver() {
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
+}
+
+function observeCard(card) {
+  if (observer) observer.observe(card);
+}
+
+/* ============================================================
+   STATE HELPERS
+   ============================================================ */
+function hideStates() {
+  emptyState.style.display = "none";
+  errorState.style.display = "none";
+}
+function showEmpty()        { emptyState.style.display = "flex"; loadMoreWrap.style.display = "none"; }
+function showError(msg)     {
+  errorState.style.display = "flex";
+  errorMsg.textContent = msg || "Could not load posts.";
+  loadMoreWrap.style.display = "none";
+}
+function updateCount(n)     {
+  feedCount.textContent = n ? `${n} post${n !== 1 ? 's' : ''}` : '';
+}
+
+/* ============================================================
+   LOAD MORE BUTTON
+   ============================================================ */
+loadMoreBtn.addEventListener("click", () => loadPosts(true));
+
+/* ============================================================
+   RETRY BUTTON
+   ============================================================ */
+document.getElementById("btn-retry").addEventListener("click", () => {
+  errorState.style.display = "none";
+  showSkeletons(6);
+  loadPosts();
+});
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+function escAttr(str) { return escHtml(str); }
+function capitalise(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+function formatDate(date) {
+  return date.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+</script>
+</body>
+</html>
