@@ -979,7 +979,7 @@ body::before {
 
 <!-- ══════════════════════════════════════════════════ SCRIPTS -->
 <script>
-/* ── Firebase Config ── */
+/* ───────────────────────── FIREBASE ───────────────────────── */
 const firebaseConfig = {
   apiKey: "AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
   authDomain: "music-7a35b.firebaseapp.com",
@@ -988,149 +988,53 @@ const firebaseConfig = {
   messagingSenderId: "26882716946",
   appId: "1:26882716946:web:5cc1c9e980bc6597442fcb"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ── State ── */
+/* ───────────────────────── STATE ───────────────────────── */
 const PAGE_SIZE = 12;
-let lastDoc        = null;
-let isLoading      = false;
-let activeFilter   = "all";
-let searchQuery    = "";
-let allPostsCached = [];
 
-/* ── DOM ── */
-const postsGrid     = document.getElementById("posts-grid");
-const emptyState    = document.getElementById("empty-state");
-const errorState    = document.getElementById("error-state");
-const errorMsg      = document.getElementById("error-msg");
-const loadMoreWrap  = document.getElementById("load-more-wrap");
-const loadMoreBtn   = document.getElementById("load-more-btn");
-const feedCount     = document.getElementById("feed-count");
-const feedTitle     = document.getElementById("feed-title");
-const navbar        = document.getElementById("navbar");
-const footerYear    = document.getElementById("footer-year");
-const mobileMenuBtn = document.getElementById("mobile-menu-btn");
-const mobileDrawer  = document.getElementById("nav-mobile-drawer");
-const searchBar     = document.getElementById("search-bar");
-const statTracks    = document.getElementById("stat-tracks");
+let lastDoc = null;
+let isLoading = false;
+let activeFilter = "all";
+let searchQuery = "";
+let allPosts = [];
 
-/* ── Init ── */
+/* ───────────────────────── DOM ───────────────────────── */
+const postsGrid = document.getElementById("posts-grid");
+const emptyState = document.getElementById("empty-state");
+const errorState = document.getElementById("error-state");
+const errorMsg = document.getElementById("error-msg");
+const loadMoreBtn = document.getElementById("load-more-btn");
+const loadMoreWrap = document.getElementById("load-more-wrap");
+const feedCount = document.getElementById("feed-count");
+const feedTitle = document.getElementById("feed-title");
+const searchBar = document.getElementById("search-bar");
+const statTracks = document.getElementById("stat-tracks");
+const footerYear = document.getElementById("footer-year");
+
+/* ───────────────────────── INIT ───────────────────────── */
 footerYear.textContent = new Date().getFullYear();
+
 showSkeletons(6);
 loadPosts();
-initNavbar();
-initFilters();
-initMobileMenu();
-initScrollObserver();
-initHeroSlider();
-initSearch();
 
-/* ── Hero Slider ── */
-function initHeroSlider() {
-  const slides = document.querySelectorAll(".hero-slide");
-  const dots   = document.querySelectorAll(".hero-dot");
-  let cur = 0, timer;
-
-  function goTo(idx) {
-    slides[cur].classList.remove("active");
-    dots[cur].classList.remove("active");
-    cur = idx;
-    slides[cur].classList.add("active");
-    dots[cur].classList.add("active");
-  }
-
-  dots.forEach(dot => {
-    dot.addEventListener("click", () => {
-      clearInterval(timer);
-      goTo(+dot.dataset.index);
-      startTimer();
-    });
-  });
-
-  function startTimer() {
-    timer = setInterval(() => goTo((cur + 1) % slides.length), 5000);
-  }
-  startTimer();
-}
-
-/* ── Navbar scroll ── */
-function initNavbar() {
-  window.addEventListener("scroll", () => {
-    navbar.classList.toggle("scrolled", window.scrollY > 10);
-  }, { passive: true });
-}
-
-/* ── Mobile menu ── */
-function initMobileMenu() {
-  mobileMenuBtn.addEventListener("click", () => {
-    const open = mobileDrawer.classList.toggle("open");
-    mobileMenuBtn.classList.toggle("open", open);
-  });
-}
-
-/* ── Filters ── */
-function initFilters() {
-  document.querySelectorAll(".nav-link[data-filter]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const filter = btn.dataset.filter;
-      if (filter === activeFilter) return;
-      activeFilter = filter;
-      document.querySelectorAll(".nav-link[data-filter]").forEach(b =>
-        b.classList.toggle("active", b.dataset.filter === filter));
-      const titleEl = feedTitle;
-      titleEl.innerHTML = filter === "all"
-        ? 'Latest <span>Releases</span>'
-        : `${capitalise(filter)} <span>Releases</span>`;
-      applyFiltersAndRender();
-      mobileDrawer.classList.remove("open");
-      mobileMenuBtn.classList.remove("open");
-    });
-  });
-}
-
-/* ── Search ── */
-function initSearch() {
-  let debounce;
-  searchBar.addEventListener("input", () => {
-    clearTimeout(debounce);
-    debounce = setTimeout(() => {
-      searchQuery = searchBar.value.trim().toLowerCase();
-      applyFiltersAndRender();
-    }, 280);
-  });
-}
-
-function applyFiltersAndRender() {
-  let filtered = allPostsCached;
-  if (activeFilter !== "all")
-    filtered = filtered.filter(p => (p.genre||'').toLowerCase() === activeFilter);
-  if (searchQuery)
-    filtered = filtered.filter(p =>
-      (p.title||'').toLowerCase().includes(searchQuery) ||
-      (p.artist||'').toLowerCase().includes(searchQuery) ||
-      (p.caption||'').toLowerCase().includes(searchQuery)
-    );
-  renderPosts(filtered, true);
-  updateCount(filtered.length);
-}
-
-/* ── Load Posts ── */
+/* ───────────────────────── FETCH POSTS ───────────────────────── */
 async function loadPosts(append = false) {
   if (isLoading) return;
   isLoading = true;
+
   hideStates();
 
   try {
-    /* 
-      KEY FIX: Use .get({ source:"server" }) and fallback sort so nulls don't break ordering.
-      We fetch without orderBy first to avoid index errors when createdAt might be null,
-      then sort client-side.
-    */
-    let query = db.collection("posts").limit(PAGE_SIZE * 4);
-    if (append && lastDoc) query = query.startAfter(lastDoc);
+    let query = db.collection("posts").limit(PAGE_SIZE);
 
-  const snapshot = await query.get();
+    if (append && lastDoc) {
+      query = query.startAfter(lastDoc);
+    }
+
+    const snapshot = await query.get();
 
     if (snapshot.empty && !append) {
       clearSkeletons();
@@ -1139,196 +1043,181 @@ async function loadPosts(append = false) {
       return;
     }
 
-    const posts = [];
+    const newPosts = [];
+
     snapshot.forEach(doc => {
-      const data = doc.data();
-      posts.push({ id: doc.id, ...data });
+      newPosts.push({
+        id: doc.id,
+        ...doc.data()
+      });
       lastDoc = doc;
     });
 
-    // Sort client-side: handle null/missing createdAt gracefully
-    posts.sort((a, b) => {
-      const ta = a.createdAt?.toDate?.() || a.createdAt || 0;
-      const tb = b.createdAt?.toDate?.() || b.createdAt || 0;
-      return tb - ta;
-    });
-
-    if (!append) allPostsCached = posts;
-    else allPostsCached = [...allPostsCached, ...posts];
-
-    // Update stat
-    if (statTracks) statTracks.textContent = allPostsCached.length + "+";
+    if (!append) {
+      allPosts = newPosts;
+    } else {
+      allPosts = [...allPosts, ...newPosts];
+    }
 
     clearSkeletons();
-    applyFiltersAndRender();
 
-    loadMoreWrap.style.display = snapshot.docs.length >= PAGE_SIZE ? "flex" : "none";
+    applyFilters();
+
+    statTracks.textContent = `${allPosts.length}+`;
+
+    loadMoreWrap.style.display = snapshot.size < PAGE_SIZE ? "none" : "flex";
 
   } catch (err) {
-    console.error("Firestore error:", err);
-    clearSkeletons();
+    console.error(err);
     showError(err.message);
   }
+
   isLoading = false;
 }
 
-/* ── Render ── */
-function renderPosts(posts, clear = false) {
-  if (clear) postsGrid.innerHTML = "";
-  if (!posts.length) { showEmpty(); return; }
-  emptyState.style.display = "none";
+/* ───────────────────────── FILTER + SEARCH ───────────────────────── */
+function applyFilters() {
+  let filtered = [...allPosts];
+
+  if (activeFilter !== "all") {
+    filtered = filtered.filter(p =>
+      (p.genre || "").toLowerCase() === activeFilter
+    );
+  }
+
+  if (searchQuery) {
+    filtered = filtered.filter(p =>
+      (p.title || "").toLowerCase().includes(searchQuery) ||
+      (p.artist || "").toLowerCase().includes(searchQuery) ||
+      (p.caption || "").toLowerCase().includes(searchQuery)
+    );
+  }
+
+  renderPosts(filtered);
+  feedCount.textContent = `${filtered.length} post${filtered.length !== 1 ? "s" : ""}`;
+}
+
+/* ───────────────────────── RENDER ───────────────────────── */
+function renderPosts(posts) {
+  postsGrid.innerHTML = "";
+
+  if (!posts.length) {
+    showEmpty();
+    return;
+  }
+
   const now = Date.now();
-  posts.forEach((post, i) => {
-    const card = buildCard(post, now);
-    card.style.transitionDelay = `${(i % PAGE_SIZE) * 45}ms`;
+
+  posts.forEach(post => {
+    const card = document.createElement("article");
+    card.className = "post-card";
+
+    const img = post.image
+      ? (post.image.startsWith("http") || post.image.startsWith("data:")
+          ? post.image
+          : "data:image/jpeg;base64," + post.image)
+      : "";
+
+    const date = post.createdAt?.toDate
+      ? post.createdAt.toDate()
+      : post.createdAt
+      ? new Date(post.createdAt)
+      : null;
+
+    const isNew = date && (now - date.getTime() < 7 * 24 * 60 * 60 * 1000);
+
+    const links = post.links || {};
+
+    card.innerHTML = `
+      <div class="card-img-wrap">
+        ${img
+          ? `<img src="${img}" alt="${post.title || ""}">`
+          : `<div style="width:100%;height:100%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;color:#555">No Image</div>`
+        }
+
+        ${isNew ? `<span class="card-new-badge">NEW</span>` : ""}
+
+        ${post.genre ? `<span class="card-genre-badge">${post.genre}</span>` : ""}
+      </div>
+
+      <div class="card-body">
+        <span class="card-artist">${post.artist || "Unknown"}</span>
+        <h2 class="card-title">${post.title || "Untitled"}</h2>
+        <p class="card-caption">${post.caption || ""}</p>
+        ${date ? `<span class="card-date">${date.toDateString()}</span>` : ""}
+      </div>
+
+      <div class="card-links">
+        ${links.spotify ? `<a class="stream-btn spotify" href="${links.spotify}" target="_blank">Spotify</a>` : ""}
+        ${links.audiomack ? `<a class="stream-btn audiomack" href="${links.audiomack}" target="_blank">Audiomack</a>` : ""}
+        ${links.apple ? `<a class="stream-btn apple" href="${links.apple}" target="_blank">Apple</a>` : ""}
+        ${links.youtube ? `<a class="stream-btn youtube" href="${links.youtube}" target="_blank">YouTube</a>` : ""}
+      </div>
+    `;
+
     postsGrid.appendChild(card);
-    requestAnimationFrame(() => observeCard(card));
   });
 }
 
-/* ── Build Card ── */
-function buildCard(post, now) {
-  const card = document.createElement("article");
-  card.className = "post-card";
-  card.dataset.id = post.id;
-
-  const links = post.links || {};
-  const hasLinks = links.spotify || links.audiomack || links.apple || links.youtube;
-
-  // Date
-  let dateStr = "";
-  let isNew = false;
-  if (post.createdAt) {
-    let d;
-    if (post.createdAt.toDate) d = post.createdAt.toDate();
-    else if (typeof post.createdAt === "number") d = new Date(post.createdAt);
-    if (d) {
-      dateStr = formatDate(d);
-      isNew = (now - d.getTime()) < 1000 * 60 * 60 * 24 * 7; // 7 days
-    }
-  }
-
-  // Image src — handle base64, URL, or missing
-  const imgSrc = post.image
-    ? (post.image.startsWith("http") || post.image.startsWith("data:")
-        ? post.image
-        : "data:image/jpeg;base64," + post.image)
-    : "";
-
-  card.innerHTML = `
-    <div class="card-img-wrap">
-      ${imgSrc
-        ? `<img src="${escAttr(imgSrc)}" alt="${escHtml(post.artist)} — ${escHtml(post.title)}" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1e1e1e'">`
-        : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a,#222);display:flex;align-items:center;justify-content:center">
-             <svg viewBox="0 0 48 48" fill="none" width="48" height="48" opacity=".3">
-               <path d="M24 4v28M12 28l12 12 12-12" stroke="#1db954" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-             </svg>
-           </div>`
-      }
-      <div class="card-play-overlay">
-        <div class="card-play-btn">
-          <svg viewBox="0 0 24 24" fill="#000" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
-        </div>
-      </div>
-      ${post.genre ? `<span class="card-genre-badge">${escHtml(capitalise(post.genre))}</span>` : ''}
-      ${isNew ? `<span class="card-new-badge">New</span>` : ''}
-    </div>
-    <div class="card-body">
-      <span class="card-artist">${escHtml(post.artist || 'Unknown Artist')}</span>
-      <h2 class="card-title">${escHtml(post.title || 'Untitled')}</h2>
-      ${post.caption ? `<p class="card-caption">${escHtml(post.caption)}</p>` : ''}
-      ${dateStr ? `<span class="card-date">${dateStr}</span>` : ''}
-    </div>
-    ${hasLinks ? `<div class="card-divider"></div><div class="card-links">${buildLinkButtons(links)}</div>` : ''}
-  `;
-
-  return card;
-}
-
-/* ── Streaming Buttons ── */
-function buildLinkButtons(links) {
-  let html = '';
-  if (links.spotify) html += `
-    <a href="${escAttr(links.spotify)}" target="_blank" rel="noopener noreferrer" class="stream-btn spotify">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-      Spotify
-    </a>`;
-  if (links.audiomack) html += `
-    <a href="${escAttr(links.audiomack)}" target="_blank" rel="noopener noreferrer" class="stream-btn audiomack">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
-      Audiomack
-    </a>`;
-  if (links.apple) html += `
-    <a href="${escAttr(links.apple)}" target="_blank" rel="noopener noreferrer" class="stream-btn apple">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-      Apple Music
-    </a>`;
-  if (links.youtube) html += `
-    <a href="${escAttr(links.youtube)}" target="_blank" rel="noopener noreferrer" class="stream-btn youtube">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
-      YouTube
-    </a>`;
-  return html;
-}
-
-/* ── Skeletons ── */
-function showSkeletons(n) {
-  for (let i = 0; i < n; i++) {
-    const el = document.createElement("div");
-    el.className = "skeleton-card";
-    el.setAttribute("aria-hidden", "true");
-    el.innerHTML = `
-      <div class="skel-img skel-line"></div>
-      <div class="skel-body">
-        <div class="skel-line" style="width:45%;height:10px"></div>
-        <div class="skel-line" style="width:75%;height:18px;margin-top:4px"></div>
-        <div class="skel-line" style="width:100%;margin-top:10px"></div>
-        <div class="skel-line" style="width:85%"></div>
-        <div class="skel-line" style="width:60%"></div>
-        <div style="display:flex;gap:8px;margin-top:14px">
-          <div class="skel-line" style="width:80px;height:30px;border-radius:20px;flex-shrink:0"></div>
-          <div class="skel-line" style="width:96px;height:30px;border-radius:20px;flex-shrink:0"></div>
-        </div>
-      </div>`;
-    postsGrid.appendChild(el);
-  }
-}
-function clearSkeletons() {
-  postsGrid.querySelectorAll(".skeleton-card").forEach(el => el.remove());
-}
-
-/* ── Intersection Observer ── */
-let observer;
-function initScrollObserver() {
-  observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); }
-    });
-  }, { threshold: 0.06, rootMargin: "0px 0px -30px 0px" });
-}
-function observeCard(card) { if (observer) observer.observe(card); }
-
-/* ── State helpers ── */
-function hideStates() { emptyState.style.display="none"; errorState.style.display="none"; }
-function showEmpty()  { emptyState.style.display="flex"; loadMoreWrap.style.display="none"; }
-function showError(msg){ errorState.style.display="flex"; errorMsg.textContent=msg||"Could not load posts."; loadMoreWrap.style.display="none"; }
-function updateCount(n){ feedCount.textContent = n ? `${n} post${n!==1?"s":""}` : ""; }
-
-/* ── Events ── */
-loadMoreBtn.addEventListener("click", () => loadPosts(true));
-document.getElementById("btn-retry").addEventListener("click", () => {
-  errorState.style.display="none"; showSkeletons(6); loadPosts();
+/* ───────────────────────── SEARCH ───────────────────────── */
+searchBar.addEventListener("input", (e) => {
+  searchQuery = e.target.value.toLowerCase();
+  applyFilters();
 });
 
-/* ── Utils ── */
-function escHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+/* ───────────────────────── FILTER BUTTONS ───────────────────────── */
+document.querySelectorAll("[data-filter]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    activeFilter = btn.dataset.filter;
+
+    document.querySelectorAll("[data-filter]").forEach(b =>
+      b.classList.remove("active")
+    );
+
+    btn.classList.add("active");
+
+    applyFilters();
+  });
+});
+
+/* ───────────────────────── LOAD MORE ───────────────────────── */
+loadMoreBtn.addEventListener("click", () => loadPosts(true));
+
+/* ───────────────────────── UI STATES ───────────────────────── */
+function showEmpty() {
+  emptyState.style.display = "flex";
 }
-function escAttr(str) { return escHtml(str); }
-function capitalise(str) { return str ? str.charAt(0).toUpperCase()+str.slice(1) : ''; }
-function formatDate(date) {
-  return date.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+
+function showError(msg) {
+  errorState.style.display = "flex";
+  errorMsg.textContent = msg;
+}
+
+function hideStates() {
+  emptyState.style.display = "none";
+  errorState.style.display = "none";
+}
+
+/* ───────────────────────── SKELETON ───────────────────────── */
+function showSkeletons(n) {
+  postsGrid.innerHTML = "";
+  for (let i = 0; i < n; i++) {
+    const div = document.createElement("div");
+    div.className = "skeleton-card";
+    div.innerHTML = `
+      <div class="skel-img"></div>
+      <div class="skel-body">
+        <div class="skel-line"></div>
+        <div class="skel-line"></div>
+        <div class="skel-line"></div>
+      </div>
+    `;
+    postsGrid.appendChild(div);
+  }
+}
+
+function clearSkeletons() {
+  document.querySelectorAll(".skeleton-card").forEach(e => e.remove());
 }
 </script>
 </body>
