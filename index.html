@@ -1009,10 +1009,9 @@ const errorMsg = document.getElementById("error-msg");
 const loadMoreBtn = document.getElementById("load-more-btn");
 const loadMoreWrap = document.getElementById("load-more-wrap");
 const feedCount = document.getElementById("feed-count");
-const feedTitle = document.getElementById("feed-title");
-const searchBar = document.getElementById("search-bar");
 const statTracks = document.getElementById("stat-tracks");
 const footerYear = document.getElementById("footer-year");
+const searchBar = document.getElementById("search-bar");
 
 /* ───────────────── INIT ───────────────── */
 footerYear.textContent = new Date().getFullYear();
@@ -1020,7 +1019,7 @@ footerYear.textContent = new Date().getFullYear();
 showSkeletons(6);
 loadPosts();
 
-/* ───────────────── LOAD POSTS (FIXED) ───────────────── */
+/* ───────────────── LOAD POSTS ───────────────── */
 async function loadPosts(append = false) {
   if (isLoading) return;
   isLoading = true;
@@ -1028,15 +1027,15 @@ async function loadPosts(append = false) {
   hideStates();
 
   try {
-    let query = db.collection("posts")
-      .orderBy("createdAt", "desc")   // 🔥 CRITICAL FIX
+    let queryRef = db.collection("posts")
+      .orderBy("createdAt", "desc")
       .limit(PAGE_SIZE);
 
     if (append && lastDoc) {
-      query = query.startAfter(lastDoc);
+      queryRef = queryRef.startAfter(lastDoc);
     }
 
-    const snapshot = await query.get();
+    const snapshot = await queryRef.get();
 
     if (snapshot.empty && !append) {
       clearSkeletons();
@@ -1051,14 +1050,9 @@ async function loadPosts(append = false) {
       newPosts.push({ id: doc.id, ...doc.data() });
     });
 
-    // pagination cursor FIX
     lastDoc = snapshot.docs[snapshot.docs.length - 1];
 
-    if (!append) {
-      allPosts = newPosts;
-    } else {
-      allPosts = [...allPosts, ...newPosts];
-    }
+    allPosts = append ? [...allPosts, ...newPosts] : newPosts;
 
     clearSkeletons();
     applyFilters();
@@ -1083,7 +1077,7 @@ function applyFilters() {
 
   if (activeFilter !== "all") {
     filtered = filtered.filter(p =>
-      (p.genre || "").toLowerCase() === activeFilter
+      (p.genre || "").toLowerCase() === activeFilter.toLowerCase()
     );
   }
 
@@ -1112,13 +1106,13 @@ function renderPosts(posts) {
 
   posts.forEach(post => {
     const card = document.createElement("article");
-    card.className = "post-card";
+    card.className = "post-card visible";
 
-    const img = post.image
-      ? (post.image.startsWith("http") || post.image.startsWith("data:")
-        ? post.image
-        : "data:image/jpeg;base64," + post.image)
-      : "";
+    const img = post.image?.startsWith("http") || post.image?.startsWith("data:")
+      ? post.image
+      : post.image
+        ? "data:image/jpeg;base64," + post.image
+        : "";
 
     const dateObj =
       post.createdAt?.toDate?.() ||
@@ -1130,9 +1124,7 @@ function renderPosts(posts) {
 
     card.innerHTML = `
       <div class="card-img-wrap">
-        ${img
-          ? `<img src="${img}" alt="${post.title || ""}">`
-          : `<div class="no-img">No Image</div>`}
+        ${img ? `<img src="${img}">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#555">No Image</div>`}
 
         ${isNew ? `<span class="card-new-badge">NEW</span>` : ""}
         ${post.genre ? `<span class="card-genre-badge">${post.genre}</span>` : ""}
@@ -1146,10 +1138,10 @@ function renderPosts(posts) {
       </div>
 
       <div class="card-links">
-        ${links.spotify ? `<a href="${links.spotify}" target="_blank">Spotify</a>` : ""}
-        ${links.audiomack ? `<a href="${links.audiomack}" target="_blank">Audiomack</a>` : ""}
-        ${links.apple ? `<a href="${links.apple}" target="_blank">Apple</a>` : ""}
-        ${links.youtube ? `<a href="${links.youtube}" target="_blank">YouTube</a>` : ""}
+        ${links.spotify ? `<a class="stream-btn spotify" href="${links.spotify}" target="_blank">Spotify</a>` : ""}
+        ${links.audiomack ? `<a class="stream-btn audiomack" href="${links.audiomack}" target="_blank">Audiomack</a>` : ""}
+        ${links.apple ? `<a class="stream-btn apple" href="${links.apple}" target="_blank">Apple</a>` : ""}
+        ${links.youtube ? `<a class="stream-btn youtube" href="${links.youtube}" target="_blank">YouTube</a>` : ""}
       </div>
     `;
 
@@ -1158,12 +1150,12 @@ function renderPosts(posts) {
 }
 
 /* ───────────────── SEARCH ───────────────── */
-searchBar.addEventListener("input", (e) => {
+searchBar.addEventListener("input", e => {
   searchQuery = e.target.value.toLowerCase();
   applyFilters();
 });
 
-/* ───────────────── FILTERS ───────────────── */
+/* ───────────────── FILTER BUTTONS ───────────────── */
 document.querySelectorAll("[data-filter]").forEach(btn => {
   btn.addEventListener("click", () => {
     activeFilter = btn.dataset.filter;
@@ -1173,7 +1165,6 @@ document.querySelectorAll("[data-filter]").forEach(btn => {
     );
 
     btn.classList.add("active");
-
     applyFilters();
   });
 });
@@ -1181,7 +1172,7 @@ document.querySelectorAll("[data-filter]").forEach(btn => {
 /* ───────────────── LOAD MORE ───────────────── */
 loadMoreBtn.addEventListener("click", () => loadPosts(true));
 
-/* ───────────────── STATES ───────────────── */
+/* ───────────────── UI STATES ───────────────── */
 function showEmpty() {
   emptyState.style.display = "flex";
 }
