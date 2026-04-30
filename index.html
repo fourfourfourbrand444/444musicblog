@@ -979,7 +979,7 @@ body::before {
 
 <!-- ══════════════════════════════════════════════════ SCRIPTS -->
 <script>
-/* ───────────────────────── FIREBASE ───────────────────────── */
+/* ───────────────── FIREBASE ───────────────── */
 const firebaseConfig = {
   apiKey: "AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
   authDomain: "music-7a35b.firebaseapp.com",
@@ -992,7 +992,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ───────────────────────── STATE ───────────────────────── */
+/* ───────────────── STATE ───────────────── */
 const PAGE_SIZE = 12;
 
 let lastDoc = null;
@@ -1001,7 +1001,7 @@ let activeFilter = "all";
 let searchQuery = "";
 let allPosts = [];
 
-/* ───────────────────────── DOM ───────────────────────── */
+/* ───────────────── DOM ───────────────── */
 const postsGrid = document.getElementById("posts-grid");
 const emptyState = document.getElementById("empty-state");
 const errorState = document.getElementById("error-state");
@@ -1014,13 +1014,13 @@ const searchBar = document.getElementById("search-bar");
 const statTracks = document.getElementById("stat-tracks");
 const footerYear = document.getElementById("footer-year");
 
-/* ───────────────────────── INIT ───────────────────────── */
+/* ───────────────── INIT ───────────────── */
 footerYear.textContent = new Date().getFullYear();
 
 showSkeletons(6);
 loadPosts();
 
-/* ───────────────────────── FETCH POSTS ───────────────────────── */
+/* ───────────────── LOAD POSTS (FIXED) ───────────────── */
 async function loadPosts(append = false) {
   if (isLoading) return;
   isLoading = true;
@@ -1028,7 +1028,9 @@ async function loadPosts(append = false) {
   hideStates();
 
   try {
-    let query = db.collection("posts").limit(PAGE_SIZE);
+    let query = db.collection("posts")
+      .orderBy("createdAt", "desc")   // 🔥 CRITICAL FIX
+      .limit(PAGE_SIZE);
 
     if (append && lastDoc) {
       query = query.startAfter(lastDoc);
@@ -1046,12 +1048,11 @@ async function loadPosts(append = false) {
     const newPosts = [];
 
     snapshot.forEach(doc => {
-      newPosts.push({
-        id: doc.id,
-        ...doc.data()
-      });
-      lastDoc = doc;
+      newPosts.push({ id: doc.id, ...doc.data() });
     });
+
+    // pagination cursor FIX
+    lastDoc = snapshot.docs[snapshot.docs.length - 1];
 
     if (!append) {
       allPosts = newPosts;
@@ -1060,22 +1061,23 @@ async function loadPosts(append = false) {
     }
 
     clearSkeletons();
-
     applyFilters();
 
     statTracks.textContent = `${allPosts.length}+`;
 
-    loadMoreWrap.style.display = snapshot.size < PAGE_SIZE ? "none" : "flex";
+    loadMoreWrap.style.display =
+      snapshot.docs.length < PAGE_SIZE ? "none" : "flex";
 
   } catch (err) {
     console.error(err);
+    clearSkeletons();
     showError(err.message);
   }
 
   isLoading = false;
 }
 
-/* ───────────────────────── FILTER + SEARCH ───────────────────────── */
+/* ───────────────── FILTER + SEARCH ───────────────── */
 function applyFilters() {
   let filtered = [...allPosts];
 
@@ -1097,7 +1099,7 @@ function applyFilters() {
   feedCount.textContent = `${filtered.length} post${filtered.length !== 1 ? "s" : ""}`;
 }
 
-/* ───────────────────────── RENDER ───────────────────────── */
+/* ───────────────── RENDER ───────────────── */
 function renderPosts(posts) {
   postsGrid.innerHTML = "";
 
@@ -1114,17 +1116,15 @@ function renderPosts(posts) {
 
     const img = post.image
       ? (post.image.startsWith("http") || post.image.startsWith("data:")
-          ? post.image
-          : "data:image/jpeg;base64," + post.image)
+        ? post.image
+        : "data:image/jpeg;base64," + post.image)
       : "";
 
-    const date = post.createdAt?.toDate
-      ? post.createdAt.toDate()
-      : post.createdAt
-      ? new Date(post.createdAt)
-      : null;
+    const dateObj =
+      post.createdAt?.toDate?.() ||
+      (post.createdAt ? new Date(post.createdAt) : null);
 
-    const isNew = date && (now - date.getTime() < 7 * 24 * 60 * 60 * 1000);
+    const isNew = dateObj && (now - dateObj.getTime() < 7 * 24 * 60 * 60 * 1000);
 
     const links = post.links || {};
 
@@ -1132,11 +1132,9 @@ function renderPosts(posts) {
       <div class="card-img-wrap">
         ${img
           ? `<img src="${img}" alt="${post.title || ""}">`
-          : `<div style="width:100%;height:100%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;color:#555">No Image</div>`
-        }
+          : `<div class="no-img">No Image</div>`}
 
         ${isNew ? `<span class="card-new-badge">NEW</span>` : ""}
-
         ${post.genre ? `<span class="card-genre-badge">${post.genre}</span>` : ""}
       </div>
 
@@ -1144,14 +1142,14 @@ function renderPosts(posts) {
         <span class="card-artist">${post.artist || "Unknown"}</span>
         <h2 class="card-title">${post.title || "Untitled"}</h2>
         <p class="card-caption">${post.caption || ""}</p>
-        ${date ? `<span class="card-date">${date.toDateString()}</span>` : ""}
+        ${dateObj ? `<span class="card-date">${dateObj.toDateString()}</span>` : ""}
       </div>
 
       <div class="card-links">
-        ${links.spotify ? `<a class="stream-btn spotify" href="${links.spotify}" target="_blank">Spotify</a>` : ""}
-        ${links.audiomack ? `<a class="stream-btn audiomack" href="${links.audiomack}" target="_blank">Audiomack</a>` : ""}
-        ${links.apple ? `<a class="stream-btn apple" href="${links.apple}" target="_blank">Apple</a>` : ""}
-        ${links.youtube ? `<a class="stream-btn youtube" href="${links.youtube}" target="_blank">YouTube</a>` : ""}
+        ${links.spotify ? `<a href="${links.spotify}" target="_blank">Spotify</a>` : ""}
+        ${links.audiomack ? `<a href="${links.audiomack}" target="_blank">Audiomack</a>` : ""}
+        ${links.apple ? `<a href="${links.apple}" target="_blank">Apple</a>` : ""}
+        ${links.youtube ? `<a href="${links.youtube}" target="_blank">YouTube</a>` : ""}
       </div>
     `;
 
@@ -1159,13 +1157,13 @@ function renderPosts(posts) {
   });
 }
 
-/* ───────────────────────── SEARCH ───────────────────────── */
+/* ───────────────── SEARCH ───────────────── */
 searchBar.addEventListener("input", (e) => {
   searchQuery = e.target.value.toLowerCase();
   applyFilters();
 });
 
-/* ───────────────────────── FILTER BUTTONS ───────────────────────── */
+/* ───────────────── FILTERS ───────────────── */
 document.querySelectorAll("[data-filter]").forEach(btn => {
   btn.addEventListener("click", () => {
     activeFilter = btn.dataset.filter;
@@ -1180,10 +1178,10 @@ document.querySelectorAll("[data-filter]").forEach(btn => {
   });
 });
 
-/* ───────────────────────── LOAD MORE ───────────────────────── */
+/* ───────────────── LOAD MORE ───────────────── */
 loadMoreBtn.addEventListener("click", () => loadPosts(true));
 
-/* ───────────────────────── UI STATES ───────────────────────── */
+/* ───────────────── STATES ───────────────── */
 function showEmpty() {
   emptyState.style.display = "flex";
 }
@@ -1198,7 +1196,7 @@ function hideStates() {
   errorState.style.display = "none";
 }
 
-/* ───────────────────────── SKELETON ───────────────────────── */
+/* ───────────────── SKELETON ───────────────── */
 function showSkeletons(n) {
   postsGrid.innerHTML = "";
   for (let i = 0; i < n; i++) {
@@ -1219,6 +1217,5 @@ function showSkeletons(n) {
 function clearSkeletons() {
   document.querySelectorAll(".skeleton-card").forEach(e => e.remove());
 }
-</script>
-</body>
+</script></body>
 </html>
