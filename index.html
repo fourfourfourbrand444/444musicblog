@@ -1130,7 +1130,7 @@ async function loadPosts(append = false) {
     let query = db.collection("posts").limit(PAGE_SIZE * 4);
     if (append && lastDoc) query = query.startAfter(lastDoc);
 
-    const snapshot = await query.get({ source: "server" });
+  const snapshot = await query.get();
 
     if (snapshot.empty && !append) {
       clearSkeletons();
