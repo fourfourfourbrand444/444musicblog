@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin — 444Music Blog</title>
+
+  <!-- Firebase v9 Compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --clr-bg:        #f9f8f5;
+  --clr-surface:   #ffffff;
+  --clr-surface-2: #f4f3f0;
+  --clr-border:    rgba(0,0,0,.08);
+  --clr-border-md: rgba(0,0,0,.14);
+  --clr-text:      #0e0e0e;
+  --clr-muted:     #6b6b6b;
+  --clr-subtle:    #9e9e9e;
+  --clr-accent:    #1a5c38;
+  --clr-accent-lt: #e8f2ec;
+  --clr-accent-dk: #0f3d24;
+  --clr-danger:    #d1293d;
+  --clr-danger-lt: #fceef0;
+  --clr-success:   #1a5c38;
+  --clr-success-lt:#e8f2ec;
+  --clr-skeleton:  #ebebeb;
+  --clr-spotify:   #1db954;
+  --clr-audiomack: #f5a623;
+  --clr-apple:     #fc3c44;
+  --clr-youtube:   #ff0000;
+
+  --ff-display: 'Playfair Display', Georgia, serif;
+  --ff-body:    'Plus Jakarta Sans', sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 24px rgba(0,0,0,.09), 0 1px 3px rgba(0,0,0,.05);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.05);
+
+  --nav-h: 64px;
+  --transition: 0.22s cubic-bezier(.4,0,.2,1);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--ff-body);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+img  { display: block; max-width: 100%; }
+a    { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+#navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--nav-h);
+  background: rgba(249,248,245,.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--clr-border);
+  box-shadow: 0 1px 0 var(--clr-border);
+}
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo { display: flex; align-items: center; gap: 2px; }
+.logo-mark {
+  font-family: var(--ff-display);
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: var(--clr-accent);
+  letter-spacing: -.03em;
+}
+.logo-word {
+  font-family: var(--ff-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--clr-text);
+  margin-left: 1px;
+}
+.logo-pill {
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  background: var(--clr-accent);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 8px;
+}
+
+.btn-ghost-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1.5px solid var(--clr-border-md);
+  border-radius: 50px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--clr-muted);
+  background: var(--clr-surface);
+  transition: all var(--transition);
+}
+.btn-ghost-sm:hover {
+  border-color: var(--clr-text);
+  color: var(--clr-text);
+  background: var(--clr-surface);
+}
+
+/* ============================================================
+   ADMIN MAIN
+   ============================================================ */
+.admin-main { padding: 40px 0 80px; }
+.admin-container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* ============================================================
+   AUTH GATE
+   ============================================================ */
+.auth-gate {
+  min-height: calc(100vh - var(--nav-h));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+.auth-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  animation: fadeUp .5s ease;
+}
+.auth-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--clr-accent-lt);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--clr-accent);
+  margin-bottom: 4px;
+}
+.auth-card h2 {
+  font-family: var(--ff-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+.auth-card p { font-size: .88rem; color: var(--clr-muted); }
+.auth-field { width: 100%; }
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+.form-input {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--clr-surface);
+  border: 1.5px solid var(--clr-border-md);
+  border-radius: var(--radius-md);
+  font-family: var(--ff-body);
+  font-size: .88rem;
+  color: var(--clr-text);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+  margin-top: 6px;
+}
+.form-input:focus {
+  border-color: var(--clr-accent);
+  box-shadow: 0 0 0 3px rgba(26,92,56,.12);
+}
+.form-input::placeholder { color: var(--clr-subtle); }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b6b6b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 36px; }
+.form-textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--clr-accent);
+  color: #fff;
+  border-radius: 50px;
+  font-size: .9rem;
+  font-weight: 600;
+  border: none;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  letter-spacing: .01em;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--clr-accent-dk);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(26,92,56,.28);
+}
+.btn-primary:disabled { opacity: .55; cursor: not-allowed; }
+.btn-primary.full-width { width: 100%; }
+
+.field-error {
+  font-size: .78rem;
+  color: var(--clr-danger);
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ============================================================
+   ADMIN DASHBOARD
+   ============================================================ */
+.admin-stats {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.stat-chip {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 20px;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  min-width: 110px;
+}
+.stat-num {
+  font-family: var(--ff-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  color: var(--clr-accent);
+  line-height: 1;
+}
+.stat-label { font-size: .75rem; color: var(--clr-muted); margin-top: 4px; font-weight: 500; }
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+}
+
+.admin-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  padding: 28px;
+}
+
+.admin-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ff-display);
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--clr-border);
+  color: var(--clr-text);
+}
+.admin-section-title svg { color: var(--clr-accent); flex-shrink: 0; }
+
+/* ============================================================
+   IMAGE DROPZONE
+   ============================================================ */
+.form-group { display: flex; flex-direction: column; margin-bottom: 20px; }
+.form-label { font-size: .8rem; font-weight: 600; color: var(--clr-text); letter-spacing: .01em; }
+.required { color: var(--clr-danger); margin-left: 2px; }
+
+.image-dropzone {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 280px;
+  border: 2px dashed var(--clr-border-md);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color var(--transition), background var(--transition);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clr-surface-2);
+}
+.image-dropzone:hover, .image-dropzone.drag-over {
+  border-color: var(--clr-accent);
+  background: var(--clr-accent-lt);
+}
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 24px;
+  pointer-events: none;
+}
+.dropzone-icon { color: var(--clr-subtle); margin-bottom: 4px; }
+.dropzone-text { font-size: .85rem; color: var(--clr-muted); font-weight: 500; }
+.dropzone-text span { color: var(--clr-accent); font-weight: 600; }
+.dropzone-hint { font-size: .75rem; color: var(--clr-subtle); }
+
+.image-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+.dropzone-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: linear-gradient(180deg, rgba(0,0,0,.35) 0%, transparent 100%);
+}
+.btn-remove-img {
+  width: 30px;
+  height: 30px;
+  background: rgba(0,0,0,.5);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+}
+.btn-remove-img:hover { background: rgba(209,41,61,.85); }
+.img-compression-badge {
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+/* ============================================================
+   STREAMING LINKS
+   ============================================================ */
+.links-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.link-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.link-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--clr-border-md);
+  border-right: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+.link-icon.spotify-icon   { background: #f0faf5; color: var(--clr-spotify); }
+.link-icon.audiomack-icon { background: #fffbf2; color: var(--clr-audiomack); }
+.link-icon.apple-icon     { background: #fff5f5; color: var(--clr-apple); }
+.link-icon.youtube-icon   { background: #fff5f5; color: var(--clr-youtube); }
+
+.link-input {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
+  margin-top: 6px;
+}
+
+/* ============================================================
+   CHAR COUNTER
+   ============================================================ */
+.char-counter {
+  font-size: .73rem;
+  color: var(--clr-subtle);
+  text-align: right;
+  margin-top: 4px;
+}
+.char-counter.warn { color: var(--clr-audiomack); }
+.char-counter.danger { color: var(--clr-danger); }
+
+/* ============================================================
+   FORM ACTIONS
+   ============================================================ */
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+.publish-btn { min-width: 150px; }
+
+/* ============================================================
+   FORM FEEDBACK
+   ============================================================ */
+.form-feedback {
+  margin-top: 14px;
+  padding: 13px 16px;
+  border-radius: var(--radius-md);
+  font-size: .85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.form-feedback.success {
+  background: var(--clr-success-lt);
+  color: var(--clr-success);
+  border: 1px solid rgba(26,92,56,.18);
+}
+.form-feedback.error {
+  background: var(--clr-danger-lt);
+  color: var(--clr-danger);
+  border: 1px solid rgba(209,41,61,.18);
+}
+
+/* ============================================================
+   SPINNER
+   ============================================================ */
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-spinner svg { animation: spin .7s linear infinite; }
+
+/* ============================================================
+   RECENT POSTS PANEL
+   ============================================================ */
+.posts-panel { position: sticky; top: calc(var(--nav-h) + 16px); max-height: calc(100vh - 120px); display: flex; flex-direction: column; }
+.admin-posts-list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.admin-posts-list::-webkit-scrollbar { width: 4px; }
+.admin-posts-list::-webkit-scrollbar-track { background: transparent; }
+.admin-posts-list::-webkit-scrollbar-thumb { background: var(--clr-border-md); border-radius: 4px; }
+
+.admin-post-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  background: var(--clr-surface-2);
+  transition: border-color var(--transition), background var(--transition);
+}
+.admin-post-item:hover { border-color: var(--clr-border-md); background: #fff; }
+.admin-post-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--clr-skeleton);
+}
+.admin-post-info { flex: 1; min-width: 0; }
+.admin-post-artist { font-size: .7rem; font-weight: 600; color: var(--clr-accent); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.admin-post-title { font-size: .82rem; font-weight: 600; color: var(--clr-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.admin-post-date { font-size: .7rem; color: var(--clr-subtle); margin-top: 2px; }
+.btn-delete-post {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: var(--clr-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+.btn-delete-post:hover { background: var(--clr-danger-lt); color: var(--clr-danger); }
+
+.admin-list-loading { display: flex; flex-direction: column; gap: 10px; }
+.mini-skeleton {
+  background: linear-gradient(90deg, #ebebeb 0%, #f5f5f5 50%, #ebebeb 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius-md);
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+.admin-list-empty { text-align: center; padding: 32px 16px; color: var(--clr-subtle); font-size: .85rem; }
+
+/* ============================================================
+   DELETE MODAL
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-card {
+  background: var(--clr-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 36px 32px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: slideUp .25s cubic-bezier(.4,0,.2,1);
+}
+@keyframes slideUp { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-icon.danger {
+  width: 56px;
+  height: 56px;
+  background: var(--clr-danger-lt);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--clr-danger);
+  margin-bottom: 4px;
+}
+.modal-card h3 {
+  font-family: var(--ff-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.modal-card p { font-size: .85rem; color: var(--clr-muted); line-height: 1.6; }
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  width: 100%;
+  justify-content: center;
+}
+.btn-danger {
+  padding: 10px 24px;
+  background: var(--clr-danger);
+  color: #fff;
+  border-radius: 50px;
+  font-size: .85rem;
+  font-weight: 600;
+  border: none;
+  transition: background var(--transition), transform var(--transition);
+}
+.btn-danger:hover { background: #b01e30; transform: translateY(-1px); }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .admin-layout { grid-template-columns: 1fr; }
+  .posts-panel { position: static; max-height: none; }
+}
+@media (max-width: 500px) {
+  .admin-card { padding: 20px; }
+  .auth-card  { padding: 32px 20px; }
+  .form-actions { flex-direction: column; }
+  .btn-ghost-sm, .publish-btn { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-mark">444</span><span class="logo-word">Music</span>
+      <span class="logo-pill">Admin</span>
+    </a>
+    <div>
+      <a href="index.html" class="btn-ghost-sm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        View Blog
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Admin Panel ────────────────────────────────── -->
+<main class="admin-main">
+  <div class="admin-container">
+
+    <!-- Auth Gate -->
+    <div id="auth-gate" class="auth-gate">
+      <div class="auth-card">
+        <div class="auth-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="30" height="30">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h2>Admin Access</h2>
+        <p>Enter your admin password to continue.</p>
+        <div class="auth-field">
+          <input type="password" id="admin-pass-input" class="form-input" placeholder="Password" autocomplete="current-password">
+          <p class="field-error" id="auth-error" style="display:none">Incorrect password.</p>
+        </div>
+        <button class="btn-primary full-width" id="auth-btn">Unlock Panel</button>
+      </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" style="display:none">
+
+      <!-- Stats -->
+      <div class="admin-stats" id="admin-stats">
+        <div class="stat-chip">
+          <span class="stat-num" id="stat-total">—</span>
+          <span class="stat-label">Total Posts</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-num" id="stat-today">—</span>
+          <span class="stat-label">Today</span>
+        </div>
+      </div>
+
+      <div class="admin-layout">
+
+        <!-- Upload Form -->
+        <section class="admin-card upload-card">
+          <h2 class="admin-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 5v14M5 12l7-7 7 7"/></svg>
+            Publish New Post
+          </h2>
+
+          <form id="upload-form" novalidate>
+
+            <!-- Image -->
+            <div class="form-group">
+              <label class="form-label">Promo Flyer <span class="required">*</span></label>
+              <div class="image-dropzone" id="image-dropzone">
+                <div class="dropzone-content" id="dropzone-content">
+                  <div class="dropzone-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>
+                  <p class="dropzone-text">Drop image here or <span>click to browse</span></p>
+                  <p class="dropzone-hint">JPG, PNG, WebP &mdash; auto-compressed</p>
+                </div>
+                <img id="image-preview" class="image-preview-img" alt="Preview" style="display:none">
+                <div class="dropzone-overlay" id="dropzone-overlay" style="display:none">
+                  <button type="button" class="btn-remove-img" id="btn-remove-img" aria-label="Remove image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </button>
+                  <div class="img-compression-badge" id="compression-badge"></div>
+                </div>
+              </div>
+              <input type="file" id="image-input" accept="image/*" class="sr-only" aria-label="Upload image">
+              <p class="field-error" id="img-error" style="display:none">Please upload a promo image.</p>
+            </div>
+
+            <!-- Artist -->
+            <div class="form-group">
+              <label class="form-label" for="artist-input">Artist Name <span class="required">*</span></label>
+              <input type="text" id="artist-input" class="form-input" placeholder="e.g. Stonebwoy" maxlength="80" autocomplete="off">
+              <p class="field-error" id="artist-error" style="display:none">Artist name is required.</p>
+            </div>
+
+            <!-- Title -->
+            <div class="form-group">
+              <label class="form-label" for="title-input">Song Title <span class="required">*</span></label>
+              <input type="text" id="title-input" class="form-input" placeholder="e.g. Activate" maxlength="120" autocomplete="off">
+              <p class="field-error" id="title-error" style="display:none">Song title is required.</p>
+            </div>
+
+            <!-- Genre -->
+            <div class="form-group">
+              <label class="form-label" for="genre-input">Genre</label>
+              <select id="genre-input" class="form-input form-select">
+                <option value="">Select genre (optional)</option>
+                <option value="afrobeats">Afrobeats</option>
+                <option value="gospel">Gospel</option>
+                <option value="hiphop">Hip-Hop</option>
+                <option value="highlife">Highlife</option>
+                <option value="amapiano">Amapiano</option>
+                <option value="rnb">R&amp;B</option>
+                <option value="afropop">Afropop</option>
+              </select>
+            </div>
+
+            <!-- Caption -->
+            <div class="form-group">
+              <label class="form-label" for="caption-input">Caption <span class="required">*</span></label>
+              <textarea id="caption-input" class="form-input form-textarea" placeholder="Write a compelling promo caption for this release…" maxlength="600" rows="4"></textarea>
+              <div class="char-counter"><span id="char-count">0</span> / 600</div>
+              <p class="field-error" id="caption-error" style="display:none">Caption is required.</p>
+            </div>
+
+            <!-- Streaming Links -->
+            <div class="form-group">
+              <label class="form-label">Streaming Links</label>
+              <div class="links-grid">
+                <div class="link-input-row">
+                  <div class="link-icon spotify-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                  </div>
+                  <input type="url" id="spotify-input" class="form-input link-input" placeholder="Spotify URL">
+                </div>
+                <div class="link-input-row">
+                  <div class="link-icon audiomack-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
+                  </div>
+                  <input type="url" id="audiomack-input" class="form-input link-input" placeholder="Audiomack URL">
+                </div>
+                <div class="link-input-row">
+                  <div class="link-icon apple-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                  </div>
+                  <input type="url" id="apple-input" class="form-input link-input" placeholder="Apple Music URL">
+                </div>
+                <div class="link-input-row">
+                  <div class="link-icon youtube-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+                  </div>
+                  <input type="url" id="youtube-input" class="form-input link-input" placeholder="YouTube URL">
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+              <button type="button" class="btn-ghost-sm" id="btn-reset">Clear Form</button>
+              <button type="submit" class="btn-primary publish-btn" id="publish-btn">
+                <span class="btn-label">Publish Post</span>
+                <span class="btn-spinner" style="display:none">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                </span>
+              </button>
+            </div>
+
+            <div class="form-feedback" id="form-feedback" style="display:none"></div>
+          </form>
+        </section>
+
+        <!-- Recent Posts -->
+        <aside class="admin-card posts-panel">
+          <h2 class="admin-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Recent Posts
+          </h2>
+          <div id="admin-posts-list" class="admin-posts-list">
+            <div class="admin-list-loading">
+              <div class="mini-skeleton" style="height:64px"></div>
+              <div class="mini-skeleton" style="height:64px"></div>
+              <div class="mini-skeleton" style="height:64px"></div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div><!-- /admin-dashboard -->
+
+  </div>
+</main>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" id="delete-modal" style="display:none" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <div class="modal-icon danger">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="26" height="26">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+    </div>
+    <h3>Delete Post?</h3>
+    <p>This action cannot be undone. The post will be permanently removed from the blog.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost-sm" id="modal-cancel">Cancel</button>
+      <button class="btn-danger" id="modal-confirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   FIREBASE CONFIG — Replace with your own project config
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
+  authDomain: "music-7a35b.firebaseapp.com",
+  projectId: "music-7a35b",
+  storageBucket: "music-7a35b.appspot.com",
+  messagingSenderId: "26882716946",
+  appId: "1:26882716946:web:5cc1c9e980bc6597442fcb",
+  measurementId: "G-2C0JM7V615"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ============================================================
+   ADMIN PASSWORD — Change this before deploying
+   ============================================================ */
+const ADMIN_PASSWORD = "444music2024";
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let compressedImageB64 = null;
+let pendingDeleteId    = null;
+
+/* ============================================================
+   DOM REFS
+   ============================================================ */
+const authGate       = document.getElementById("auth-gate");
+const authPassInput  = document.getElementById("admin-pass-input");
+const authBtn        = document.getElementById("auth-btn");
+const authError      = document.getElementById("auth-error");
+const dashboard      = document.getElementById("admin-dashboard");
+const uploadForm     = document.getElementById("upload-form");
+const imageDropzone  = document.getElementById("image-dropzone");
+const dropzoneContent= document.getElementById("dropzone-content");
+const imageInput     = document.getElementById("image-input");
+const imagePreview   = document.getElementById("image-preview");
+const dropzoneOverlay= document.getElementById("dropzone-overlay");
+const compressionBadge = document.getElementById("compression-badge");
+const btnRemoveImg   = document.getElementById("btn-remove-img");
+const artistInput    = document.getElementById("artist-input");
+const titleInput     = document.getElementById("title-input");
+const genreInput     = document.getElementById("genre-input");
+const captionInput   = document.getElementById("caption-input");
+const charCount      = document.getElementById("char-count");
+const charCounter    = charCount.closest(".char-counter");
+const spotifyInput   = document.getElementById("spotify-input");
+const audiomackInput = document.getElementById("audiomack-input");
+const appleInput     = document.getElementById("apple-input");
+const youtubeInput   = document.getElementById("youtube-input");
+const publishBtn     = document.getElementById("publish-btn");
+const btnReset       = document.getElementById("btn-reset");
+const formFeedback   = document.getElementById("form-feedback");
+const adminPostsList = document.getElementById("admin-posts-list");
+const statTotal      = document.getElementById("stat-total");
+const statToday      = document.getElementById("stat-today");
+const deleteModal    = document.getElementById("delete-modal");
+const modalCancel    = document.getElementById("modal-cancel");
+const modalConfirm   = document.getElementById("modal-confirm");
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+authBtn.addEventListener("click", handleAuth);
+authPassInput.addEventListener("keydown", e => { if (e.key === "Enter") handleAuth(); });
+
+function handleAuth() {
+  const val = authPassInput.value.trim();
+  if (val === ADMIN_PASSWORD) {
+    authGate.style.display = "none";
+    dashboard.style.display = "block";
+    loadAdminPosts();
+  } else {
+    authError.style.display = "flex";
+    authPassInput.classList.add("error");
+    authPassInput.focus();
+    setTimeout(() => {
+      authError.style.display = "none";
+      authPassInput.classList.remove("error");
+    }, 3000);
+  }
+}
+
+/* ============================================================
+   IMAGE HANDLING
+   ============================================================ */
+imageDropzone.addEventListener("click", () => imageInput.click());
+imageDropzone.addEventListener("dragover", e => { e.preventDefault(); imageDropzone.classList.add("drag-over"); });
+imageDropzone.addEventListener("dragleave", () => imageDropzone.classList.remove("drag-over"));
+imageDropzone.addEventListener("drop", e => {
+  e.preventDefault();
+  imageDropzone.classList.remove("drag-over");
+  const file = e.dataTransfer?.files?.[0];
+  if (file && file.type.startsWith("image/")) processImage(file);
+});
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files?.[0];
+  if (file) processImage(file);
+});
+btnRemoveImg.addEventListener("click", e => {
+  e.stopPropagation();
+  clearImage();
+});
+
+function processImage(file) {
+  const originalKb = (file.size / 1024).toFixed(0);
+  const reader = new FileReader();
+  reader.onload = evt => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      // Crop to 1:1
+      const side = Math.min(w, h);
+      const sx = (w - side) / 2;
+      const sy = (h - side) / 2;
+      canvas.width  = Math.min(side, MAX);
+      canvas.height = Math.min(side, MAX);
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, sx, sy, side, side, 0, 0, canvas.width, canvas.height);
+      const b64 = canvas.toDataURL("image/jpeg", 0.80);
+      compressedImageB64 = b64;
+
+      // Show preview
+      imagePreview.src = b64;
+      imagePreview.style.display = "block";
+      dropzoneContent.style.display = "none";
+      dropzoneOverlay.style.display = "flex";
+
+      // Badge
+      const newKb = Math.round(b64.length * 0.75 / 1024);
+      compressionBadge.textContent = `${originalKb}KB → ${newKb}KB`;
+
+      // Hide error
+      document.getElementById("img-error").style.display = "none";
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImage() {
+  compressedImageB64 = null;
+  imageInput.value = "";
+  imagePreview.src = "";
+  imagePreview.style.display = "none";
+  dropzoneContent.style.display = "flex";
+  dropzoneOverlay.style.display = "none";
+  compressionBadge.textContent = "";
+}
+
+/* ============================================================
+   CHAR COUNTER
+   ============================================================ */
+captionInput.addEventListener("input", () => {
+  const n = captionInput.value.length;
+  charCount.textContent = n;
+  charCounter.className = "char-counter" + (n > 540 ? " danger" : n > 450 ? " warn" : "");
+});
+
+/* ============================================================
+   FORM SUBMIT
+   ============================================================ */
+uploadForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!validateForm()) return;
+
+  setPublishing(true);
+  hideFeedback();
+
+  const post = {
+    artist:    artistInput.value.trim(),
+    title:     titleInput.value.trim(),
+    genre:     genreInput.value || null,
+    caption:   captionInput.value.trim(),
+    image:     compressedImageB64,
+    links: {
+      spotify:   spotifyInput.value.trim()   || null,
+      audiomack: audiomackInput.value.trim() || null,
+      apple:     appleInput.value.trim()     || null,
+      youtube:   youtubeInput.value.trim()   || null,
+    },
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    await db.collection("posts").add(post);
+    showFeedback("success", "Post published successfully.");
+    resetForm();
+    loadAdminPosts();
+  } catch (err) {
+    console.error(err);
+    showFeedback("error", "Failed to publish: " + err.message);
+  }
+
+  setPublishing(false);
+});
+
+function validateForm() {
+  let valid = true;
+  const show = (id, msg) => {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = "flex";
+    valid = false;
+  };
+  const hide = id => { document.getElementById(id).style.display = "none"; };
+
+  if (!compressedImageB64) show("img-error", "Please upload a promo image."); else hide("img-error");
+  if (!artistInput.value.trim()) show("artist-error", "Artist name is required."); else hide("artist-error");
+  if (!titleInput.value.trim()) show("title-error", "Song title is required."); else hide("title-error");
+  if (!captionInput.value.trim()) show("caption-error", "Caption is required."); else hide("caption-error");
+  return valid;
+}
+
+function setPublishing(state) {
+  publishBtn.disabled = state;
+  publishBtn.querySelector(".btn-label").style.display = state ? "none" : "inline";
+  publishBtn.querySelector(".btn-spinner").style.display = state ? "inline-flex" : "none";
+}
+
+function resetForm() {
+  uploadForm.reset();
+  clearImage();
+  charCount.textContent = "0";
+  charCounter.className = "char-counter";
+  ["img-error","artist-error","title-error","caption-error"].forEach(id => {
+    document.getElementById(id).style.display = "none";
+  });
+}
+
+/* ============================================================
+   FEEDBACK
+   ============================================================ */
+function showFeedback(type, msg) {
+  formFeedback.className = "form-feedback " + type;
+  formFeedback.textContent = msg;
+  formFeedback.style.display = "flex";
+  setTimeout(hideFeedback, 6000);
+}
+function hideFeedback() { formFeedback.style.display = "none"; }
+
+/* ============================================================
+   RESET BUTTON
+   ============================================================ */
+btnReset.addEventListener("click", () => { resetForm(); hideFeedback(); });
+
+/* ============================================================
+   LOAD ADMIN POSTS
+   ============================================================ */
+async function loadAdminPosts() {
+  try {
+    const snapshot = await db.collection("posts")
+      .orderBy("createdAt", "desc")
+      .limit(20)
+      .get();
+
+    const posts = [];
+    snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
+
+    // Stats
+    statTotal.textContent = posts.length;
+    const today = new Date();
+    const todayCount = posts.filter(p => {
+      if (!p.createdAt?.toDate) return false;
+      const d = p.createdAt.toDate();
+      return d.toDateString() === today.toDateString();
+    }).length;
+    statToday.textContent = todayCount;
+
+    renderAdminList(posts);
+  } catch (err) {
+    console.error(err);
+    adminPostsList.innerHTML = `<div class="admin-list-empty">Could not load posts.</div>`;
+  }
+}
+
+function renderAdminList(posts) {
+  if (!posts.length) {
+    adminPostsList.innerHTML = `<div class="admin-list-empty">No posts yet. Publish your first post.</div>`;
+    return;
+  }
+  adminPostsList.innerHTML = "";
+  posts.forEach(post => {
+    const item = document.createElement("div");
+    item.className = "admin-post-item";
+    const date = post.createdAt?.toDate
+      ? formatDate(post.createdAt.toDate())
+      : "Just now";
+    item.innerHTML = `
+      <img class="admin-post-thumb" src="${post.image || ''}" alt="${escHtml(post.artist)}" loading="lazy">
+      <div class="admin-post-info">
+        <div class="admin-post-artist">${escHtml(post.artist)}</div>
+        <div class="admin-post-title">${escHtml(post.title)}</div>
+        <div class="admin-post-date">${date}</div>
+      </div>
+      <button class="btn-delete-post" data-id="${post.id}" aria-label="Delete post">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+        </svg>
+      </button>
+    `;
+    adminPostsList.appendChild(item);
+  });
+
+  // Delete buttons
+  adminPostsList.querySelectorAll(".btn-delete-post").forEach(btn => {
+    btn.addEventListener("click", () => {
+      pendingDeleteId = btn.dataset.id;
+      deleteModal.style.display = "flex";
+    });
+  });
+}
+
+/* ============================================================
+   DELETE MODAL
+   ============================================================ */
+modalCancel.addEventListener("click", () => { deleteModal.style.display = "none"; pendingDeleteId = null; });
+modalConfirm.addEventListener("click", async () => {
+  if (!pendingDeleteId) return;
+  try {
+    await db.collection("posts").doc(pendingDeleteId).delete();
+    deleteModal.style.display = "none";
+    pendingDeleteId = null;
+    loadAdminPosts();
+  } catch (err) {
+    console.error(err);
+    deleteModal.style.display = "none";
+    showFeedback("error", "Delete failed: " + err.message);
+  }
+});
+
+// Close modal on overlay click
+deleteModal.addEventListener("click", e => {
+  if (e.target === deleteModal) { deleteModal.style.display = "none"; pendingDeleteId = null; }
+});
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+function formatDate(date) {
+  return date.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+</script>
+</body>
+</html>
