@@ -36,10 +36,8 @@
   --clr-success:   #1a5c38;
   --clr-success-lt:#e8f2ec;
   --clr-skeleton:  #ebebeb;
-  --clr-spotify:   #1db954;
-  --clr-audiomack: #f5a623;
-  --clr-apple:     #fc3c44;
-  --clr-youtube:   #ff0000;
+  --clr-edit:      #1a4a8a;
+  --clr-edit-lt:   #e8eef8;
 
   --ff-display: 'Playfair Display', Georgia, serif;
   --ff-body:    'Plus Jakarta Sans', sans-serif;
@@ -57,9 +55,6 @@
   --transition: 0.22s cubic-bezier(.4,0,.2,1);
 }
 
-/* ============================================================
-   RESET & BASE
-   ============================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
@@ -249,6 +244,15 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .btn-primary:disabled { opacity: .55; cursor: not-allowed; }
 .btn-primary.full-width { width: 100%; }
 
+/* Edit mode publish btn */
+.btn-primary.edit-mode {
+  background: var(--clr-edit);
+}
+.btn-primary.edit-mode:hover:not(:disabled) {
+  background: #0f3268;
+  box-shadow: 0 6px 20px rgba(26,74,138,.28);
+}
+
 .field-error {
   font-size: .78rem;
   color: var(--clr-danger);
@@ -257,6 +261,37 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   align-items: center;
   gap: 4px;
 }
+
+/* ============================================================
+   EDIT MODE BANNER
+   ============================================================ */
+.edit-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--clr-edit-lt);
+  border: 1.5px solid rgba(26,74,138,.18);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: .85rem;
+  font-weight: 500;
+  color: var(--clr-edit);
+}
+.edit-banner svg { flex-shrink: 0; }
+.edit-banner-text { flex: 1; }
+.btn-cancel-edit {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--clr-edit);
+  border: 1.5px solid rgba(26,74,138,.3);
+  border-radius: 50px;
+  padding: 4px 12px;
+  background: #fff;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.btn-cancel-edit:hover { background: var(--clr-edit); color: #fff; }
 
 /* ============================================================
    ADMIN DASHBOARD
@@ -397,34 +432,36 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 
 /* ============================================================
-   STREAMING LINKS
+   FFM LINK INPUT
    ============================================================ */
-.links-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
-.link-input-row {
+.ffm-input-wrap {
   display: flex;
   align-items: center;
   gap: 0;
+  margin-top: 6px;
 }
-.link-icon {
-  width: 40px;
-  height: 40px;
+.ffm-icon {
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid var(--clr-border-md);
+  background: #0e0e0e;
+  border: 1.5px solid #0e0e0e;
   border-right: none;
   border-radius: var(--radius-md) 0 0 var(--radius-md);
   flex-shrink: 0;
-  margin-top: 6px;
 }
-.link-icon.spotify-icon   { background: #f0faf5; color: var(--clr-spotify); }
-.link-icon.audiomack-icon { background: #fffbf2; color: var(--clr-audiomack); }
-.link-icon.apple-icon     { background: #fff5f5; color: var(--clr-apple); }
-.link-icon.youtube-icon   { background: #fff5f5; color: var(--clr-youtube); }
-
-.link-input {
+.ffm-icon svg { color: #fff; }
+.ffm-field {
   border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
-  margin-top: 6px;
+  margin-top: 0 !important;
+  border-left: none !important;
+}
+.ffm-hint {
+  font-size: .75rem;
+  color: var(--clr-subtle);
+  margin-top: 5px;
 }
 
 /* ============================================================
@@ -436,7 +473,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   text-align: right;
   margin-top: 4px;
 }
-.char-counter.warn { color: var(--clr-audiomack); }
+.char-counter.warn { color: #f5a623; }
 .char-counter.danger { color: var(--clr-danger); }
 
 /* ============================================================
@@ -501,6 +538,10 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   transition: border-color var(--transition), background var(--transition);
 }
 .admin-post-item:hover { border-color: var(--clr-border-md); background: #fff; }
+.admin-post-item.editing {
+  border-color: rgba(26,74,138,.4);
+  background: var(--clr-edit-lt);
+}
 .admin-post-thumb {
   width: 48px;
   height: 48px;
@@ -513,16 +554,29 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .admin-post-artist { font-size: .7rem; font-weight: 600; color: var(--clr-accent); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .admin-post-title { font-size: .82rem; font-weight: 600; color: var(--clr-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
 .admin-post-date { font-size: .7rem; color: var(--clr-subtle); margin-top: 2px; }
-.btn-delete-post {
-  width: 30px;
-  height: 30px;
+
+/* Post action buttons row */
+.admin-post-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.btn-edit-post, .btn-delete-post {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  color: var(--clr-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   transition: background var(--transition), color var(--transition);
+}
+.btn-edit-post {
+  color: var(--clr-subtle);
+}
+.btn-edit-post:hover { background: var(--clr-edit-lt); color: var(--clr-edit); }
+.btn-delete-post {
+  color: var(--clr-subtle);
 }
 .btn-delete-post:hover { background: var(--clr-danger-lt); color: var(--clr-danger); }
 
@@ -688,12 +742,19 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
       <div class="admin-layout">
 
-        <!-- Upload Form -->
+        <!-- Upload / Edit Form -->
         <section class="admin-card upload-card">
-          <h2 class="admin-section-title">
+          <h2 class="admin-section-title" id="form-section-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 5v14M5 12l7-7 7 7"/></svg>
-            Publish New Post
+            <span id="form-title-text">Publish New Post</span>
           </h2>
+
+          <!-- Edit mode banner -->
+          <div class="edit-banner" id="edit-banner" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span class="edit-banner-text">Editing post — make your changes and click <strong>Save Changes</strong></span>
+            <button class="btn-cancel-edit" id="btn-cancel-edit">Cancel</button>
+          </div>
 
           <form id="upload-form" novalidate>
 
@@ -761,35 +822,20 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
               <p class="field-error" id="caption-error" style="display:none">Caption is required.</p>
             </div>
 
-            <!-- Streaming Links -->
+            <!-- FFM Link (single link) -->
             <div class="form-group">
-              <label class="form-label">Streaming Links</label>
-              <div class="links-grid">
-                <div class="link-input-row">
-                  <div class="link-icon spotify-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-                  </div>
-                  <input type="url" id="spotify-input" class="form-input link-input" placeholder="Spotify URL">
+              <label class="form-label" for="ffm-input">Streaming Link (FFM)</label>
+              <div class="ffm-input-wrap">
+                <div class="ffm-icon">
+                  <!-- music link / chain icon -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                  </svg>
                 </div>
-                <div class="link-input-row">
-                  <div class="link-icon audiomack-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
-                  </div>
-                  <input type="url" id="audiomack-input" class="form-input link-input" placeholder="Audiomack URL">
-                </div>
-                <div class="link-input-row">
-                  <div class="link-icon apple-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                  </div>
-                  <input type="url" id="apple-input" class="form-input link-input" placeholder="Apple Music URL">
-                </div>
-                <div class="link-input-row">
-                  <div class="link-icon youtube-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
-                  </div>
-                  <input type="url" id="youtube-input" class="form-input link-input" placeholder="YouTube URL">
-                </div>
+                <input type="url" id="ffm-input" class="form-input ffm-field" placeholder="https://ffm.to/your-link">
               </div>
+              <p class="ffm-hint">Paste your FFM (Feature.fm) smart link — fans can pick their platform from there.</p>
             </div>
 
             <!-- Actions -->
@@ -850,7 +896,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 <script>
 /* ============================================================
-   FIREBASE CONFIG — Replace with your own project config
+   FIREBASE CONFIG
    ============================================================ */
 const firebaseConfig = {
   apiKey: "AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
@@ -865,7 +911,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 /* ============================================================
-   ADMIN PASSWORD — Change this before deploying
+   ADMIN PASSWORD
    ============================================================ */
 const ADMIN_PASSWORD = "444music2024";
 
@@ -874,42 +920,43 @@ const ADMIN_PASSWORD = "444music2024";
    ============================================================ */
 let compressedImageB64 = null;
 let pendingDeleteId    = null;
+let editingPostId      = null;   // null = create mode, string = edit mode
 
 /* ============================================================
    DOM REFS
    ============================================================ */
-const authGate       = document.getElementById("auth-gate");
-const authPassInput  = document.getElementById("admin-pass-input");
-const authBtn        = document.getElementById("auth-btn");
-const authError      = document.getElementById("auth-error");
-const dashboard      = document.getElementById("admin-dashboard");
-const uploadForm     = document.getElementById("upload-form");
-const imageDropzone  = document.getElementById("image-dropzone");
-const dropzoneContent= document.getElementById("dropzone-content");
-const imageInput     = document.getElementById("image-input");
-const imagePreview   = document.getElementById("image-preview");
-const dropzoneOverlay= document.getElementById("dropzone-overlay");
+const authGate         = document.getElementById("auth-gate");
+const authPassInput    = document.getElementById("admin-pass-input");
+const authBtn          = document.getElementById("auth-btn");
+const authError        = document.getElementById("auth-error");
+const dashboard        = document.getElementById("admin-dashboard");
+const uploadForm       = document.getElementById("upload-form");
+const imageDropzone    = document.getElementById("image-dropzone");
+const dropzoneContent  = document.getElementById("dropzone-content");
+const imageInput       = document.getElementById("image-input");
+const imagePreview     = document.getElementById("image-preview");
+const dropzoneOverlay  = document.getElementById("dropzone-overlay");
 const compressionBadge = document.getElementById("compression-badge");
-const btnRemoveImg   = document.getElementById("btn-remove-img");
-const artistInput    = document.getElementById("artist-input");
-const titleInput     = document.getElementById("title-input");
-const genreInput     = document.getElementById("genre-input");
-const captionInput   = document.getElementById("caption-input");
-const charCount      = document.getElementById("char-count");
-const charCounter    = charCount.closest(".char-counter");
-const spotifyInput   = document.getElementById("spotify-input");
-const audiomackInput = document.getElementById("audiomack-input");
-const appleInput     = document.getElementById("apple-input");
-const youtubeInput   = document.getElementById("youtube-input");
-const publishBtn     = document.getElementById("publish-btn");
-const btnReset       = document.getElementById("btn-reset");
-const formFeedback   = document.getElementById("form-feedback");
-const adminPostsList = document.getElementById("admin-posts-list");
-const statTotal      = document.getElementById("stat-total");
-const statToday      = document.getElementById("stat-today");
-const deleteModal    = document.getElementById("delete-modal");
-const modalCancel    = document.getElementById("modal-cancel");
-const modalConfirm   = document.getElementById("modal-confirm");
+const btnRemoveImg     = document.getElementById("btn-remove-img");
+const artistInput      = document.getElementById("artist-input");
+const titleInput       = document.getElementById("title-input");
+const genreInput       = document.getElementById("genre-input");
+const captionInput     = document.getElementById("caption-input");
+const charCount        = document.getElementById("char-count");
+const charCounter      = charCount.closest(".char-counter");
+const ffmInput         = document.getElementById("ffm-input");
+const publishBtn       = document.getElementById("publish-btn");
+const btnReset         = document.getElementById("btn-reset");
+const formFeedback     = document.getElementById("form-feedback");
+const adminPostsList   = document.getElementById("admin-posts-list");
+const statTotal        = document.getElementById("stat-total");
+const statToday        = document.getElementById("stat-today");
+const deleteModal      = document.getElementById("delete-modal");
+const modalCancel      = document.getElementById("modal-cancel");
+const modalConfirm     = document.getElementById("modal-confirm");
+const editBanner       = document.getElementById("edit-banner");
+const btnCancelEdit    = document.getElementById("btn-cancel-edit");
+const formTitleText    = document.getElementById("form-title-text");
 
 /* ============================================================
    AUTH
@@ -964,7 +1011,6 @@ function processImage(file) {
       const canvas = document.createElement("canvas");
       const MAX = 800;
       let w = img.width, h = img.height;
-      // Crop to 1:1
       const side = Math.min(w, h);
       const sx = (w - side) / 2;
       const sy = (h - side) / 2;
@@ -975,22 +1021,28 @@ function processImage(file) {
       const b64 = canvas.toDataURL("image/jpeg", 0.80);
       compressedImageB64 = b64;
 
-      // Show preview
       imagePreview.src = b64;
       imagePreview.style.display = "block";
       dropzoneContent.style.display = "none";
       dropzoneOverlay.style.display = "flex";
 
-      // Badge
       const newKb = Math.round(b64.length * 0.75 / 1024);
       compressionBadge.textContent = `${originalKb}KB → ${newKb}KB`;
 
-      // Hide error
       document.getElementById("img-error").style.display = "none";
     };
     img.src = evt.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+function setImagePreview(src) {
+  compressedImageB64 = src;
+  imagePreview.src = src;
+  imagePreview.style.display = "block";
+  dropzoneContent.style.display = "none";
+  dropzoneOverlay.style.display = "flex";
+  compressionBadge.textContent = "existing image";
 }
 
 function clearImage() {
@@ -1013,7 +1065,56 @@ captionInput.addEventListener("input", () => {
 });
 
 /* ============================================================
-   FORM SUBMIT
+   EDIT MODE HELPERS
+   ============================================================ */
+function enterEditMode(post) {
+  editingPostId = post.id;
+
+  // Update UI to edit mode
+  formTitleText.textContent = "Edit Post";
+  editBanner.style.display  = "flex";
+  publishBtn.querySelector(".btn-label").textContent = "Save Changes";
+  publishBtn.classList.add("edit-mode");
+
+  // Populate fields
+  artistInput.value  = post.artist  || "";
+  titleInput.value   = post.title   || "";
+  genreInput.value   = post.genre   || "";
+  captionInput.value = post.caption || "";
+  ffmInput.value     = post.links?.ffm || post.links?.spotify || "";
+
+  // Update char counter
+  const n = captionInput.value.length;
+  charCount.textContent = n;
+  charCounter.className = "char-counter" + (n > 540 ? " danger" : n > 450 ? " warn" : "");
+
+  // Image
+  if (post.image) setImagePreview(post.image);
+
+  // Highlight the item being edited in the list
+  document.querySelectorAll(".admin-post-item").forEach(el => {
+    el.classList.toggle("editing", el.dataset.postId === post.id);
+  });
+
+  // Scroll form into view
+  document.querySelector(".upload-card").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function exitEditMode() {
+  editingPostId = null;
+  formTitleText.textContent = "Publish New Post";
+  editBanner.style.display  = "none";
+  publishBtn.querySelector(".btn-label").textContent = "Publish Post";
+  publishBtn.classList.remove("edit-mode");
+  document.querySelectorAll(".admin-post-item").forEach(el => el.classList.remove("editing"));
+  resetForm();
+  hideFeedback();
+}
+
+btnCancelEdit.addEventListener("click", exitEditMode);
+
+/* ============================================================
+   FORM SUBMIT  (create OR update)
    ============================================================ */
 uploadForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -1029,22 +1130,30 @@ uploadForm.addEventListener("submit", async e => {
     caption:   captionInput.value.trim(),
     image:     compressedImageB64,
     links: {
-      spotify:   spotifyInput.value.trim()   || null,
-      audiomack: audiomackInput.value.trim() || null,
-      apple:     appleInput.value.trim()     || null,
-      youtube:   youtubeInput.value.trim()   || null,
-    },
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      ffm: ffmInput.value.trim() || null,
+    }
   };
 
   try {
-    await db.collection("posts").add(post);
-    showFeedback("success", "Post published successfully.");
-    resetForm();
+    if (editingPostId) {
+      // UPDATE existing post
+      await db.collection("posts").doc(editingPostId).update({
+        ...post,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      showFeedback("success", "Post updated successfully.");
+      exitEditMode();
+    } else {
+      // CREATE new post
+      post.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection("posts").add(post);
+      showFeedback("success", "Post published successfully.");
+      resetForm();
+    }
     loadAdminPosts();
   } catch (err) {
     console.error(err);
-    showFeedback("error", "Failed to publish: " + err.message);
+    showFeedback("error", (editingPostId ? "Update" : "Publish") + " failed: " + err.message);
   }
 
   setPublishing(false);
@@ -1097,7 +1206,10 @@ function hideFeedback() { formFeedback.style.display = "none"; }
 /* ============================================================
    RESET BUTTON
    ============================================================ */
-btnReset.addEventListener("click", () => { resetForm(); hideFeedback(); });
+btnReset.addEventListener("click", () => {
+  if (editingPostId) exitEditMode();
+  else { resetForm(); hideFeedback(); }
+});
 
 /* ============================================================
    LOAD ADMIN POSTS
@@ -1112,7 +1224,6 @@ async function loadAdminPosts() {
     const posts = [];
     snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
 
-    // Stats
     statTotal.textContent = posts.length;
     const today = new Date();
     const todayCount = posts.filter(p => {
@@ -1138,6 +1249,7 @@ function renderAdminList(posts) {
   posts.forEach(post => {
     const item = document.createElement("div");
     item.className = "admin-post-item";
+    item.dataset.postId = post.id;
     const date = post.createdAt?.toDate
       ? formatDate(post.createdAt.toDate())
       : "Just now";
@@ -1148,15 +1260,39 @@ function renderAdminList(posts) {
         <div class="admin-post-title">${escHtml(post.title)}</div>
         <div class="admin-post-date">${date}</div>
       </div>
-      <button class="btn-delete-post" data-id="${post.id}" aria-label="Delete post">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
-          <polyline points="3 6 5 6 21 6"/>
-          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-          <path d="M10 11v6M14 11v6"/>
-        </svg>
-      </button>
+      <div class="admin-post-actions">
+        <button class="btn-edit-post" data-id="${post.id}" aria-label="Edit post" title="Edit post">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+        <button class="btn-delete-post" data-id="${post.id}" aria-label="Delete post" title="Delete post">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+          </svg>
+        </button>
+      </div>
     `;
     adminPostsList.appendChild(item);
+  });
+
+  // Edit buttons
+  adminPostsList.querySelectorAll(".btn-edit-post").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
+      try {
+        const doc = await db.collection("posts").doc(id).get();
+        if (doc.exists) {
+          enterEditMode({ id: doc.id, ...doc.data() });
+        }
+      } catch (err) {
+        console.error(err);
+        showFeedback("error", "Could not load post for editing.");
+      }
+    });
   });
 
   // Delete buttons
@@ -1177,6 +1313,8 @@ modalConfirm.addEventListener("click", async () => {
   try {
     await db.collection("posts").doc(pendingDeleteId).delete();
     deleteModal.style.display = "none";
+    // If we were editing the deleted post, exit edit mode
+    if (editingPostId === pendingDeleteId) exitEditMode();
     pendingDeleteId = null;
     loadAdminPosts();
   } catch (err) {
@@ -1186,7 +1324,6 @@ modalConfirm.addEventListener("click", async () => {
   }
 });
 
-// Close modal on overlay click
 deleteModal.addEventListener("click", e => {
   if (e.target === deleteModal) { deleteModal.style.display = "none"; pendingDeleteId = null; }
 });
@@ -1197,11 +1334,8 @@ deleteModal.addEventListener("click", e => {
 function escHtml(str) {
   if (!str) return '';
   return String(str)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#039;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 function formatDate(date) {
   return date.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
