@@ -1057,7 +1057,7 @@ body::before {
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-/* ─────────── FIREBASE SAFE INIT ─────────── */
+/* ─────────── FIREBASE INIT ─────────── */
 const firebaseConfig = {
   apiKey:"AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
   authDomain:"music-7a35b.firebaseapp.com",
@@ -1067,106 +1067,49 @@ const firebaseConfig = {
   appId:"1:26882716946:web:5cc1c9e980bc6597442fcb"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 /* ─────────── STATE ─────────── */
+let allPosts = [];
+let lastDoc = null;
+let isLoading = false;
 const PAGE_SIZE = 12;
-let lastDoc = null, isLoading = false, activeFilter = "all", searchQuery = "", allPosts = [];
-let currentSharePost = null;
 
-/* ─────────── SAFE DOM GETTER ─────────── */
+/* ─────────── HELPERS ─────────── */
 const $ = (id) => document.getElementById(id);
 
-/* ─────────── DOM ─────────── */
-const postsGrid    = $("posts-grid");
-const emptyState   = $("empty-state");
-const errorState   = $("error-state");
-const errorMsg     = $("error-msg");
-const loadMoreBtn  = $("load-more-btn");
-const loadMoreWrap = $("load-more-wrap");
-const feedCount    = $("feed-count");
-const statTracks   = $("stat-tracks");
-const searchBar    = $("search-input");
-const sharePanel   = $("share-panel");
-const copyToast    = $("copy-toast");
-
-if ($("footer-year")) $("footer-year").textContent = new Date().getFullYear();
-
-/* ─────────── HERO (SAFE) ─────────── */
-const heroSlides  = document.querySelectorAll(".hero-slide") || [];
-const heroDots    = document.querySelectorAll(".hero-dot") || [];
-const progressBar = $("hero-progress-bar");
-
-let heroIdx = 0, heroProgress = 0, heroTimer;
-
-function goToSlide(idx) {
-  if (!heroSlides.length) return;
-  heroSlides[heroIdx]?.classList.remove("active");
-  heroDots[heroIdx]?.classList.remove("active");
-  heroIdx = idx % heroSlides.length;
-  heroSlides[heroIdx]?.classList.add("active");
-  heroDots[heroIdx]?.classList.add("active");
-  heroProgress = 0;
+/* ─────────── SHARE SYSTEM (SPOTIFY STYLE) ─────────── */
+function buildShareUrl(postId) {
+  return `${location.origin}${location.pathname}?post=${postId}`;
 }
 
-heroDots.forEach(dot => {
-  dot.addEventListener("click", () => {
-    clearInterval(heroTimer);
-    goToSlide(parseInt(dot.dataset.index));
-    startHeroTimer();
-  });
-});
+async function sharePost(post) {
+  const url = buildShareUrl(post.id);
+  const title = `${post.artist || ''} - ${post.title || ''}`;
 
-function startHeroTimer() {
-  if (!progressBar) return;
-  heroTimer = setInterval(() => {
-    heroProgress += 1;
-    progressBar.style.width = heroProgress + "%";
-    if (heroProgress >= 100) goToSlide(heroIdx + 1);
-  }, 50);
-}
-startHeroTimer();
-
-/* ─────────── NAVBAR SAFE ─────────── */
-window.addEventListener("scroll", () => {
-  $("navbar")?.classList.toggle("scrolled", window.scrollY > 10);
-}, { passive:true });
-
-$("mobile-menu-btn")?.addEventListener("click", function() {
-  this.classList.toggle("open");
-  const drawer = $("nav-mobile-drawer");
-  drawer?.classList.toggle("open");
-});
-
-/* ─────────── SHARE (FIXED) ─────────── */
-function buildShareUrl(id) {
-  return `${location.origin}${location.pathname}?post=${id}`;
-}
-
-function copyToClipboard(text) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(showCopyToast);
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: title,
+        text: post.caption || '',
+        url: url
+      });
+    } catch (e) {
+      copyLink(url);
+    }
   } else {
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    ta.remove();
-    showCopyToast();
+    copyLink(url);
   }
 }
 
-function showCopyToast() {
-  if (!copyToast) return;
-  copyToast.classList.add("show");
-  setTimeout(() => copyToast.classList.remove("show"), 2000);
+function copyLink(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    alert("Link copied!");
+  });
 }
 
-/* ─────────── POSTS LOADER (FIXED) ─────────── */
+/* ─────────── LOAD POSTS ─────────── */
 async function loadPosts(append=false) {
   if (isLoading) return;
   isLoading = true;
@@ -1177,34 +1120,29 @@ async function loadPosts(append=false) {
 
     const snap = await q.get();
 
-    if (snap.empty && !append) {
-      emptyState?.style.display = "flex";
-      return;
-    }
+    const newPosts = snap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
-    const newPosts = snap.docs.map(doc => ({ id:doc.id, ...doc.data() }));
     lastDoc = snap.docs[snap.docs.length - 1];
-
     allPosts = append ? [...allPosts, ...newPosts] : newPosts;
 
     renderPosts(allPosts);
 
-    statTracks && (statTracks.textContent = allPosts.length + "+");
-    loadMoreWrap && (loadMoreWrap.style.display = snap.docs.length < PAGE_SIZE ? "none" : "flex");
-
-  } catch(err) {
+  } catch (err) {
     console.error(err);
-    errorState && (errorState.style.display = "flex");
-    errorMsg && (errorMsg.textContent = err.message);
   }
 
   isLoading = false;
 }
 
-/* ─────────── RENDER POSTS SAFE ─────────── */
+/* ─────────── RENDER POSTS ─────────── */
 function renderPosts(posts) {
-  if (!postsGrid) return;
-  postsGrid.innerHTML = "";
+  const grid = $("posts-grid");
+  if (!grid) return;
+
+  grid.innerHTML = "";
 
   posts.forEach(post => {
     const div = document.createElement("div");
@@ -1216,15 +1154,22 @@ function renderPosts(posts) {
       <h3>${post.title || "Untitled"}</h3>
       <p>${post.artist || "Unknown"}</p>
       <small>${dateObj.toDateString()}</small>
+
+      <button class="share-btn">Share</button>
     `;
 
     div.onclick = () => openModal(post);
 
-    postsGrid.appendChild(div);
+    div.querySelector(".share-btn").onclick = (e) => {
+      e.stopPropagation();
+      sharePost(post);
+    };
+
+    grid.appendChild(div);
   });
 }
 
-/* ─────────── MODAL SAFE ─────────── */
+/* ─────────── MODAL ─────────── */
 function openModal(post) {
   const overlay = $("modal-overlay");
   if (!overlay) return;
@@ -1233,22 +1178,57 @@ function openModal(post) {
   $("modal-caption").textContent = post.caption || "";
 
   overlay.classList.add("open");
+
+  /* Update URL (IMPORTANT) */
+  const url = buildShareUrl(post.id);
+  history.replaceState({}, '', url);
 }
 
 function closeModal() {
   $("modal-overlay")?.classList.remove("open");
+
+  /* Clean URL */
+  history.replaceState({}, '', location.pathname);
 }
 
-/* ─────────── EVENTS SAFE ─────────── */
-loadMoreBtn?.addEventListener("click", () => loadPosts(true));
 $("modal-close")?.addEventListener("click", closeModal);
 
-searchBar?.addEventListener("input", e => {
-  searchQuery = e.target.value.toLowerCase();
-});
+/* ─────────── DEEP LINK HANDLER (THIS IS THE MAGIC) ─────────── */
+async function handleSharedLink() {
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get("post");
+
+  if (!postId) return;
+
+  try {
+    /* Try find in already loaded posts first */
+    let post = allPosts.find(p => p.id === postId);
+
+    /* If not found → fetch directly */
+    if (!post) {
+      const doc = await db.collection("posts").doc(postId).get();
+      if (doc.exists) {
+        post = { id: doc.id, ...doc.data() };
+      }
+    }
+
+    if (post) {
+      openModal(post);
+
+      /* Optional: scroll nicely */
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+  } catch (err) {
+    console.error("Deep link error:", err);
+  }
+}
 
 /* ─────────── INIT ─────────── */
-loadPosts();
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadPosts();
+  handleSharedLink(); // 🔥 IMPORTANT
+});
 </script>
 
 </body>
