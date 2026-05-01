@@ -618,7 +618,6 @@ body::before {
 .post-card:hover .card-play-btn { opacity:1; transform:scale(1); }
 .card-play-btn svg { margin-left:3px; }
 
-/* NEW badge — left side only, genre badge removed */
 .card-new-badge {
   position:absolute; top:12px; left:12px;
   padding:3px 9px; border-radius:20px;
@@ -663,33 +662,67 @@ body::before {
 .card-divider { height:1px; background:var(--border); margin:0 20px; }
 
 .card-stores {
-  display:flex; align-items:center; gap:10px; padding:14px 20px 18px;
-  flex-wrap:wrap;
+  display:flex; align-items:stretch; gap:0; padding:12px 20px 16px;
+  flex-direction:column;
 }
-.store-icon {
-  display:flex; align-items:center; justify-content:center;
-  width:36px; height:36px; border-radius:10px;
-  border:1.5px solid var(--border-md);
-  transition:all .25s var(--spring); position:relative;
-  background:var(--bg-white); flex-shrink:0; overflow:hidden;
+
+/* ================================================================
+   SHARE BUTTON
+   ================================================================ */
+.card-stores-row {
+  display:flex; align-items:center; gap:10px; flex-wrap:nowrap;
 }
-.store-icon:hover { transform:translateY(-3px) scale(1.1); box-shadow:var(--shadow-hover); }
-.store-icon img { width:22px; height:22px; object-fit:contain; }
-.store-icon .store-tooltip {
-  position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
-  padding:3px 8px; border-radius:6px; background:var(--text); color:#fff;
-  font-size:.6rem; font-weight:600; white-space:nowrap; letter-spacing:.04em;
-  opacity:0; pointer-events:none; transition:opacity .2s;
+.share-btn {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:0 13px; height:36px; border-radius:20px;
+  border:1.5px solid var(--border-md); background:var(--bg-white);
+  color:var(--text-muted); font-family:var(--ff-display);
+  font-size:.72rem; font-weight:700; cursor:pointer;
+  transition:all .22s var(--ease); flex-shrink:0;
+  box-shadow:var(--shadow-xs);
 }
-.store-icon:hover .store-tooltip { opacity:1; }
-.store-icon .store-tooltip::after {
-  content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
-  border:4px solid transparent; border-top-color:var(--text);
+.share-btn:hover { background:var(--purple-soft); color:var(--purple); border-color:var(--border-strong); }
+.share-btn.active {
+  background:var(--purple-soft); color:var(--purple);
+  border-color:var(--border-strong);
 }
-.store-label {
-  font-family:var(--ff-display); font-size:.7rem; font-weight:600;
-  color:var(--text-subtle); margin-left:auto;
-  display:flex; align-items:center; gap:4px;
+.share-expand {
+  display:none; align-items:center; gap:8px;
+  padding:9px 10px; border-radius:12px;
+  background:var(--bg-elevated); border:1.5px solid var(--border-md);
+  margin-top:8px; width:100%;
+  animation:fadeShareIn .2s var(--ease) both;
+}
+@keyframes fadeShareIn {
+  from { opacity:0; transform:translateY(-6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.share-expand.open { display:flex; }
+.share-hint {
+  font-size:.62rem; color:var(--text-subtle); font-family:var(--ff-display);
+  font-weight:700; letter-spacing:.04em; white-space:nowrap; flex-shrink:0;
+}
+.share-url {
+  flex:1; font-size:.68rem; color:var(--text-muted);
+  font-family:var(--ff-body); background:var(--bg-white);
+  border:1px solid var(--border); border-radius:8px;
+  padding:5px 9px; outline:none; cursor:text;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  user-select:all; min-width:0;
+  transition:border-color .2s;
+}
+.share-url:focus { border-color:var(--purple); }
+.share-copy-btn {
+  padding:6px 14px; border-radius:20px; white-space:nowrap;
+  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
+  color:#fff; font-family:var(--ff-display); font-size:.66rem; font-weight:700;
+  border:none; cursor:pointer; flex-shrink:0;
+  transition:all .2s var(--spring); box-shadow:0 2px 10px var(--purple-glow);
+}
+.share-copy-btn:hover { transform:scale(1.06); box-shadow:0 4px 16px var(--purple-glow); }
+.share-copy-btn.copied {
+  background:linear-gradient(135deg,#059669,#10b981);
+  box-shadow:0 2px 10px rgba(5,150,105,.3);
 }
 
 /* ================================================================
@@ -1011,6 +1044,7 @@ body::before {
   .trust-grid { grid-template-columns:repeat(2,1fr); gap:16px; }
   .ad-inner { padding:0 16px; }
   .trust-inner { padding:0 16px; }
+  .share-hint { display:none; }
 }
 
 @media(max-width:480px){
@@ -1630,8 +1664,6 @@ function renderPosts(posts) {
     const dateObj = post.createdAt?.toDate?.() || (post.createdAt ? new Date(post.createdAt) : null);
     const isNew = dateObj && (now - dateObj.getTime() < 7 * 24 * 60 * 60 * 1000);
     const links = post.links || {};
-
-    // Support both old (spotify/audiomack/apple/youtube) and new (ffm) link formats
     const ffmUrl = links.ffm || links.spotify || links.audiomack || links.apple || links.youtube || null;
 
     const card = document.createElement("article");
@@ -1662,12 +1694,23 @@ function renderPosts(posts) {
       </div>
       <div class="card-divider"></div>
       <div class="card-stores">
-        ${ffmUrl
-          ? `<a class="store-icon" href="${ffmUrl}" target="_blank" rel="noopener" aria-label="Stream this track" title="Stream this track" onclick="event.stopPropagation()" style="width:auto;padding:0 14px;border-radius:20px;gap:7px;font-family:var(--ff-display);font-size:.72rem;font-weight:700;color:var(--purple);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-              Stream Now
-            </a>`
-          : '<span style="font-size:.72rem;color:var(--text-subtle);font-family:var(--ff-display)">No streaming link</span>'}
+        <div class="card-stores-row">
+          ${ffmUrl
+            ? `<a class="store-icon" href="${ffmUrl}" target="_blank" rel="noopener" aria-label="Stream this track" onclick="event.stopPropagation()" style="width:auto;padding:0 14px;border-radius:20px;gap:7px;font-family:var(--ff-display);font-size:.72rem;font-weight:700;color:var(--purple);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                Stream Now
+              </a>`
+            : '<span style="font-size:.72rem;color:var(--text-subtle);font-family:var(--ff-display)">No streaming link</span>'}
+          <button class="share-btn" onclick="event.stopPropagation();toggleShare(this)" aria-label="Share this track">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+          </button>
+        </div>
+        <div class="share-expand" onclick="event.stopPropagation()" role="region" aria-label="Share panel">
+          <span class="share-hint">Share with fans:</span>
+          <input class="share-url" type="text" value="https://444musicblog.vercel.app/#main" readonly aria-label="Share link" onclick="this.select()">
+          <button class="share-copy-btn" onclick="copyShareLink(this)">Copy Link</button>
+        </div>
       </div>
     `;
 
@@ -1683,6 +1726,71 @@ function renderPosts(posts) {
     });
   });
 }
+
+/* ─────────── SHARE FUNCTIONS ─────────── */
+function toggleShare(btn) {
+  const storesDiv = btn.closest('.card-stores');
+  const panel = storesDiv.querySelector('.share-expand');
+  const isOpen = panel.classList.contains('open');
+
+  // Close all other open share panels
+  document.querySelectorAll('.share-expand.open').forEach(p => {
+    p.classList.remove('open');
+    const b = p.closest('.card-stores').querySelector('.share-btn');
+    if (b) b.classList.remove('active');
+  });
+
+  if (!isOpen) {
+    panel.classList.add('open');
+    btn.classList.add('active');
+    // Auto-select the URL for easy copying
+    setTimeout(() => {
+      const urlInput = panel.querySelector('.share-url');
+      if (urlInput) urlInput.select();
+    }, 60);
+  }
+}
+
+function copyShareLink(btn) {
+  const url = 'https://444musicblog.vercel.app/#main';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url)
+      .then(() => showCopied(btn))
+      .catch(() => fallbackCopy(btn, url));
+  } else {
+    fallbackCopy(btn, url);
+  }
+}
+
+function fallbackCopy(btn, url) {
+  const panel = btn.closest('.share-expand');
+  const inp = panel ? panel.querySelector('.share-url') : null;
+  if (inp) {
+    inp.select();
+    try { document.execCommand('copy'); } catch(e) {}
+  }
+  showCopied(btn);
+}
+
+function showCopied(btn) {
+  btn.textContent = '✓ Copied!';
+  btn.classList.add('copied');
+  setTimeout(() => {
+    btn.textContent = 'Copy Link';
+    btn.classList.remove('copied');
+  }, 2200);
+}
+
+// Close share panels when clicking elsewhere on the page
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.card-stores')) {
+    document.querySelectorAll('.share-expand.open').forEach(p => {
+      p.classList.remove('open');
+      const b = p.closest('.card-stores').querySelector('.share-btn');
+      if (b) b.classList.remove('active');
+    });
+  }
+});
 
 /* ─────────── MODAL ─────────── */
 function openModal(post) {
