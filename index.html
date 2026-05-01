@@ -192,6 +192,9 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .card-stores{display:flex;align-items:center;gap:8px;padding:14px 20px 18px;flex-wrap:wrap}
 .card-stream-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border-md);background:var(--bg-white);font-family:var(--ff-display);font-size:.72rem;font-weight:700;transition:all .25s var(--spring);text-decoration:none}
 .card-stream-btn:hover{background:var(--purple-soft);border-color:var(--purple);transform:translateY(-2px)}
+/* Listen Now button special style */
+.card-listen-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:20px;background:linear-gradient(135deg,var(--purple),var(--purple-lt));color:#fff !important;font-family:var(--ff-display);font-size:.72rem;font-weight:700;border:none;transition:all .25s var(--spring);text-decoration:none;box-shadow:0 4px 14px var(--purple-glow)}
+.card-listen-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px var(--purple-glow)}
 .card-share-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border-md);background:var(--bg-white);font-family:var(--ff-display);font-size:.72rem;font-weight:700;color:var(--text-muted);transition:all .25s var(--spring);margin-left:auto}
 .card-share-btn:hover{background:var(--purple-soft);border-color:var(--purple);color:var(--purple);transform:translateY(-2px)}
 
@@ -200,6 +203,13 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .share-panel.open{display:flex}
 @keyframes panelPop{from{opacity:0;transform:scale(.9) translateY(6px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .share-panel-title{font-family:var(--ff-display);font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-subtle);padding:6px 10px 8px;border-bottom:1px solid var(--border);margin-bottom:4px}
+
+/* URL highlight box inside share panel */
+.share-url-box{display:flex;align-items:center;gap:8px;background:var(--purple-soft);border:1.5px solid var(--border-md);border-radius:10px;padding:8px 12px;margin:4px 0 8px;cursor:pointer;transition:border-color var(--t)}
+.share-url-box:hover{border-color:var(--purple)}
+.share-url-text{font-family:var(--ff-display);font-size:.7rem;font-weight:600;color:var(--purple);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:all}
+.share-url-copy-icon{flex-shrink:0;color:var(--purple)}
+
 .share-option{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-family:var(--ff-display);font-size:.8rem;font-weight:600;color:var(--text);cursor:pointer;transition:background var(--t);border:none;background:none;width:100%;text-align:left;text-decoration:none}
 .share-option:hover{background:var(--bg-elevated);color:var(--purple)}
 .share-option-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -575,8 +585,9 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 
 <script>
 /* ================================================================
-   444MUSIC — CLEAN PRODUCTION JS
-   Single Firebase v8 SDK | Bulletproof share | All fields covered
+   444MUSIC — PRODUCTION JS
+   Share always uses https://444musicblog.vercel.app/#main
+   Listen Now links to the admin's pasted streaming URL
 ================================================================ */
 
 /* ── FIREBASE ── */
@@ -620,7 +631,23 @@ function fmtDate(ts){
   try{ const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString("en-GH",{year:"numeric",month:"short",day:"numeric"}); }catch{ return ""; }
 }
 
-/* ── STREAM LINKS — checks every possible field name ── */
+/* ── FIXED SHARE URL — always this, for every share action ── */
+const SITE_URL = "https://444musicblog.vercel.app/#main";
+
+/* ── GET THE ADMIN'S STREAMING LINK ── */
+/* Admin stores it as: links.ffm (new format) OR ffmLink / streamLink / link / url (older formats) */
+function getListenUrl(post){
+  return (post.links && (post.links.ffm || post.links.spotify || post.links.audiomack || post.links.apple || post.links.youtube || post.links.boomplay))
+      || post.ffmLink
+      || post.ffm
+      || post.streamLink
+      || post.musicLink
+      || post.link
+      || post.url
+      || null;
+}
+
+/* ── STREAM LINK PLATFORMS ── */
 const PLATFORMS = [
   { key:"spotify",   label:"Spotify",      color:"#1db954", bg:"rgba(29,185,84,.12)",
     icon:'<svg viewBox="0 0 24 24" fill="#1db954" width="14" height="14"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/></svg>' },
@@ -634,9 +661,9 @@ const PLATFORMS = [
     icon:'<svg viewBox="0 0 24 24" fill="#ff6b35" width="14" height="14"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#fff"/></svg>' },
 ];
 
-/* Try every possible field name variation an admin might have used */
 function getStreamUrl(post, key){
-  return post[key]
+  // Check top-level field variants
+  const topLevel = post[key]
       || post[key+"Link"]
       || post[key+"Url"]
       || post[key+"_url"]
@@ -644,30 +671,32 @@ function getStreamUrl(post, key){
       || post[key.charAt(0).toUpperCase()+key.slice(1)]
       || post[key.charAt(0).toUpperCase()+key.slice(1)+"Link"]
       || null;
+  if(topLevel) return topLevel;
+  // Also check nested links object (new admin format)
+  if(post.links && post.links[key]) return post.links[key];
+  return null;
 }
 
-function buildCardButtons(post){
+/* ── BUILD CARD BOTTOM ROW: Listen Now + Share ── */
+/* Returns the inner HTML for .card-stores — Listen Now (if URL exists) + Share button */
+function buildCardStoreRow(post){
+  const listenUrl = getListenUrl(post);
   let html = "";
-  PLATFORMS.forEach(p => {
-    const url = getStreamUrl(post, p.key);
-    if(!url) return;
-    html += `<a href="${esc(url)}" target="_blank" rel="noopener"
-      class="card-stream-btn" style="color:${p.color}"
+
+  if(listenUrl){
+    html += `<a href="${esc(listenUrl)}" target="_blank" rel="noopener"
+      class="card-listen-btn"
       onclick="event.stopPropagation()">
-      ${p.icon} ${p.label}
+      <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M8 5v14l11-7z"/></svg>
+      Listen Now
     </a>`;
-  });
-  /* also check generic "streamLink" / "link" / "url" fields */
-  if(!html){
-    const fallback = post.streamLink || post.ffmLink || post.link || post.url || post.musicLink;
-    if(fallback){
-      html = `<a href="${esc(fallback)}" target="_blank" rel="noopener"
-        class="card-stream-btn" style="color:var(--purple)" onclick="event.stopPropagation()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        Stream Now
-      </a>`;
-    }
   }
+
+  html += `<button class="card-share-btn" style="${listenUrl ? '' : 'margin-left:0'}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    Share
+  </button>`;
+
   return html;
 }
 
@@ -681,36 +710,39 @@ function buildModalButtons(post){
       ${p.label}
     </a>`;
   });
-  if(!html){
-    const fallback = post.streamLink || post.ffmLink || post.link || post.url || post.musicLink;
-    if(fallback){
-      html = `<a href="${esc(fallback)}" target="_blank" rel="noopener" class="modal-store-btn">
-        <span style="background:var(--purple-soft);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="14" height="14"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        </span>Stream Now
-      </a>`;
-    }
+  const listenUrl = getListenUrl(post);
+  if(!html && listenUrl){
+    html = `<a href="${esc(listenUrl)}" target="_blank" rel="noopener" class="modal-store-btn">
+      <span style="background:var(--purple-soft);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="14" height="14"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      </span>Stream Now
+    </a>`;
   }
   return html || `<p style="font-size:.85rem;color:var(--text-subtle);font-style:italic">No streaming links added yet.</p>`;
 }
 
-/* ── SHARE — always works, copies site URL as fallback ── */
-const SITE_URL = "https://444musicblog.vercel.app/";
-
-function showSharePanel(post, anchor){
+/* ── SHARE — always uses SITE_URL (https://444musicblog.vercel.app/#main) ── */
+function showSharePanel(anchor){
   sharePanel.innerHTML = "";
   sharePanel.classList.remove("open");
   sharePanel.style.display = "none";
 
-  /* Build the share URL — postId if available, else homepage */
-  const shareUrl = post && post.id
-    ? (window.location.origin + window.location.pathname + "?post=" + encodeURIComponent(post.id))
-    : SITE_URL;
-  const shareTitle = post ? `${post.artist||"444Music"} – ${post.title||"New Release"}` : "444Music Blog";
-  const shareText  = `Check out this new track on 444Music 🎵 ${shareTitle}`;
+  /* Always share the fixed site URL */
+  const shareUrl   = SITE_URL;
+  const shareTitle = "444Music — Ghana's freshest music drops 🎵";
+  const shareText  = "Check out the latest music on 444Music! 🎶";
 
   sharePanel.innerHTML = `
-    <div class="share-panel-title">Share this track</div>
+    <div class="share-panel-title">Share 444Music</div>
+
+    <!-- Highlighted URL box — click to copy -->
+    <div class="share-url-box" id="sp-url-box" title="Click to copy">
+      <span class="share-url-text">${esc(shareUrl)}</span>
+      <span class="share-url-copy-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </span>
+    </div>
+
     <button class="share-option" id="sp-copy">
       <span class="share-option-icon" style="background:#f0fdf4">
         <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -719,7 +751,7 @@ function showSharePanel(post, anchor){
     <button class="share-option" id="sp-native">
       <span class="share-option-icon" style="background:var(--purple-soft)">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="14" height="14"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      </span>Share
+      </span>Share…
     </button>
     <a class="share-option" href="https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}" target="_blank" rel="noopener">
       <span class="share-option-icon" style="background:#e7fce8">
@@ -737,7 +769,15 @@ function showSharePanel(post, anchor){
       </span>Facebook
     </a>`;
 
-  /* Copy button — always copies, always shows toast */
+  /* URL box click = copy */
+  document.getElementById("sp-url-box").onclick = async (e) => {
+    e.stopPropagation();
+    try { await navigator.clipboard.writeText(shareUrl); } catch { fallbackCopy(shareUrl); }
+    showToast();
+    closeSharePanel();
+  };
+
+  /* Copy button */
   document.getElementById("sp-copy").onclick = async (e) => {
     e.stopPropagation();
     try { await navigator.clipboard.writeText(shareUrl); } catch { fallbackCopy(shareUrl); }
@@ -745,7 +785,7 @@ function showSharePanel(post, anchor){
     closeSharePanel();
   };
 
-  /* Native share — falls back to copy if not available */
+  /* Native share */
   document.getElementById("sp-native").onclick = async (e) => {
     e.stopPropagation();
     if(navigator.share){
@@ -757,9 +797,9 @@ function showSharePanel(post, anchor){
     closeSharePanel();
   };
 
-  /* Position panel */
+  /* Position panel near the anchor button */
   const rect = anchor.getBoundingClientRect();
-  const panelW = 230;
+  const panelW = 240;
   let left = rect.left + window.scrollX;
   if(left + panelW > window.innerWidth - 10) left = window.innerWidth - panelW - 10;
   sharePanel.style.top  = (rect.bottom + window.scrollY + 8) + "px";
@@ -829,7 +869,7 @@ function renderCards(){
     const img   = post.imageUrl || post.image || post.coverUrl || post.cover || post.thumbnail
                   || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80&fit=crop";
     const isNew = post.createdAt && (Date.now()-(post.createdAt.toDate?.() || new Date(post.createdAt)).getTime()) < 86400000*3;
-    const streamBtns = buildCardButtons(post);
+    const storeRow = buildCardStoreRow(post);
     const date  = fmtDate(post.createdAt);
 
     card.innerHTML = `
@@ -851,22 +891,24 @@ function renderCards(){
       </div>
       <div class="card-divider"></div>
       <div class="card-stores">
-        ${streamBtns}
-        <button class="card-share-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          Share
-        </button>
+        ${storeRow}
       </div>`;
 
+    /* Card click → open modal (not on Listen Now or Share) */
     card.addEventListener("click", e => {
-      if(e.target.closest(".card-share-btn") || e.target.closest(".card-stream-btn") || e.target.closest("a")) return;
+      if(e.target.closest(".card-share-btn") || e.target.closest(".card-listen-btn") || e.target.closest("a")) return;
       openModal(post);
     });
     card.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openModal(post); } });
-    card.querySelector(".card-share-btn").addEventListener("click", e => {
-      e.stopPropagation();
-      showSharePanel(post, e.currentTarget);
-    });
+
+    /* Share button */
+    const shareBtn = card.querySelector(".card-share-btn");
+    if(shareBtn){
+      shareBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        showSharePanel(e.currentTarget);
+      });
+    }
 
     postsGrid.appendChild(card);
     requestAnimationFrame(()=>{ setTimeout(()=>card.classList.add("visible"), i*50); });
@@ -965,11 +1007,9 @@ function openModal(post){
   const stores = document.getElementById("modal-stores");
   if(stores) stores.innerHTML = buildModalButtons(post);
 
+  /* Modal share button — uses same fixed SITE_URL */
   const shareBtn = document.getElementById("modal-share-btn");
-  if(shareBtn){ shareBtn.onclick = e=>{ e.stopPropagation(); showSharePanel(post, shareBtn); }; }
-
-  /* Update URL for sharing */
-  try{ window.history.replaceState({}, "", window.location.pathname + "?post=" + encodeURIComponent(post.id)); }catch{}
+  if(shareBtn){ shareBtn.onclick = e=>{ e.stopPropagation(); showSharePanel(shareBtn); }; }
 
   ov.classList.add("open");
   document.body.style.overflow = "hidden";
@@ -979,7 +1019,6 @@ function openModal(post){
 function closeModal(){
   document.getElementById("modal-overlay").classList.remove("open");
   document.body.style.overflow = "";
-  try{ window.history.replaceState({}, "", window.location.pathname); }catch{}
 }
 
 /* ── DEEP LINK ── */
@@ -1097,9 +1136,9 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   initFilters();
   initHero();
   initSearch();
-  await loadPosts();       /* load first */
-  await handleDeepLink();  /* THEN check URL — order is critical */
-  loadPlaylists();         /* non-blocking */
+  await loadPosts();
+  await handleDeepLink();
+  loadPlaylists();
 });
 </script>
 </body>
