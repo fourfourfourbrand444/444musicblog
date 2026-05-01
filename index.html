@@ -1053,29 +1053,45 @@ body::before {
 <!-- ══════════════════════ COPY TOAST -->
 <div class="share-copied-toast" id="copy-toast">Link copied!</div>
 <!-- Firebase v8 (COMPAT - works with your code) -->
+<!-- CORRECT -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
 <script>
-/* ─────────── FIREBASE ─────────── */
+/* paste the entire JS from the .js file here */
+  /* ================================================================
+   444MUSIC BLOG — FIXED PRODUCTION JAVASCRIPT
+   Firebase v8 Compat | Deep Links | Share System | Full Card Render
+   ================================================================ */
+
+/* ─────────────────────────────────────────
+   FIREBASE INIT (v8 compat — unchanged)
+───────────────────────────────────────── */
 const firebaseConfig = {
-  apiKey:"AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
-  authDomain:"music-7a35b.firebaseapp.com",
-  projectId:"music-7a35b",
-  storageBucket:"music-7a35b.appspot.com",
-  messagingSenderId:"26882716946",
-  appId:"1:26882716946:web:5cc1c9e980bc6597442fcb"
+  apiKey: "AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
+  authDomain: "music-7a35b.firebaseapp.com",
+  projectId: "music-7a35b",
+  storageBucket: "music-7a35b.appspot.com",
+  messagingSenderId: "26882716946",
+  appId: "1:26882716946:web:5cc1c9e980bc6597442fcb"
 };
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ─────────── STATE ─────────── */
-const PAGE_SIZE = 12;
-let lastDoc = null, isLoading = false, activeFilter = "all", searchQuery = "", allPosts = [];
-let currentSharePost = null;
+/* ─────────────────────────────────────────
+   STATE
+───────────────────────────────────────── */
+const PAGE_SIZE     = 12;
+let lastDoc         = null;
+let isLoading       = false;
+let activeFilter    = "all";
+let searchQuery     = "";
+let allPosts        = [];       // master list (grows with load-more)
+let currentSharePost = null;    // post being shared right now
 
-/* ─────────── DOM ─────────── */
+/* ─────────────────────────────────────────
+   DOM REFS
+───────────────────────────────────────── */
 const postsGrid    = document.getElementById("posts-grid");
 const emptyState   = document.getElementById("empty-state");
 const errorState   = document.getElementById("error-state");
@@ -1088,190 +1104,841 @@ const searchBar    = document.getElementById("search-input");
 const sharePanel   = document.getElementById("share-panel");
 const copyToast    = document.getElementById("copy-toast");
 
-document.getElementById("footer-year")?.textContent = new Date().getFullYear();
+/* Footer year */
+const footerYear = document.getElementById("footer-year");
+if (footerYear) footerYear.textContent = new Date().getFullYear();
 
-/* ═══════════════════════════════════════════
-   SHARE SYSTEM (FIXED + DEEP LINK READY)
-   ═══════════════════════════════════════════ */
+/* ================================================================
+   UTILITY HELPERS
+   ================================================================ */
 
-function buildShareUrl(postId) {
-  return window.location.origin + window.location.pathname + '?post=' + postId;
+function escHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
 }
+
+function formatDate(ts) {
+  if (!ts) return "";
+  try {
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString("en-GH", { year:"numeric", month:"short", day:"numeric" });
+  } catch { return ""; }
+}
+
+/* Build deep-link URL */
+function buildShareUrl(postId) {
+  const base = window.location.origin + window.location.pathname;
+  return `${base}?post=${encodeURIComponent(postId)}`;
+}
+
+/* ================================================================
+   STREAMING PLATFORM HELPERS
+   ================================================================ */
+
+const PLATFORM_META = {
+  spotify:   { label:"Spotify",   color:"#1db954", bg:"rgba(29,185,84,.12)",
+    icon:`<svg viewBox="0 0 24 24" fill="#1db954" width="16" height="16"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>` },
+  audiomack: { label:"Audiomack", color:"#f5a623", bg:"rgba(245,166,35,.12)",
+    icon:`<svg viewBox="0 0 24 24" fill="#f5a623" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>` },
+  apple:     { label:"Apple Music", color:"#fc3c44", bg:"rgba(252,60,68,.12)",
+    icon:`<svg viewBox="0 0 24 24" fill="#fc3c44" width="16" height="16"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 0 0-1.877-.726 10.496 10.496 0 0 0-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.475 3.208A7.494 7.494 0 0 0 .05 5.5c-.02.533-.01 1.067-.013 1.6v9.8c0 .533.017 1.067.05 1.6.09 1.203.47 2.3 1.214 3.23.834 1.044 1.915 1.672 3.23 1.896.55.097 1.107.13 1.666.14.19.007.38.01.572.01h11.467c.19 0 .382-.004.573-.013.55-.01 1.098-.043 1.64-.14 1.31-.23 2.392-.855 3.23-1.896.744-.93 1.124-2.027 1.214-3.23.033-.533.05-1.067.05-1.6V7.1c0-.533.007-1.067-.013-1.6z"/></svg>` },
+  youtube:   { label:"YouTube",   color:"#ff0000", bg:"rgba(255,0,0,.12)",
+    icon:`<svg viewBox="0 0 24 24" fill="#ff0000" width="16" height="16"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>` },
+  boomplay:  { label:"Boomplay",  color:"#ff6b35", bg:"rgba(255,107,53,.12)",
+    icon:`<svg viewBox="0 0 24 24" fill="#ff6b35" width="16" height="16"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#fff"/></svg>` },
+};
+
+function buildStreamButtons(post, context="card") {
+  const platforms = ["spotify","audiomack","apple","youtube","boomplay"];
+  const btnClass  = context === "modal" ? "modal-store-btn" : "card-stream-btn";
+  let html = "";
+
+  platforms.forEach(key => {
+    const url = post[key] || post[key + "Link"] || post[key + "Url"] || post[`${key}_url`];
+    if (!url) return;
+    const m = PLATFORM_META[key] || { label: key, color:"#7c3aed", bg:"rgba(124,58,237,.1)", icon:"" };
+    if (context === "modal") {
+      html += `<a href="${escHtml(url)}" target="_blank" rel="noopener" class="${btnClass} ${key}"
+        style="--btn-color:${m.color}"
+        aria-label="Stream on ${m.label}">
+        <span class="modal-store-icon" style="background:${m.bg};width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;">${m.icon}</span>
+        ${escHtml(m.label)}
+        <svg style="margin-left:auto;opacity:.4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>`;
+    } else {
+      html += `<a href="${escHtml(url)}" target="_blank" rel="noopener" class="${btnClass}"
+        style="color:${m.color}" aria-label="${m.label}" onclick="event.stopPropagation()">
+        ${m.icon} ${escHtml(m.label)}
+      </a>`;
+    }
+  });
+
+  /* Fallback: generic "ffm" link */
+  if (!html && post.ffmLink) {
+    html = `<a href="${escHtml(post.ffmLink)}" target="_blank" rel="noopener"
+      class="${btnClass} ffm" aria-label="Stream this track" onclick="event.stopPropagation()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      Stream
+    </a>`;
+  }
+
+  return html;
+}
+
+/* ================================================================
+   RENDER CARDS  (full design — matches your CSS classes exactly)
+   ================================================================ */
+
+function renderCards(posts) {
+  postsGrid.innerHTML = "";
+  emptyState.style.display  = "none";
+  errorState.style.display  = "none";
+
+  const filtered = getFiltered(posts);
+
+  /* Update count badge */
+  if (feedCount) feedCount.textContent = filtered.length > 0 ? `${filtered.length} tracks` : "";
+
+  if (filtered.length === 0) {
+    emptyState.style.display = "flex";
+    return;
+  }
+
+  filtered.forEach((post, i) => {
+    const card = document.createElement("article");
+    card.className = "post-card";
+    card.setAttribute("role", "article");
+    card.setAttribute("aria-label", `${escHtml(post.artist || "Artist")} – ${escHtml(post.title || "Track")}`);
+    card.setAttribute("tabindex", "0");
+
+    const imgSrc    = escHtml(post.imageUrl || post.image || post.coverUrl || post.cover || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80&fit=crop");
+    const isNew     = post.createdAt && (Date.now() - (post.createdAt.toDate?.() || new Date(post.createdAt)).getTime()) < 86400000 * 3;
+    const genreTag  = post.genre ? `<span class="card-chip">${escHtml(post.genre)}</span>` : "";
+    const dateStr   = formatDate(post.createdAt);
+    const streams   = buildStreamButtons(post, "card");
+
+    card.innerHTML = `
+      <div class="card-img-wrap">
+        <img src="${imgSrc}" alt="${escHtml(post.artist || "")} – ${escHtml(post.title || "")}" loading="lazy">
+        <div class="card-play-overlay" aria-hidden="true">
+          <div class="card-play-btn">
+            <svg viewBox="0 0 24 24" fill="#fff" width="22" height="22"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        ${isNew ? `<span class="card-new-badge">New</span>` : ""}
+      </div>
+      <div class="card-body">
+        <div class="card-artist">${escHtml(post.artist || "Unknown Artist")}</div>
+        <h3 class="card-title">${escHtml(post.title || "Untitled")}</h3>
+        <p class="card-caption">${escHtml(post.caption || post.description || "")}</p>
+        <div class="card-meta-row">
+          ${genreTag}
+          ${dateStr ? `<span class="card-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${escHtml(dateStr)}</span>` : ""}
+        </div>
+      </div>
+      ${streams ? `<div class="card-divider"></div><div class="card-stores">${streams}<button class="card-share-btn" aria-label="Share this track"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share</button></div>` : `<div class="card-stores"><button class="card-share-btn" style="margin-left:0" aria-label="Share this track"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share</button></div>`}
+    `;
+
+    /* Card click → open modal */
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".card-share-btn") || e.target.closest(".card-stream-btn")) return;
+      openModal(post);
+    });
+
+    /* Keyboard open */
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(post); }
+    });
+
+    /* Share button */
+    const shareBtn = card.querySelector(".card-share-btn");
+    if (shareBtn) {
+      shareBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        showSharePanel(post, shareBtn);
+      });
+    }
+
+    postsGrid.appendChild(card);
+
+    /* Staggered reveal animation */
+    requestAnimationFrame(() => {
+      setTimeout(() => card.classList.add("visible"), i * 55);
+    });
+  });
+}
+
+/* ================================================================
+   FILTERING + SEARCH
+   ================================================================ */
+
+function getFiltered(posts) {
+  let result = posts;
+
+  if (activeFilter && activeFilter !== "all") {
+    result = result.filter(p => {
+      const g = (p.genre || "").toLowerCase().replace(/[^a-z]/g,"");
+      return g.includes(activeFilter.toLowerCase().replace(/[^a-z]/g,""));
+    });
+  }
+
+  if (searchQuery.trim()) {
+    const q = searchQuery.trim().toLowerCase();
+    result = result.filter(p =>
+      (p.title  || "").toLowerCase().includes(q) ||
+      (p.artist || "").toLowerCase().includes(q) ||
+      (p.genre  || "").toLowerCase().includes(q) ||
+      (p.caption|| "").toLowerCase().includes(q)
+    );
+  }
+
+  return result;
+}
+
+/* ================================================================
+   LOAD POSTS FROM FIRESTORE
+   ================================================================ */
+
+async function loadPosts(append = false) {
+  if (isLoading) return;
+  isLoading = true;
+  if (loadMoreBtn) loadMoreBtn.disabled = true;
+
+  /* Show skeleton on first load */
+  if (!append && postsGrid.innerHTML === "") {
+    postsGrid.innerHTML = Array(6).fill(`
+      <div class="skeleton-card">
+        <div class="skel-img"></div>
+        <div class="skel-body">
+          <div class="skel-line" style="width:40%"></div>
+          <div class="skel-line" style="width:80%"></div>
+          <div class="skel-line" style="width:60%"></div>
+        </div>
+      </div>`).join("");
+    emptyState.style.display = "none";
+    errorState.style.display = "none";
+  }
+
+  try {
+    let q = db.collection("posts").orderBy("createdAt", "desc").limit(PAGE_SIZE);
+    if (append && lastDoc) q = q.startAfter(lastDoc);
+
+    const snap = await q.get();
+    const newPosts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    /* Guard: avoid duplicates if loadMore called multiple times */
+    if (append) {
+      const existingIds = new Set(allPosts.map(p => p.id));
+      newPosts.forEach(p => { if (!existingIds.has(p.id)) allPosts.push(p); });
+    } else {
+      allPosts = newPosts;
+    }
+
+    lastDoc = snap.docs.length > 0 ? snap.docs[snap.docs.length - 1] : lastDoc;
+
+    renderCards(allPosts);
+    populateEditorial(allPosts);
+    if (statTracks) statTracks.textContent = allPosts.length >= PAGE_SIZE ? allPosts.length + "+" : String(allPosts.length);
+
+    /* Show/hide load-more */
+    loadMoreWrap.style.display = snap.docs.length < PAGE_SIZE ? "none" : "flex";
+
+  } catch (err) {
+    console.error("Firestore load error:", err);
+    postsGrid.innerHTML = "";
+    emptyState.style.display = "none";
+    errorState.style.display = "flex";
+    if (errorMsg) errorMsg.textContent = err.message || "Could not load posts.";
+  }
+
+  isLoading = false;
+  if (loadMoreBtn) loadMoreBtn.disabled = false;
+}
+
+/* ================================================================
+   EDITORIAL PICKS  (top 3 most recent posts)
+   ================================================================ */
+
+function populateEditorial(posts) {
+  if (!posts.length) return;
+
+  /* Featured — first post */
+  const featured = posts[0];
+  const featuredEl = document.getElementById("editorial-featured");
+  if (featuredEl && featured) {
+    const img = featuredEl.querySelector("img");
+    if (img) {
+      img.src = featured.imageUrl || featured.image || featured.coverUrl || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop";
+      img.alt = `${featured.artist || ""} – ${featured.title || ""}`;
+    }
+    const genrePill = featuredEl.querySelector(".ed-genre-pill");
+    if (genrePill && featured.genre) genrePill.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> ${escHtml(featured.genre)}`;
+    const headline = featuredEl.querySelector(".ed-headline");
+    if (headline) headline.textContent = featured.title || "Top Pick";
+    const meta = featuredEl.querySelector(".ed-meta");
+    if (meta) meta.textContent = `${featured.artist || "Artist"} · ${formatDate(featured.createdAt) || "Recent"}`;
+    featuredEl.onclick = () => openModal(featured);
+  }
+
+  /* Sidebar — next 3 posts */
+  const sidebar = document.getElementById("ed-sidebar");
+  if (sidebar) {
+    sidebar.innerHTML = "";
+    posts.slice(1, 4).forEach(post => {
+      const imgSrc = post.imageUrl || post.image || post.coverUrl || "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&q=80&fit=crop";
+      const mini = document.createElement("div");
+      mini.className = "ed-mini";
+      mini.setAttribute("tabindex","0");
+      mini.innerHTML = `
+        <div class="ed-mini-img"><img src="${escHtml(imgSrc)}" alt="${escHtml(post.artist||"")} – ${escHtml(post.title||"")}" loading="lazy"></div>
+        <div>
+          <div class="ed-mini-genre">${escHtml(post.genre || "Music")}</div>
+          <div class="ed-mini-title">${escHtml(post.title || "Untitled")}</div>
+          <div class="ed-mini-meta">${escHtml(post.artist || "Artist")} · ${formatDate(post.createdAt) || "Recent"}</div>
+        </div>`;
+      mini.addEventListener("click", () => openModal(post));
+      mini.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" ") { e.preventDefault(); openModal(post); } });
+      sidebar.appendChild(mini);
+    });
+  }
+}
+
+/* ================================================================
+   MODAL — opens a post with full content
+   ================================================================ */
+
+function openModal(post) {
+  if (!post) return;
+
+  const overlay = document.getElementById("modal-overlay");
+  const card    = document.getElementById("modal-card");
+
+  /* Image */
+  const imgEl = document.getElementById("modal-img-el");
+  if (imgEl) {
+    imgEl.src = post.imageUrl || post.image || post.coverUrl || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop";
+    imgEl.alt = `${post.artist || ""} – ${post.title || ""}`;
+  }
+
+  /* Badges */
+  const badgeRow = document.getElementById("modal-badge-row");
+  if (badgeRow) {
+    badgeRow.innerHTML = "";
+    if (post.genre) {
+      const gb = document.createElement("span");
+      gb.className = "modal-genre-badge";
+      gb.textContent = post.genre;
+      badgeRow.appendChild(gb);
+    }
+    const isNew = post.createdAt && (Date.now() - (post.createdAt.toDate?.() || new Date(post.createdAt)).getTime()) < 86400000 * 3;
+    if (isNew) {
+      const nb = document.createElement("span");
+      nb.className = "modal-new-badge";
+      nb.textContent = "New";
+      badgeRow.appendChild(nb);
+    }
+  }
+
+  /* Text content */
+  const artistEl = document.getElementById("modal-artist");
+  if (artistEl) artistEl.textContent = post.artist || "";
+
+  const titleEl = document.getElementById("modal-title");
+  if (titleEl) titleEl.textContent = post.title || "Untitled";
+
+  const captionEl = document.getElementById("modal-caption");
+  if (captionEl) captionEl.textContent = post.caption || post.description || "";
+
+  /* Meta row */
+  const metaEl = document.getElementById("modal-meta");
+  if (metaEl) {
+    metaEl.innerHTML = "";
+    const dateStr = formatDate(post.createdAt);
+    if (dateStr) {
+      metaEl.innerHTML += `<span class="modal-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${escHtml(dateStr)}</span>`;
+    }
+    if (post.genre) {
+      metaEl.innerHTML += `<span class="modal-chip">${escHtml(post.genre)}</span>`;
+    }
+  }
+
+  /* Streaming buttons */
+  const storesEl = document.getElementById("modal-stores");
+  if (storesEl) {
+    storesEl.innerHTML = buildStreamButtons(post, "modal");
+    if (!storesEl.innerHTML.trim()) {
+      storesEl.innerHTML = `<p style="font-size:.85rem;color:var(--text-subtle);font-style:italic">No streaming links added yet.</p>`;
+    }
+  }
+
+  /* Share button inside modal */
+  const modalShareBtn = document.getElementById("modal-share-btn");
+  if (modalShareBtn) {
+    modalShareBtn.onclick = (e) => {
+      e.stopPropagation();
+      showSharePanel(post, modalShareBtn);
+    };
+  }
+
+  /* Deep-link: update URL so the page is shareable */
+  const shareUrl = buildShareUrl(post.id);
+  window.history.replaceState({ postId: post.id }, `${post.artist || ""} – ${post.title || ""}`, shareUrl);
+
+  /* Open overlay */
+  overlay.classList.add("open");
+  requestAnimationFrame(() => { if (card) card.focus(); });
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  const overlay = document.getElementById("modal-overlay");
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+
+  /* Restore clean URL — no ?post= query */
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+/* ================================================================
+   SHARE PANEL  (Spotify-style floating panel)
+   ================================================================ */
 
 function showSharePanel(post, anchorEl) {
   currentSharePost = post;
+  closeSharePanel(); /* close any existing */
 
   const url   = buildShareUrl(post.id);
-  const title = `${post.artist || ''} – ${post.title || ''}`;
+  const title = `${post.artist || "444Music"} – ${post.title || "New Release"}`;
+  const text  = `Check out this new track on 444Music 🎵`;
 
   sharePanel.innerHTML = `
-    <button id="copyLink">Copy Link</button>
-    <button id="nativeShare">Share</button>
-  `;
+    <div class="share-panel-title">Share this track</div>
+    <button class="share-option" id="sp-native">
+      <span class="share-option-icon" style="background:var(--purple-soft)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="15" height="15"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </span>
+      Share
+    </button>
+    <button class="share-option" id="sp-copy">
+      <span class="share-option-icon" style="background:#f0fdf4">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" width="15" height="15"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </span>
+      Copy link
+    </button>
+    <a class="share-option" id="sp-whatsapp"
+      href="https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}"
+      target="_blank" rel="noopener">
+      <span class="share-option-icon" style="background:#e7fce8">
+        <svg viewBox="0 0 24 24" fill="#25d366" width="16" height="16"><path d="M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652A11.971 11.971 0 0 0 12 23.786c6.585 0 11.946-5.334 11.949-11.893a11.821 11.821 0 0 0-3.429-8.444zM12.045 21.785a9.945 9.945 0 0 1-5.031-1.356l-.361-.214-3.741.975.997-3.648-.235-.374a9.861 9.861 0 0 1-1.521-5.237c0-5.455 4.451-9.893 9.926-9.893 2.65 0 5.138 1.028 7.006 2.895a9.791 9.791 0 0 1 2.912 6.998c-.002 5.455-4.453 9.854-9.952 9.854zm5.449-7.374c-.299-.149-1.765-.867-2.039-.966-.272-.099-.47-.149-.668.149-.198.297-.769.966-.942 1.164-.173.199-.347.223-.646.074-.299-.149-1.262-.462-2.403-1.471-.888-.789-1.487-1.763-1.661-2.061-.174-.298-.019-.459.13-.607.134-.134.299-.348.448-.522.149-.174.199-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.606-.916-2.2-.241-.578-.487-.5-.668-.51-.173-.008-.372-.01-.57-.01-.198 0-.522.075-.796.372-.273.298-1.044 1.019-1.044 2.483 0 1.462 1.069 2.875 1.218 3.073.149.198 2.105 3.2 5.097 4.487.712.306 1.268.489 1.702.625.715.227 1.366.195 1.88.118.574-.085 1.765-.72 2.015-1.414.249-.694.249-1.289.174-1.414-.074-.124-.272-.199-.571-.348z"/></svg>
+      </span>
+      WhatsApp
+    </a>
+    <a class="share-option" id="sp-twitter"
+      href="https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}"
+      target="_blank" rel="noopener">
+      <span class="share-option-icon" style="background:#f0f8ff">
+        <svg viewBox="0 0 24 24" fill="#1da1f2" width="15" height="15"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </span>
+      Twitter / X
+    </a>
+    <a class="share-option" id="sp-facebook"
+      href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}"
+      target="_blank" rel="noopener">
+      <span class="share-option-icon" style="background:#f0f4ff">
+        <svg viewBox="0 0 24 24" fill="#1877f2" width="15" height="15"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </span>
+      Facebook
+    </a>`;
 
+  /* Position panel near the anchor button */
+  const rect = anchorEl.getBoundingClientRect();
+  sharePanel.style.top  = `${rect.bottom + window.scrollY + 8}px`;
+  sharePanel.style.left = `${Math.min(rect.left, window.innerWidth - 260)}px`;
+  sharePanel.style.display = "flex";
   sharePanel.classList.add("open");
 
-  /* COPY */
-  document.getElementById("copyLink").onclick = () => {
-    navigator.clipboard.writeText(url);
-    showCopyToast();
-    closeSharePanel();
-  };
-
-  /* NATIVE SHARE */
-  document.getElementById("nativeShare").onclick = async () => {
+  /* Native share */
+  document.getElementById("sp-native").addEventListener("click", async (e) => {
+    e.stopPropagation();
     if (navigator.share) {
-      try {
-        await navigator.share({ title, url });
-      } catch(e){}
+      try { await navigator.share({ title, text, url }); } catch {}
     } else {
-      navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(url).catch(() => fallbackCopy(url));
       showCopyToast();
     }
     closeSharePanel();
-  };
+  });
+
+  /* Copy link */
+  document.getElementById("sp-copy").addEventListener("click", async (e) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(url).catch(() => fallbackCopy(url));
+    showCopyToast();
+    closeSharePanel();
+  });
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.cssText = "position:fixed;opacity:0;pointer-events:none";
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand("copy");
+  document.body.removeChild(ta);
 }
 
 function closeSharePanel() {
   sharePanel.classList.remove("open");
+  sharePanel.style.display = "none";
 }
 
 function showCopyToast() {
-  copyToast?.classList.add("show");
-  setTimeout(() => copyToast?.classList.remove("show"), 2000);
+  if (!copyToast) return;
+  copyToast.classList.add("show");
+  setTimeout(() => copyToast.classList.remove("show"), 2400);
 }
 
-/* ═══════════════════════════════════════════
-   LOAD POSTS
-   ═══════════════════════════════════════════ */
-
-async function loadPosts(append=false) {
-  if (isLoading) return;
-  isLoading = true;
-
-  try {
-    let q = db.collection("posts").orderBy("createdAt","desc").limit(PAGE_SIZE);
-    if (append && lastDoc) q = q.startAfter(lastDoc);
-
-    const snap = await q.get();
-
-    const newPosts = snap.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    lastDoc = snap.docs[snap.docs.length - 1];
-    allPosts = append ? [...allPosts, ...newPosts] : newPosts;
-
-    renderPosts(allPosts);
-
-    statTracks.textContent = allPosts.length + "+";
-    loadMoreWrap.style.display = snap.docs.length < PAGE_SIZE ? "none" : "flex";
-
-  } catch(err) {
-    console.error(err);
-    errorState.style.display = "flex";
-    errorMsg.textContent = err.message;
-  }
-
-  isLoading = false;
-}
-
-/* ═══════════════════════════════════════════
-   RENDER POSTS (YOUR ORIGINAL STYLE KEPT)
-   ═══════════════════════════════════════════ */
-
-function renderPosts(posts) {
-  postsGrid.innerHTML = "";
-
-  posts.forEach(post => {
-    const card = document.createElement("div");
-    card.className = "post-card";
-
-    card.innerHTML = `
-      <h3>${post.title || "Untitled"}</h3>
-      <p>${post.artist || "Unknown Artist"}</p>
-      <button class="share-btn">Share</button>
-    `;
-
-    card.onclick = () => openModal(post);
-
-    card.querySelector(".share-btn").onclick = (e) => {
-      e.stopPropagation();
-      showSharePanel(post, e.currentTarget);
-    };
-
-    postsGrid.appendChild(card);
-  });
-}
-
-/* ═══════════════════════════════════════════
-   MODAL (WITH SHARE URL UPDATE)
-   ═══════════════════════════════════════════ */
-
-function openModal(post) {
-  const overlay = document.getElementById("modal-overlay");
-
-  document.getElementById("modal-title").textContent = post.title || "";
-  document.getElementById("modal-caption").textContent = post.caption || "";
-
-  overlay.classList.add("open");
-
-  /* 🔥 THIS IS THE KEY */
-  const shareUrl = buildShareUrl(post.id);
-  window.history.replaceState({}, '', shareUrl);
-}
-
-function closeModal() {
-  document.getElementById("modal-overlay").classList.remove("open");
-
-  /* Remove query */
-  window.history.replaceState({}, '', window.location.pathname);
-}
-
-/* ═══════════════════════════════════════════
-   DEEP LINK HANDLER (SPOTIFY STYLE)
-   ═══════════════════════════════════════════ */
+/* ================================================================
+   DEEP-LINK HANDLER  (Spotify style)
+   ================================================================ */
 
 async function handleSharedLink() {
   const params = new URLSearchParams(window.location.search);
   const postId = params.get("post");
-
   if (!postId) return;
 
   try {
+    /* Check in-memory cache first */
     let post = allPosts.find(p => p.id === postId);
 
+    /* If not cached, fetch directly from Firestore */
     if (!post) {
-      const doc = await db.collection("posts").doc(postId).get();
-      if (doc.exists) {
-        post = { id: doc.id, ...doc.data() };
+      const docSnap = await db.collection("posts").doc(postId).get();
+      if (docSnap.exists) {
+        post = { id: docSnap.id, ...docSnap.data() };
+        /* Prepend so it appears at top even if not in current page */
+        const existingIdx = allPosts.findIndex(p => p.id === post.id);
+        if (existingIdx === -1) allPosts.unshift(post);
       }
     }
 
     if (post) {
       openModal(post);
+    } else {
+      console.warn("444Music: shared post not found:", postId);
     }
-
-  } catch(err) {
-    console.error("Deep link error:", err);
+  } catch (err) {
+    console.error("Deep link handler error:", err);
   }
 }
 
-/* ═══════════════════════════════════════════
-   EVENTS
-   ═══════════════════════════════════════════ */
+/* ================================================================
+   PLAYLISTS (Firestore "playlists" collection)
+   ================================================================ */
 
-loadMoreBtn?.addEventListener("click", () => loadPosts(true));
+async function loadPlaylists() {
+  const grid = document.getElementById("playlists-grid");
+  if (!grid) return;
+
+  try {
+    const snap = await db.collection("playlists").orderBy("createdAt","desc").limit(12).get();
+
+    if (snap.empty) {
+      grid.innerHTML = `<div class="playlists-empty">No playlists yet. Check back soon!</div>`;
+      return;
+    }
+
+    grid.innerHTML = "";
+    snap.docs.forEach(doc => {
+      const pl = { id: doc.id, ...doc.data() };
+      const imgSrc = escHtml(pl.imageUrl || pl.image || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&fit=crop");
+
+      /* Platform dots */
+      const platforms = ["spotify","audiomack","apple","youtube","boomplay"];
+      const dotHtml = platforms.map(k => {
+        if (!(pl[k] || pl[k+"Link"] || pl[k+"Url"])) return "";
+        const m = PLATFORM_META[k] || {};
+        return `<span class="spl-platform-dot" style="background:${m.bg||"#eee"}" title="${m.label||k}">${m.icon||""}</span>`;
+      }).join("");
+
+      const card = document.createElement("div");
+      card.className = "spl-card";
+      card.setAttribute("tabindex","0");
+      card.setAttribute("aria-label", `Playlist: ${escHtml(pl.title||"Playlist")}`);
+      card.innerHTML = `
+        <div class="spl-art">
+          <img src="${imgSrc}" alt="${escHtml(pl.title||"Playlist")}" loading="lazy">
+          <div class="spl-play" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#fff" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="spl-title">${escHtml(pl.title||"Untitled Playlist")}</div>
+        <div class="spl-desc">${escHtml(pl.description||"")}</div>
+        <div class="spl-meta">
+          ${dotHtml}
+          ${pl.trackCount ? `<span class="spl-track-count">${escHtml(String(pl.trackCount))} tracks</span>` : ""}
+        </div>`;
+
+      card.addEventListener("click", () => openPlaylistModal(pl));
+      card.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" ") { e.preventDefault(); openPlaylistModal(pl); } });
+      grid.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("Playlists load error:", err);
+    if (grid) grid.innerHTML = `<div class="playlists-empty">Could not load playlists.</div>`;
+  }
+}
+
+/* ================================================================
+   PLAYLIST MODAL
+   ================================================================ */
+
+function openPlaylistModal(pl) {
+  const overlay = document.getElementById("playlist-modal-overlay");
+  const card    = document.getElementById("playlist-modal-card");
+  if (!overlay) return;
+
+  const imgEl = document.getElementById("pm-img-el");
+  if (imgEl) {
+    imgEl.src = pl.imageUrl || pl.image || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80&fit=crop";
+    imgEl.alt = pl.title || "";
+  }
+
+  const badge = document.getElementById("pm-badge");
+  if (badge) badge.textContent = pl.genre || "Playlist";
+
+  const genre = document.getElementById("pm-genre");
+  if (genre) genre.textContent = pl.genre || "Curated Playlist";
+
+  const title = document.getElementById("pm-title");
+  if (title) title.textContent = pl.title || "Untitled Playlist";
+
+  const desc = document.getElementById("pm-desc");
+  if (desc) desc.textContent = pl.description || "";
+
+  /* Build platform links */
+  const linksGrid = document.getElementById("pm-links-grid");
+  if (linksGrid) {
+    linksGrid.innerHTML = "";
+    const platforms = ["spotify","audiomack","apple","youtube","boomplay"];
+    let hasLink = false;
+    platforms.forEach(key => {
+      const url = pl[key] || pl[key+"Link"] || pl[key+"Url"] || pl[`${key}_url`];
+      if (!url) return;
+      hasLink = true;
+      const m = PLATFORM_META[key] || { label:key, color:"#7c3aed", bg:"rgba(124,58,237,.1)", icon:"" };
+      const a = document.createElement("a");
+      a.href = url; a.target="_blank"; a.rel="noopener";
+      a.className = `pm-link-btn ${key}`;
+      a.innerHTML = `
+        <span class="pm-link-icon" style="background:${m.bg}">${m.icon}</span>
+        ${escHtml(m.label)}
+        <svg style="margin-left:auto;opacity:.35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="9 18 15 12 9 6"/></svg>`;
+      linksGrid.appendChild(a);
+    });
+    if (!hasLink) {
+      linksGrid.innerHTML = `<p style="font-size:.85rem;color:var(--text-subtle);font-style:italic">No streaming links added yet.</p>`;
+    }
+  }
+
+  overlay.classList.add("open");
+  requestAnimationFrame(() => { if (card) card.focus(); });
+  document.body.style.overflow = "hidden";
+}
+
+function closePlaylistModal() {
+  const overlay = document.getElementById("playlist-modal-overlay");
+  if (overlay) overlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+/* ================================================================
+   NAV — FILTER TABS
+   ================================================================ */
+
+function initNavFilters() {
+  const allFilterBtns = document.querySelectorAll("[data-filter]");
+  allFilterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeFilter = btn.dataset.filter || "all";
+
+      /* Update active state on ALL filter buttons (desktop + mobile) */
+      allFilterBtns.forEach(b => {
+        b.classList.toggle("active", b.dataset.filter === activeFilter);
+        b.setAttribute("aria-selected", b.dataset.filter === activeFilter ? "true" : "false");
+      });
+
+      renderCards(allPosts); /* re-render with new filter */
+
+      /* Close mobile drawer */
+      const drawer = document.getElementById("nav-mobile-drawer");
+      const menuBtn = document.getElementById("mobile-menu-btn");
+      if (drawer) drawer.classList.remove("open");
+      if (menuBtn) { menuBtn.classList.remove("open"); menuBtn.setAttribute("aria-expanded","false"); }
+    });
+  });
+}
+
+/* ================================================================
+   NAV — SCROLL EFFECT + MOBILE MENU
+   ================================================================ */
+
+function initNav() {
+  const navbar = document.getElementById("navbar");
+  const mobileBtn = document.getElementById("mobile-menu-btn");
+  const drawer = document.getElementById("nav-mobile-drawer");
+
+  /* Scroll shadow */
+  window.addEventListener("scroll", () => {
+    if (navbar) navbar.classList.toggle("scrolled", window.scrollY > 10);
+  }, { passive: true });
+
+  /* Mobile toggle */
+  if (mobileBtn && drawer) {
+    mobileBtn.addEventListener("click", () => {
+      const isOpen = drawer.classList.toggle("open");
+      mobileBtn.classList.toggle("open", isOpen);
+      mobileBtn.setAttribute("aria-expanded", String(isOpen));
+    });
+  }
+}
+
+/* ================================================================
+   HERO SLIDESHOW
+   ================================================================ */
+
+function initHero() {
+  const slides   = document.querySelectorAll(".hero-slide");
+  const dots     = document.querySelectorAll(".hero-dot");
+  const bar      = document.getElementById("hero-progress-bar");
+  const INTERVAL = 5000;
+  let current    = 0;
+  let startTime  = Date.now();
+  let rafId      = null;
+
+  if (!slides.length) return;
+
+  function goTo(idx) {
+    slides[current].classList.remove("active");
+    dots[current]?.classList.remove("active");
+    current = (idx + slides.length) % slides.length;
+    slides[current].classList.add("active");
+    dots[current]?.classList.add("active");
+    startTime = Date.now();
+  }
+
+  function tick() {
+    const elapsed = Date.now() - startTime;
+    const pct = Math.min((elapsed / INTERVAL) * 100, 100);
+    if (bar) bar.style.width = pct + "%";
+    if (elapsed >= INTERVAL) goTo(current + 1);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  dots.forEach(dot => {
+    dot.addEventListener("click", () => goTo(Number(dot.dataset.index)));
+  });
+
+  rafId = requestAnimationFrame(tick);
+}
+
+/* ================================================================
+   SEARCH
+   ================================================================ */
+
+function initSearch() {
+  if (!searchBar) return;
+  let debounceTimer;
+  searchBar.addEventListener("input", () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      searchQuery = searchBar.value || "";
+      renderCards(allPosts);
+    }, 280);
+  });
+}
+
+/* ================================================================
+   KEYBOARD / OUTSIDE CLICK CLOSERS
+   ================================================================ */
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeModal();
+    closePlaylistModal();
+    closeSharePanel();
+  }
+});
+
+document.addEventListener("click", (e) => {
+  /* Close share panel if clicked outside */
+  if (!sharePanel.contains(e.target) && !e.target.closest(".card-share-btn") && !e.target.closest(".modal-share-btn")) {
+    closeSharePanel();
+  }
+});
+
+/* Modal overlay click-to-close */
+document.getElementById("modal-overlay")?.addEventListener("click", (e) => {
+  if (e.target === document.getElementById("modal-overlay")) closeModal();
+});
+
 document.getElementById("modal-close")?.addEventListener("click", closeModal);
 
-/* ═══════════════════════════════════════════
-   INIT
-   ═══════════════════════════════════════════ */
+document.getElementById("playlist-modal-overlay")?.addEventListener("click", (e) => {
+  if (e.target === document.getElementById("playlist-modal-overlay")) closePlaylistModal();
+});
+
+document.getElementById("pm-close")?.addEventListener("click", closePlaylistModal);
+
+/* Load more */
+loadMoreBtn?.addEventListener("click", () => loadPosts(true));
+
+/* Retry on error */
+document.getElementById("btn-retry")?.addEventListener("click", () => {
+  errorState.style.display = "none";
+  lastDoc = null;
+  allPosts = [];
+  loadPosts();
+});
+
+/* View all playlists */
+document.getElementById("view-all-playlists-btn")?.addEventListener("click", () => {
+  document.getElementById("playlists-section")?.scrollIntoView({ behavior:"smooth" });
+});
+
+/* Newsletter */
+document.querySelector(".nl-btn")?.addEventListener("click", () => {
+  const input = document.querySelector(".nl-input");
+  if (!input?.value?.includes("@")) {
+    input?.focus();
+    return;
+  }
+  const btn = document.querySelector(".nl-btn");
+  if (btn) { btn.textContent = "✓ Subscribed!"; btn.disabled = true; }
+});
+
+/* ================================================================
+   INIT — run everything
+   ================================================================ */
 
 document.addEventListener("DOMContentLoaded", async () => {
+  initNav();
+  initNavFilters();
+  initHero();
+  initSearch();
+
+  /* Load posts first, THEN handle deep link (order matters!) */
   await loadPosts();
-  handleSharedLink(); // 🔥 THIS MAKES SHARE WORK
+  await handleSharedLink();
+
+  /* Load playlists in parallel-ish (non-blocking) */
+  loadPlaylists();
 });
 </script>
 </body>
