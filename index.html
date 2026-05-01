@@ -1057,7 +1057,7 @@ body::before {
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-/* ─────────── FIREBASE INIT ─────────── */
+/* ─────────── FIREBASE ─────────── */
 const firebaseConfig = {
   apiKey:"AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
   authDomain:"music-7a35b.firebaseapp.com",
@@ -1071,45 +1071,80 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 /* ─────────── STATE ─────────── */
-let allPosts = [];
-let lastDoc = null;
-let isLoading = false;
 const PAGE_SIZE = 12;
+let lastDoc = null, isLoading = false, activeFilter = "all", searchQuery = "", allPosts = [];
+let currentSharePost = null;
 
-/* ─────────── HELPERS ─────────── */
-const $ = (id) => document.getElementById(id);
+/* ─────────── DOM ─────────── */
+const postsGrid    = document.getElementById("posts-grid");
+const emptyState   = document.getElementById("empty-state");
+const errorState   = document.getElementById("error-state");
+const errorMsg     = document.getElementById("error-msg");
+const loadMoreBtn  = document.getElementById("load-more-btn");
+const loadMoreWrap = document.getElementById("load-more-wrap");
+const feedCount    = document.getElementById("feed-count");
+const statTracks   = document.getElementById("stat-tracks");
+const searchBar    = document.getElementById("search-input");
+const sharePanel   = document.getElementById("share-panel");
+const copyToast    = document.getElementById("copy-toast");
 
-/* ─────────── SHARE SYSTEM (SPOTIFY STYLE) ─────────── */
+document.getElementById("footer-year")?.textContent = new Date().getFullYear();
+
+/* ═══════════════════════════════════════════
+   SHARE SYSTEM (FIXED + DEEP LINK READY)
+   ═══════════════════════════════════════════ */
+
 function buildShareUrl(postId) {
-  return `${location.origin}${location.pathname}?post=${postId}`;
+  return window.location.origin + window.location.pathname + '?post=' + postId;
 }
 
-async function sharePost(post) {
-  const url = buildShareUrl(post.id);
-  const title = `${post.artist || ''} - ${post.title || ''}`;
+function showSharePanel(post, anchorEl) {
+  currentSharePost = post;
 
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: title,
-        text: post.caption || '',
-        url: url
-      });
-    } catch (e) {
-      copyLink(url);
+  const url   = buildShareUrl(post.id);
+  const title = `${post.artist || ''} – ${post.title || ''}`;
+
+  sharePanel.innerHTML = `
+    <button id="copyLink">Copy Link</button>
+    <button id="nativeShare">Share</button>
+  `;
+
+  sharePanel.classList.add("open");
+
+  /* COPY */
+  document.getElementById("copyLink").onclick = () => {
+    navigator.clipboard.writeText(url);
+    showCopyToast();
+    closeSharePanel();
+  };
+
+  /* NATIVE SHARE */
+  document.getElementById("nativeShare").onclick = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+      } catch(e){}
+    } else {
+      navigator.clipboard.writeText(url);
+      showCopyToast();
     }
-  } else {
-    copyLink(url);
-  }
+    closeSharePanel();
+  };
 }
 
-function copyLink(url) {
-  navigator.clipboard.writeText(url).then(() => {
-    alert("Link copied!");
-  });
+function closeSharePanel() {
+  sharePanel.classList.remove("open");
 }
 
-/* ─────────── LOAD POSTS ─────────── */
+function showCopyToast() {
+  copyToast?.classList.add("show");
+  setTimeout(() => copyToast?.classList.remove("show"), 2000);
+}
+
+/* ═══════════════════════════════════════════
+   LOAD POSTS
+   ═══════════════════════════════════════════ */
+
 async function loadPosts(append=false) {
   if (isLoading) return;
   isLoading = true;
@@ -1130,70 +1165,74 @@ async function loadPosts(append=false) {
 
     renderPosts(allPosts);
 
-  } catch (err) {
+    statTracks.textContent = allPosts.length + "+";
+    loadMoreWrap.style.display = snap.docs.length < PAGE_SIZE ? "none" : "flex";
+
+  } catch(err) {
     console.error(err);
+    errorState.style.display = "flex";
+    errorMsg.textContent = err.message;
   }
 
   isLoading = false;
 }
 
-/* ─────────── RENDER POSTS ─────────── */
-function renderPosts(posts) {
-  const grid = $("posts-grid");
-  if (!grid) return;
+/* ═══════════════════════════════════════════
+   RENDER POSTS (YOUR ORIGINAL STYLE KEPT)
+   ═══════════════════════════════════════════ */
 
-  grid.innerHTML = "";
+function renderPosts(posts) {
+  postsGrid.innerHTML = "";
 
   posts.forEach(post => {
-    const div = document.createElement("div");
-    div.className = "post-card";
+    const card = document.createElement("div");
+    card.className = "post-card";
 
-    const dateObj = post.createdAt?.toDate?.() || new Date();
-
-    div.innerHTML = `
+    card.innerHTML = `
       <h3>${post.title || "Untitled"}</h3>
-      <p>${post.artist || "Unknown"}</p>
-      <small>${dateObj.toDateString()}</small>
-
+      <p>${post.artist || "Unknown Artist"}</p>
       <button class="share-btn">Share</button>
     `;
 
-    div.onclick = () => openModal(post);
+    card.onclick = () => openModal(post);
 
-    div.querySelector(".share-btn").onclick = (e) => {
+    card.querySelector(".share-btn").onclick = (e) => {
       e.stopPropagation();
-      sharePost(post);
+      showSharePanel(post, e.currentTarget);
     };
 
-    grid.appendChild(div);
+    postsGrid.appendChild(card);
   });
 }
 
-/* ─────────── MODAL ─────────── */
-function openModal(post) {
-  const overlay = $("modal-overlay");
-  if (!overlay) return;
+/* ═══════════════════════════════════════════
+   MODAL (WITH SHARE URL UPDATE)
+   ═══════════════════════════════════════════ */
 
-  $("modal-title").textContent = post.title || "";
-  $("modal-caption").textContent = post.caption || "";
+function openModal(post) {
+  const overlay = document.getElementById("modal-overlay");
+
+  document.getElementById("modal-title").textContent = post.title || "";
+  document.getElementById("modal-caption").textContent = post.caption || "";
 
   overlay.classList.add("open");
 
-  /* Update URL (IMPORTANT) */
-  const url = buildShareUrl(post.id);
-  history.replaceState({}, '', url);
+  /* 🔥 THIS IS THE KEY */
+  const shareUrl = buildShareUrl(post.id);
+  window.history.replaceState({}, '', shareUrl);
 }
 
 function closeModal() {
-  $("modal-overlay")?.classList.remove("open");
+  document.getElementById("modal-overlay").classList.remove("open");
 
-  /* Clean URL */
-  history.replaceState({}, '', location.pathname);
+  /* Remove query */
+  window.history.replaceState({}, '', window.location.pathname);
 }
 
-$("modal-close")?.addEventListener("click", closeModal);
+/* ═══════════════════════════════════════════
+   DEEP LINK HANDLER (SPOTIFY STYLE)
+   ═══════════════════════════════════════════ */
 
-/* ─────────── DEEP LINK HANDLER (THIS IS THE MAGIC) ─────────── */
 async function handleSharedLink() {
   const params = new URLSearchParams(window.location.search);
   const postId = params.get("post");
@@ -1201,10 +1240,8 @@ async function handleSharedLink() {
   if (!postId) return;
 
   try {
-    /* Try find in already loaded posts first */
     let post = allPosts.find(p => p.id === postId);
 
-    /* If not found → fetch directly */
     if (!post) {
       const doc = await db.collection("posts").doc(postId).get();
       if (doc.exists) {
@@ -1214,22 +1251,28 @@ async function handleSharedLink() {
 
     if (post) {
       openModal(post);
-
-      /* Optional: scroll nicely */
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-  } catch (err) {
+  } catch(err) {
     console.error("Deep link error:", err);
   }
 }
 
-/* ─────────── INIT ─────────── */
+/* ═══════════════════════════════════════════
+   EVENTS
+   ═══════════════════════════════════════════ */
+
+loadMoreBtn?.addEventListener("click", () => loadPosts(true));
+document.getElementById("modal-close")?.addEventListener("click", closeModal);
+
+/* ═══════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════ */
+
 document.addEventListener("DOMContentLoaded", async () => {
   await loadPosts();
-  handleSharedLink(); // 🔥 IMPORTANT
+  handleSharedLink(); // 🔥 THIS MAKES SHARE WORK
 });
 </script>
-
 </body>
 </html>
