@@ -252,25 +252,6 @@ body::before {
 @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
 /* ================================================================
-   FLYER ADS
-   ================================================================ */
-.ad-strip { padding:32px 0; background:var(--bg-white); border-bottom:1px solid var(--border); overflow:hidden; }
-.ad-inner { max-width:1240px; margin:0 auto; padding:0 28px; }
-.ad-label { font-family:var(--ff-display); font-size:.65rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-subtle); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
-.ad-label::before, .ad-label::after { content:''; flex:1; height:1px; background:var(--border); }
-.flyers-track { display:flex; gap:16px; overflow:hidden; position:relative; }
-.flyers-scroll { display:flex; gap:16px; animation:flyer-scroll 32s linear infinite; width:max-content; }
-.flyers-scroll:hover { animation-play-state:paused; }
-@keyframes flyer-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-.flyer-card { width:200px; height:120px; border-radius:var(--radius-md); overflow:hidden; flex-shrink:0; position:relative; cursor:pointer; transition:transform .35s var(--spring), box-shadow .35s; border:1.5px solid var(--border); }
-.flyer-card:hover { transform:translateY(-6px) scale(1.03); box-shadow:var(--shadow-hover); }
-.flyer-card img { width:100%; height:100%; object-fit:cover; filter:brightness(.75) saturate(1.2); }
-.flyer-card-overlay { position:absolute; inset:0; background:linear-gradient(135deg, rgba(124,58,237,.7) 0%, rgba(0,0,0,.3) 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px; }
-.flyer-genre { font-family:var(--ff-display); font-size:.6rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.7); margin-bottom:4px; }
-.flyer-title { font-family:var(--ff-display); font-size:.9rem; font-weight:800; color:#fff; text-align:center; line-height:1.2; }
-.flyer-tag { position:absolute; top:8px; right:8px; padding:2px 7px; border-radius:20px; background:var(--purple); color:#fff; font-family:var(--ff-display); font-size:.55rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
-
-/* ================================================================
    STATS BAR
    ================================================================ */
 .stats-bar { background:var(--bg-white); border-bottom:1px solid var(--border); }
@@ -363,7 +344,6 @@ body::before {
 .card-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:20px; background:var(--purple-soft); color:var(--purple); font-family:var(--ff-display); font-size:.62rem; font-weight:600; border:1px solid var(--border); }
 .card-divider { height:1px; background:var(--border); margin:0 20px; }
 
-/* ── Card stores + share row ── */
 .card-stores { display:flex; align-items:center; gap:8px; padding:14px 20px 18px; flex-wrap:wrap; }
 .card-stream-btn {
   display:inline-flex; align-items:center; gap:6px;
@@ -375,7 +355,6 @@ body::before {
 }
 .card-stream-btn:hover { background:var(--purple-soft); border-color:var(--purple); transform:translateY(-2px); }
 
-/* Share button */
 .card-share-btn {
   display:inline-flex; align-items:center; gap:5px;
   padding:8px 14px; border-radius:20px;
@@ -390,22 +369,17 @@ body::before {
    SHARE PANEL
    ================================================================ */
 .share-panel {
-  position:fixed;
-  z-index:900;
+  position:fixed; z-index:900;
   background:var(--bg-white);
   border:1.5px solid var(--border-md);
   border-radius:var(--radius-lg);
   box-shadow:0 20px 60px rgba(0,0,0,.18), 0 4px 20px rgba(124,58,237,.12);
-  padding:10px;
-  min-width:220px;
-  display:none;
-  flex-direction:column;
-  gap:2px;
+  padding:10px; min-width:230px;
+  display:none; flex-direction:column; gap:2px;
   animation:panelPop .2s var(--spring);
 }
 .share-panel.open { display:flex; }
 @keyframes panelPop { from{opacity:0;transform:scale(.9) translateY(6px)} to{opacity:1;transform:scale(1) translateY(0)} }
-
 .share-panel-title {
   font-family:var(--ff-display); font-size:.65rem; font-weight:700;
   letter-spacing:.1em; text-transform:uppercase; color:var(--text-subtle);
@@ -418,6 +392,7 @@ body::before {
   color:var(--text); cursor:pointer;
   transition:background var(--t), color var(--t);
   border:none; background:none; width:100%; text-align:left;
+  text-decoration:none;
 }
 .share-option:hover { background:var(--bg-elevated); color:var(--purple); }
 .share-option-icon {
@@ -456,8 +431,6 @@ body::before {
 .modal-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 11px; border-radius:20px; background:var(--purple-soft); color:var(--purple); font-family:var(--ff-display); font-size:.68rem; font-weight:600; border:1px solid var(--border); }
 .modal-divider { height:1px; background:var(--border); margin:20px 0; }
 .modal-caption { font-size:.96rem; color:var(--text-muted); line-height:1.85; font-weight:400; margin-bottom:20px; }
-
-/* Modal share + stream row */
 .modal-action-row { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
 .modal-share-btn {
   display:inline-flex; align-items:center; gap:8px;
@@ -468,12 +441,10 @@ body::before {
   position:relative;
 }
 .modal-share-btn:hover { border-color:var(--purple); color:var(--purple); background:var(--purple-soft); }
-
 .modal-stores-label { font-family:var(--ff-display); font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text-subtle); margin-bottom:14px; }
 .modal-stores-grid { display:flex; gap:12px; flex-wrap:wrap; }
 .modal-store-btn { display:inline-flex; align-items:center; gap:10px; padding:11px 20px; border-radius:14px; border:1.5px solid var(--border-md); background:var(--bg-white); color:var(--text); font-family:var(--ff-display); font-size:.8rem; font-weight:700; transition:all .25s var(--spring); box-shadow:var(--shadow-xs); text-decoration:none; }
 .modal-store-btn:hover { transform:translateY(-3px); box-shadow:var(--shadow-hover); border-color:var(--border-strong); }
-.modal-store-btn img { width:22px;height:22px;object-fit:contain;border-radius:5px; }
 .modal-store-btn.ffm:hover { background:#f3f0ff; border-color:var(--purple); color:var(--purple); }
 
 /* ================================================================
@@ -486,57 +457,100 @@ body::before {
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
 /* ================================================================
-   PLAYLISTS SECTION (replaces Blog/Music Stories)
+   CURATED PLAYLISTS — Spotify-style
    ================================================================ */
-.playlists-strip { padding:48px 0; border-top:1px solid var(--border); background:var(--bg-white); }
+.playlists-strip {
+  padding:52px 0 60px;
+  border-top:1px solid var(--border);
+  background:var(--bg);
+}
 .playlists-inner { max-width:1240px; margin:0 auto; padding:0 28px; }
-.playlists-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:28px; }
 
-.playlist-card {
-  border-radius:var(--radius-lg); overflow:hidden;
-  border:1.5px solid var(--border); background:var(--bg-card);
-  box-shadow:var(--shadow-xs); transition:all var(--t) var(--ease);
-  cursor:pointer; display:flex; flex-direction:column;
+/* Scrollable row like Spotify */
+.playlists-scroll-row {
+  display:flex; gap:20px;
+  overflow-x:auto; padding-bottom:16px;
+  scrollbar-width:none; margin-top:28px;
 }
-.playlist-card:hover { box-shadow:var(--shadow-hover); border-color:var(--border-strong); transform:translateY(-4px); }
-.playlist-card-img { width:100%; aspect-ratio:1/1; overflow:hidden; position:relative; }
-.playlist-card-img img { width:100%;height:100%;object-fit:cover;filter:brightness(.8);transition:transform .6s var(--ease),filter .4s; }
-.playlist-card:hover .playlist-card-img img { transform:scale(1.06); filter:brightness(.65); }
-.playlist-img-overlay {
-  position:absolute; inset:0;
-  background:linear-gradient(to top, rgba(17,10,36,.8) 0%, transparent 50%);
-  display:flex; align-items:flex-end; padding:14px;
+.playlists-scroll-row::-webkit-scrollbar { display:none; }
+
+/* Individual Spotify-style card */
+.spl-card {
+  flex-shrink:0; width:190px;
+  background:var(--bg-white);
+  border-radius:var(--radius-md);
+  padding:14px 14px 16px;
+  cursor:pointer;
+  transition:background var(--t), transform var(--t), box-shadow var(--t);
+  border:1px solid transparent;
+  position:relative;
 }
-.playlist-listen-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:6px 14px; border-radius:40px;
-  background:rgba(124,58,237,.85); color:#fff;
-  font-family:var(--ff-display); font-size:.68rem; font-weight:700;
-  backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.2);
-  opacity:0; transform:translateY(8px);
-  transition:all .3s var(--spring);
+.spl-card:hover {
+  background:var(--bg-hover);
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-hover);
+  border-color:var(--border-md);
 }
-.playlist-card:hover .playlist-listen-badge { opacity:1; transform:translateY(0); }
-.playlist-card-body { padding:18px 20px 20px; flex:1; display:flex; flex-direction:column; gap:6px; }
-.playlist-cat { font-family:var(--ff-display); font-size:.62rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--purple); margin-bottom:2px; }
-.playlist-title { font-family:var(--ff-display); font-size:1.05rem; font-weight:800; letter-spacing:-.02em; color:var(--text); line-height:1.3; }
-.playlist-desc { font-size:.8rem; color:var(--text-muted); line-height:1.7; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; flex:1; }
-.playlist-meta-row { display:flex; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap; }
-.playlist-platform-dot {
-  width:22px; height:22px; border-radius:6px;
+
+/* Square art with play button overlay */
+.spl-art {
+  width:100%; aspect-ratio:1/1;
+  border-radius:var(--radius-sm);
+  overflow:hidden; position:relative;
+  margin-bottom:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);
+}
+.spl-art img {
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .5s var(--ease), filter .3s;
+}
+.spl-card:hover .spl-art img { transform:scale(1.06); filter:brightness(.85); }
+
+/* Green play button — Spotify style */
+.spl-play {
+  position:absolute; bottom:10px; right:10px;
+  width:44px; height:44px; border-radius:50%;
+  background:#1db954;
   display:flex; align-items:center; justify-content:center;
-  border:1px solid var(--border);
+  opacity:0; transform:translateY(8px);
+  transition:opacity .25s var(--spring), transform .25s var(--spring);
+  box-shadow:0 8px 24px rgba(29,185,84,.4);
 }
-.playlist-meta-count { font-size:.7rem; color:var(--text-subtle); font-family:var(--ff-display); font-weight:600; margin-left:auto; }
+.spl-card:hover .spl-play { opacity:1; transform:translateY(0); }
+.spl-play svg { margin-left:3px; }
 
-/* Playlist skeleton */
-.playlist-skel { border-radius:var(--radius-lg); overflow:hidden; border:1.5px solid var(--border); background:var(--bg-white); }
-.pskel-img { aspect-ratio:1/1; background:var(--bg-elevated); }
-.pskel-body { padding:18px; display:flex; flex-direction:column; gap:10px; }
-.pskel-line { height:10px; border-radius:5px; background:linear-gradient(90deg,var(--bg-elevated) 25%,#e8e5f5 50%,var(--bg-elevated) 75%); background-size:200% 100%; animation:shimmer 1.6s infinite; }
+/* Text */
+.spl-title {
+  font-family:var(--ff-display); font-size:.92rem; font-weight:800;
+  color:var(--text); letter-spacing:-.02em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  margin-bottom:5px;
+}
+.spl-desc {
+  font-size:.75rem; color:var(--text-muted); line-height:1.5;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.spl-meta {
+  display:flex; align-items:center; gap:6px; margin-top:8px; flex-wrap:wrap;
+}
+.spl-platform-dot {
+  width:18px; height:18px; border-radius:4px;
+  display:flex; align-items:center; justify-content:center;
+}
+.spl-track-count {
+  font-family:var(--ff-display); font-size:.62rem; font-weight:700;
+  color:var(--text-subtle); margin-left:auto;
+}
 
-.playlists-empty { grid-column:1/-1; text-align:center; padding:60px 24px; color:var(--text-subtle); font-size:.9rem; font-family:var(--ff-display); }
-.playlists-empty span { display:block; font-size:2rem; margin-bottom:10px; }
+/* Skeleton for playlists */
+.spl-skel {
+  flex-shrink:0; width:190px;
+  background:var(--bg-white); border-radius:var(--radius-md); padding:14px;
+}
+.spl-skel-img { width:100%; aspect-ratio:1/1; border-radius:var(--radius-sm); background:var(--bg-elevated); margin-bottom:14px; }
+.spl-skel-line { height:10px; border-radius:5px; background:linear-gradient(90deg,var(--bg-elevated) 25%,#e8e5f5 50%,var(--bg-elevated) 75%); background-size:200% 100%; animation:shimmer 1.6s infinite; margin-bottom:8px; }
+
+.playlists-empty { text-align:center; padding:60px 24px; color:var(--text-subtle); font-size:.9rem; font-family:var(--ff-display); }
 
 /* ================================================================
    PLAYLIST MODAL
@@ -558,14 +572,7 @@ body::before {
 .pm-divider { height:1px; background:var(--border); margin:20px 0; }
 .pm-links-label { font-family:var(--ff-display); font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text-subtle); margin-bottom:14px; }
 .pm-links-grid { display:flex; flex-direction:column; gap:10px; }
-.pm-link-btn {
-  display:flex; align-items:center; gap:12px;
-  padding:13px 18px; border-radius:14px;
-  border:1.5px solid var(--border-md); background:var(--bg-white);
-  color:var(--text); font-family:var(--ff-display); font-size:.85rem; font-weight:700;
-  transition:all .25s var(--spring); box-shadow:var(--shadow-xs);
-  text-decoration:none;
-}
+.pm-link-btn { display:flex; align-items:center; gap:12px; padding:13px 18px; border-radius:14px; border:1.5px solid var(--border-md); background:var(--bg-white); color:var(--text); font-family:var(--ff-display); font-size:.85rem; font-weight:700; transition:all .25s var(--spring); box-shadow:var(--shadow-xs); text-decoration:none; }
 .pm-link-btn:hover { transform:translateY(-2px); box-shadow:var(--shadow-hover); }
 .pm-link-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .pm-link-btn.spotify:hover { background:#f0fef4; border-color:#1db954; color:#1db954; }
@@ -619,13 +626,13 @@ body::before {
 .footer-col-link:hover { color:#fff; }
 .footer-bottom { border-top:1px solid rgba(255,255,255,.08); padding:20px 28px; max-width:1240px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 .footer-copy { font-size:.78rem; color:rgba(255,255,255,.35); }
-.footer-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; background:rgba(124,58,237,.2); border:1px solid rgba(124,58,237,.3); font-size:.68rem; color:rgba(255,255,255,.6); font-weight:500; }
+.footer-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; background:rgba(124,58,237,.2); border:1px solid rgba(124,58,237,.3); font-size:.68px; color:rgba(255,255,255,.6); font-weight:500; }
 .live-dot { width:6px;height:6px;border-radius:50%;background:var(--purple-lt);animation:pulse-dot 2s infinite; }
 
 .s-header { display:flex; align-items:baseline; justify-content:space-between; gap:16px; }
 .s-title { font-family:var(--ff-display); font-size:1.5rem; font-weight:800; letter-spacing:-.04em; color:var(--text); }
 .s-title span { color:var(--purple); }
-.s-link { font-family:var(--ff-display); font-size:.76rem; font-weight:700; letter-spacing:.04em; color:var(--purple); display:flex; align-items:center; gap:4px; white-space:nowrap; transition:gap .2s; }
+.s-link { font-family:var(--ff-display); font-size:.76rem; font-weight:700; letter-spacing:.04em; color:var(--purple); display:flex; align-items:center; gap:4px; white-space:nowrap; transition:gap .2s; background:none; border:none; cursor:pointer; }
 .s-link:hover { gap:8px; }
 
 /* ================================================================
@@ -646,7 +653,6 @@ body::before {
   .ed-sidebar { flex-direction:row; overflow-x:auto; padding-bottom:4px; }
   .ed-mini { min-width:240px; flex-shrink:0; }
   .trust-grid { grid-template-columns:repeat(2,1fr); }
-  .playlists-grid { grid-template-columns:repeat(2,1fr); }
   .footer-top { grid-template-columns:1fr 1fr; gap:32px; }
 }
 @media(max-width:768px){
@@ -666,7 +672,7 @@ body::before {
   .stat-num { font-size:1rem; }
   .editorial-inner { padding:0 16px; }
   .playlists-inner { padding:0 16px; }
-  .playlists-grid { grid-template-columns:1fr; gap:16px; }
+  .spl-card { width:155px; }
   .container { padding:0 16px; }
   .posts-grid { grid-template-columns:1fr 1fr; gap:16px; }
   .section-title { font-size:1.4rem; }
@@ -675,7 +681,6 @@ body::before {
   .footer-top { grid-template-columns:1fr; gap:28px; padding:0 16px 40px; }
   .footer-bottom { padding:16px; flex-direction:column; align-items:flex-start; gap:10px; }
   .trust-grid { grid-template-columns:repeat(2,1fr); gap:16px; }
-  .ad-inner { padding:0 16px; }
   .trust-inner { padding:0 16px; }
   .pm-body { padding:20px 20px 28px; }
   .pm-title { font-size:1.3rem; }
@@ -691,8 +696,6 @@ body::before {
   .card-title { font-size:1rem; }
   .editorial-inner { padding:0 12px; }
   .trust-val { font-size:1.3rem; }
-  .trust-grid { gap:12px; }
-  .playlists-grid { margin-top:20px; }
   .s-header { flex-direction:column; gap:6px; align-items:flex-start; }
   .feed-toolbar { gap:8px; }
   .search-wrap { max-width:100%; }
@@ -715,7 +718,6 @@ body::before {
       <span class="logo-text">Music<span class="dot">.</span></span>
       <span class="live-badge">Live</span>
     </a>
-
     <div class="nav-center" id="nav-center" role="tablist" aria-label="Genre filters">
       <button class="nav-link active" data-filter="all" role="tab" aria-selected="true">All</button>
       <button class="nav-link" data-filter="afrobeats" role="tab">Afrobeats</button>
@@ -730,7 +732,6 @@ body::before {
       <button class="nav-link" data-filter="rnb" role="tab">R&amp;B</button>
       <button class="nav-link" data-filter="bongo" role="tab">Bongo</button>
     </div>
-
     <div class="nav-right">
       <button class="nav-icon-btn" aria-label="Search" onclick="document.getElementById('search-input').focus()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -871,16 +872,6 @@ body::before {
   </div>
 </div>
 
-<!-- ══════════════════════ FLYER ADS -->
-<div class="ad-strip" role="region" aria-label="Featured promos">
-  <div class="ad-inner">
-    <div class="ad-label">Trending Now</div>
-    <div class="flyers-track">
-      <div class="flyers-scroll" id="flyers-scroll"></div>
-    </div>
-  </div>
-</div>
-
 <!-- ══════════════════════ TRUST BAR -->
 <div class="trust-bar" role="region" aria-label="Why trust 444Music">
   <div class="trust-inner">
@@ -915,20 +906,22 @@ body::before {
   </div>
 </div>
 
-<!-- ══════════════════════ PLAYLISTS (replaces Music Stories) -->
+<!-- ══════════════════════ CURATED PLAYLISTS — Spotify-style -->
 <div class="playlists-strip" role="region" aria-label="Curated playlists" id="playlists-section">
   <div class="playlists-inner">
     <div class="s-header">
       <h2 class="s-title">Curated <span>Playlists</span></h2>
-      <button class="s-link" id="view-all-playlists-btn" style="background:none;border:none;cursor:pointer;">
-        More playlists <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="9 18 15 12 9 6"/></svg>
+      <button class="s-link" id="view-all-playlists-btn">
+        See all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
-    <div class="playlists-grid" id="playlists-grid">
-      <!-- skeletons rendered by JS -->
-      <div class="playlist-skel"><div class="pskel-img"></div><div class="pskel-body"><div class="pskel-line" style="width:40%"></div><div class="pskel-line" style="width:75%"></div><div class="pskel-line" style="width:55%"></div></div></div>
-      <div class="playlist-skel"><div class="pskel-img"></div><div class="pskel-body"><div class="pskel-line" style="width:35%"></div><div class="pskel-line" style="width:80%"></div><div class="pskel-line" style="width:60%"></div></div></div>
-      <div class="playlist-skel"><div class="pskel-img"></div><div class="pskel-body"><div class="pskel-line" style="width:45%"></div><div class="pskel-line" style="width:70%"></div><div class="pskel-line" style="width:50%"></div></div></div>
+    <!-- Skeletons shown while loading -->
+    <div class="playlists-scroll-row" id="playlists-grid">
+      <div class="spl-skel"><div class="spl-skel-img"></div><div class="spl-skel-line" style="width:70%"></div><div class="spl-skel-line" style="width:50%"></div></div>
+      <div class="spl-skel"><div class="spl-skel-img"></div><div class="spl-skel-line" style="width:65%"></div><div class="spl-skel-line" style="width:45%"></div></div>
+      <div class="spl-skel"><div class="spl-skel-img"></div><div class="spl-skel-line" style="width:75%"></div><div class="spl-skel-line" style="width:55%"></div></div>
+      <div class="spl-skel"><div class="spl-skel-img"></div><div class="spl-skel-line" style="width:60%"></div><div class="spl-skel-line" style="width:40%"></div></div>
+      <div class="spl-skel"><div class="spl-skel-img"></div><div class="spl-skel-line" style="width:72%"></div><div class="spl-skel-line" style="width:52%"></div></div>
     </div>
   </div>
 </div>
@@ -1055,12 +1048,10 @@ body::before {
 </div>
 
 <!-- ══════════════════════ SHARE PANEL -->
-<div class="share-panel" id="share-panel" role="menu" aria-label="Share options">
-  <div class="share-panel-title">Share this post</div>
-</div>
+<div class="share-panel" id="share-panel" role="menu" aria-label="Share options"></div>
 
 <!-- ══════════════════════ COPY TOAST -->
-<div class="share-copied-toast" id="copy-toast">Link copied to clipboard!</div>
+<div class="share-copied-toast" id="copy-toast">Link copied!</div>
 
 <script>
 /* ─────────── FIREBASE ─────────── */
@@ -1078,7 +1069,7 @@ const db = firebase.firestore();
 /* ─────────── STATE ─────────── */
 const PAGE_SIZE = 12;
 let lastDoc = null, isLoading = false, activeFilter = "all", searchQuery = "", allPosts = [];
-let currentSharePost = null; // for share panel
+let currentSharePost = null;
 
 /* ─────────── DOM ─────────── */
 const postsGrid    = document.getElementById("posts-grid");
@@ -1091,29 +1082,6 @@ const feedCount    = document.getElementById("feed-count");
 const statTracks   = document.getElementById("stat-tracks");
 const searchBar    = document.getElementById("search-input");
 document.getElementById("footer-year").textContent = new Date().getFullYear();
-
-/* ─────────── FLYER ADS ─────────── */
-const flyerData = [
-  { genre:"Afrobeats", title:"Weekend Vibes", img:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=70&fit=crop", tag:"HOT" },
-  { genre:"Gospel", title:"Sunday Praise", img:"https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=70&fit=crop", tag:"NEW" },
-  { genre:"Highlife", title:"Old Gold", img:"https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&q=70&fit=crop", tag:"" },
-  { genre:"Hip-Hop", title:"Bars & Beats", img:"https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=70&fit=crop", tag:"HOT" },
-  { genre:"Dancehall", title:"Island Riddim", img:"https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&q=70&fit=crop", tag:"NEW" },
-  { genre:"Drill", title:"Street Code", img:"https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&q=70&fit=crop", tag:"" },
-  { genre:"R&B", title:"Smooth Grooves", img:"https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=70&fit=crop", tag:"" },
-  { genre:"Afropop", title:"Dance All Night", img:"https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&q=70&fit=crop", tag:"HOT" },
-];
-const flyerHTML = [...flyerData, ...flyerData].map(f => `
-  <div class="flyer-card" role="img" aria-label="${f.genre} - ${f.title}">
-    <img src="${f.img}" alt="${f.title}" loading="lazy">
-    <div class="flyer-card-overlay">
-      <div class="flyer-genre">${f.genre}</div>
-      <div class="flyer-title">${f.title}</div>
-    </div>
-    ${f.tag ? `<span class="flyer-tag">${f.tag}</span>` : ''}
-  </div>
-`).join('');
-document.getElementById("flyers-scroll").innerHTML = flyerHTML;
 
 /* ─────────── HERO SLIDER ─────────── */
 const heroSlides  = document.querySelectorAll(".hero-slide");
@@ -1130,12 +1098,12 @@ function goToSlide(idx) {
 }
 heroDots.forEach(dot => { dot.addEventListener("click", () => { clearInterval(heroTimer); goToSlide(parseInt(dot.dataset.index)); startHeroTimer(); }); });
 function startHeroTimer() {
-  heroTimer = setInterval(() => { heroProgress += 1; progressBar.style.width = heroProgress + "%"; if (heroProgress >= 100) { goToSlide(heroIdx + 1); } }, 50);
+  heroTimer = setInterval(() => { heroProgress += 1; progressBar.style.width = heroProgress + "%"; if (heroProgress >= 100) goToSlide(heroIdx + 1); }, 50);
 }
 startHeroTimer();
 
 /* ─────────── NAVBAR ─────────── */
-window.addEventListener("scroll", () => { document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 10); }, { passive: true });
+window.addEventListener("scroll", () => { document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 10); }, { passive:true });
 document.getElementById("mobile-menu-btn").addEventListener("click", function() {
   this.classList.toggle("open");
   const drawer = document.getElementById("nav-mobile-drawer");
@@ -1143,100 +1111,127 @@ document.getElementById("mobile-menu-btn").addEventListener("click", function() 
   this.setAttribute("aria-expanded", drawer.classList.contains("open").toString());
 });
 
-/* ─────────── SHARE FUNCTIONALITY ─────────── */
+/* ═══════════════════════════════════════════
+   SHARE FUNCTIONALITY — REAL & WORKING
+   ═══════════════════════════════════════════ */
 const sharePanel = document.getElementById("share-panel");
 const copyToast  = document.getElementById("copy-toast");
 
 function buildShareUrl(postId) {
-  const base = window.location.origin + window.location.pathname;
-  return base + '?post=' + postId;
+  return window.location.origin + window.location.pathname + '?post=' + postId;
 }
 
 function showSharePanel(post, anchorEl) {
   currentSharePost = post;
-  const url = buildShareUrl(post.id);
-  const title = encodeURIComponent((post.artist || '') + ' – ' + (post.title || ''));
-  const text  = encodeURIComponent((post.caption || '').slice(0, 100));
+  const url          = buildShareUrl(post.id);
+  const title        = (post.artist || '') + ' – ' + (post.title || '');
+  const encodedUrl   = encodeURIComponent(url);
+  const encodedTitle = encodeURIComponent(title);
+  const encodedText  = encodeURIComponent((post.caption || '').slice(0, 100));
 
   sharePanel.innerHTML = `
     <div class="share-panel-title">Share this post</div>
-    <button class="share-option" data-action="copy">
+
+    <button class="share-option" id="sp-native">
       <div class="share-option-icon" style="background:#f3f0ff">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      </div>
-      Copy Link
+        <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" width="14" height="14"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </div>Share via…
     </button>
-    <a class="share-option" href="https://wa.me/?text=${title}%20${encodeURIComponent(url)}" target="_blank" rel="noopener">
+
+    <button class="share-option" id="sp-copy">
+      <div class="share-option-icon" style="background:#f3f0ff">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </div>Copy Link
+    </button>
+
+    <a class="share-option" href="https://wa.me/?text=${encodedTitle}%20${encodedUrl}" target="_blank" rel="noopener noreferrer">
       <div class="share-option-icon" style="background:#e8faf0">
         <svg viewBox="0 0 24 24" fill="#25D366" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-      </div>
-      WhatsApp
+      </div>WhatsApp
     </a>
-    <a class="share-option" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" rel="noopener">
+
+    <a class="share-option" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener noreferrer">
       <div class="share-option-icon" style="background:#e8f0fe">
         <svg viewBox="0 0 24 24" fill="#1877F2" width="16" height="16"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      </div>
-      Facebook
+      </div>Facebook
     </a>
-    <a class="share-option" href="https://twitter.com/intent/tweet?text=${title}&url=${encodeURIComponent(url)}" target="_blank" rel="noopener">
+
+    <a class="share-option" href="https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer">
       <div class="share-option-icon" style="background:#f0f0f0">
         <svg viewBox="0 0 24 24" fill="#000" width="14" height="14"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      </div>
-      Twitter / X
+      </div>Twitter / X
     </a>
-    <a class="share-option" href="https://t.me/share/url?url=${encodeURIComponent(url)}&text=${title}" target="_blank" rel="noopener">
+
+    <a class="share-option" href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer">
       <div class="share-option-icon" style="background:#e8f4fd">
         <svg viewBox="0 0 24 24" fill="#0088cc" width="16" height="16"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-      </div>
-      Telegram
+      </div>Telegram
     </a>
-    <a class="share-option" href="https://www.instagram.com/" target="_blank" rel="noopener">
-      <div class="share-option-icon" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);border-radius:8px;display:flex;align-items:center;justify-content:center;">
-        <svg viewBox="0 0 24 24" fill="#fff" width="13" height="13"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="#fff" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="#fff" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="#fff" stroke-width="2"/></svg>
-      </div>
-      Instagram (copy link)
-    </a>
-    <a class="share-option" href="https://www.tiktok.com/" target="_blank" rel="noopener">
-      <div class="share-option-icon" style="background:#010101;border-radius:8px;">
-        <svg viewBox="0 0 24 24" fill="#fff" width="13" height="13"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.16 8.16 0 0 0 4.77 1.52V7.14a4.85 4.85 0 0 1-1-.45z"/></svg>
-      </div>
-      TikTok (copy link)
+
+    <a class="share-option" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" id="sp-tiktok">
+      <div class="share-option-icon" style="background:#010101;border-radius:8px">
+        <svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.16 8.16 0 0 0 4.77 1.52V7.14a4.85 4.85 0 0 1-1-.45z"/></svg>
+      </div>TikTok (copy link)
     </a>
   `;
 
-  // Position share panel near anchor
-  const rect = anchorEl.getBoundingClientRect();
-  const panelW = 230;
-  let left = rect.left;
+  /* Position near the button */
+  const rect    = anchorEl.getBoundingClientRect();
+  const panelW  = 236;
+  let left = rect.left + window.scrollX;
   let top  = rect.bottom + window.scrollY + 8;
   if (left + panelW > window.innerWidth - 16) left = window.innerWidth - panelW - 16;
+  if (left < 8) left = 8;
   sharePanel.style.left = left + 'px';
   sharePanel.style.top  = top + 'px';
   sharePanel.classList.add("open");
 
-  // Copy link action
-  sharePanel.querySelector('[data-action="copy"]')?.addEventListener("click", () => {
+  /* ── Native share sheet (mobile) ── */
+  sharePanel.querySelector('#sp-native').addEventListener("click", async () => {
+    closeSharePanel();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text: (post.caption || '').slice(0,120), url });
+      } catch(e) {
+        if (e.name !== 'AbortError') { copyToClipboard(url); }
+      }
+    } else {
+      /* Desktop fallback: just copy */
+      copyToClipboard(url);
+    }
+  });
+
+  /* ── Copy link ── */
+  sharePanel.querySelector('#sp-copy').addEventListener("click", () => {
     copyToClipboard(url);
     closeSharePanel();
   });
 
-  // Instagram & TikTok: copy link first
-  sharePanel.querySelectorAll('a[href*="instagram"], a[href*="tiktok"]').forEach(el => {
-    el.addEventListener("click", () => { copyToClipboard(url); });
+  /* ── TikTok: copy link then navigate ── */
+  sharePanel.querySelector('#sp-tiktok').addEventListener("click", () => {
+    copyToClipboard(url);
   });
 }
 
 function closeSharePanel() { sharePanel.classList.remove("open"); }
 
 function copyToClipboard(text) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(showCopyToast);
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(showCopyToast).catch(() => fallbackCopy(text));
   } else {
-    const ta = document.createElement("textarea");
-    ta.value = text; document.body.appendChild(ta); ta.select();
-    document.execCommand("copy"); document.body.removeChild(ta);
-    showCopyToast();
+    fallbackCopy(text);
   }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  document.execCommand("copy");
+  document.body.removeChild(ta);
+  showCopyToast();
 }
 
 function showCopyToast() {
@@ -1244,17 +1239,206 @@ function showCopyToast() {
   setTimeout(() => copyToast.classList.remove("show"), 2500);
 }
 
+/* Close panel when clicking outside */
 document.addEventListener("click", (e) => {
-  if (!sharePanel.contains(e.target) && !e.target.closest(".card-share-btn") && !e.target.closest(".modal-share-btn")) {
+  if (!sharePanel.contains(e.target) &&
+      !e.target.closest(".card-share-btn") &&
+      !e.target.closest(".modal-share-btn")) {
     closeSharePanel();
   }
 });
+
+/* ═══════════════════════════════════════════
+   CURATED PLAYLISTS — Spotify-style static cards
+   + Firebase playlists merged
+   ═══════════════════════════════════════════ */
+
+/* Static fallback playlists shown when Firebase has none */
+const STATIC_PLAYLISTS = [
+  {
+    id:'s1', title:'Afrobeats Heat 🔥', genre:'Afrobeats',
+    description:'The hottest Afrobeats bangers straight from the streets of Accra and Lagos.',
+    coverImage:'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80&fit=crop',
+    trackCount:'28 tracks', links:{}
+  },
+  {
+    id:'s2', title:'Sunday Gospel', genre:'Gospel',
+    description:'Spirit-filled praise and worship to lift your soul any day of the week.',
+    coverImage:'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=80&fit=crop',
+    trackCount:'34 tracks', links:{}
+  },
+  {
+    id:'s3', title:'Highlife Classics', genre:'Highlife',
+    description:'Timeless Ghanaian Highlife from the legends who built the sound.',
+    coverImage:'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&q=80&fit=crop',
+    trackCount:'45 tracks', links:{}
+  },
+  {
+    id:'s4', title:'Drill Season', genre:'Drill',
+    description:'Raw, uncut Afro-Drill from the emerging voices reshaping the scene.',
+    coverImage:'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&q=80&fit=crop',
+    trackCount:'19 tracks', links:{}
+  },
+  {
+    id:'s5', title:'Amapiano Sunsets', genre:'Amapiano',
+    description:'Silky piano-driven grooves perfect for those golden-hour vibes.',
+    coverImage:'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&q=80&fit=crop',
+    trackCount:'22 tracks', links:{}
+  },
+  {
+    id:'s6', title:'R&B Feels', genre:'R&B',
+    description:'Smooth African R&B – love, heartbreak, and everything in between.',
+    coverImage:'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=80&fit=crop',
+    trackCount:'31 tracks', links:{}
+  },
+  {
+    id:'s7', title:'Hip-Hop Cypher', genre:'Hip-Hop',
+    description:'Hard-hitting bars and trap beats from Ghana\'s finest MCs.',
+    coverImage:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80&fit=crop',
+    trackCount:'17 tracks', links:{}
+  },
+  {
+    id:'s8', title:'Dancehall Party', genre:'Dancehall',
+    description:'Riddims and vibes to keep the dance floor moving all night long.',
+    coverImage:'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&q=80&fit=crop',
+    trackCount:'26 tracks', links:{}
+  },
+  {
+    id:'s9', title:'Afropop Waves', genre:'Afropop',
+    description:'Chart-topping Afropop anthems crossing borders and breaking records.',
+    coverImage:'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&q=80&fit=crop',
+    trackCount:'38 tracks', links:{}
+  },
+  {
+    id:'s10', title:'Bongo Flavour', genre:'Bongo',
+    description:'East African Bongo Flava with that unmistakable coastal swing.',
+    coverImage:'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&q=80&fit=crop&crop=center',
+    trackCount:'21 tracks', links:{}
+  },
+];
+
+let allPlaylists = [];
+loadPlaylists();
+
+async function loadPlaylists() {
+  try {
+    const snap = await db.collection("playlists").orderBy("createdAt","desc").get();
+    const dbPlaylists = [];
+    snap.forEach(doc => dbPlaylists.push({ id: doc.id, ...doc.data() }));
+    /* Merge: show Firebase ones first, then fill remainder with static */
+    allPlaylists = dbPlaylists.length > 0
+      ? [...dbPlaylists, ...STATIC_PLAYLISTS.slice(0, Math.max(0, 10 - dbPlaylists.length))]
+      : STATIC_PLAYLISTS;
+    renderPlaylists(allPlaylists);
+  } catch(err) {
+    allPlaylists = STATIC_PLAYLISTS;
+    renderPlaylists(STATIC_PLAYLISTS);
+  }
+}
+
+function renderPlaylists(playlists) {
+  const grid = document.getElementById("playlists-grid");
+  if (!playlists.length) {
+    grid.innerHTML = '<div class="playlists-empty">No playlists yet — check back soon!</div>';
+    return;
+  }
+
+  const linkDefs = [
+    { key:'spotify',   bg:'#1db954', icon:`<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/>` },
+    { key:'audiomack', bg:'#f5a623', icon:`<path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm-.5 5l5 4-5 4V8z"/>` },
+    { key:'apple',     bg:'#fc3c44', icon:`<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.22 1.3-2.2 3.87.04 3.06 2.68 4.08 2.71 4.1-.03.07-.42 1.44-1.38 2.61z"/>` },
+    { key:'youtube',   bg:'#ff0000', icon:`<path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>` },
+    { key:'boomplay',  bg:'#ff6b35', icon:`<circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="2"/><polygon points="10 8 16 12 10 16 10 8" fill="#fff"/>` },
+  ];
+
+  grid.innerHTML = playlists.map(pl => {
+    const img = pl.coverImage
+      ? (pl.coverImage.startsWith("http") || pl.coverImage.startsWith("data:") ? pl.coverImage : "data:image/jpeg;base64," + pl.coverImage)
+      : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80&fit=crop";
+    const links = pl.links || {};
+    const activePlatforms = linkDefs.filter(ld => links[ld.key]);
+    const trackCount = pl.trackCount || (activePlatforms.length > 0 ? activePlatforms.length + ' platforms' : 'Playlist');
+
+    return `
+    <div class="spl-card" tabindex="0" role="button" aria-label="Open playlist: ${pl.title || 'Playlist'}" data-playlist-id="${pl.id}">
+      <div class="spl-art">
+        <img src="${img}" alt="${pl.title || 'Playlist'}" loading="lazy">
+        <div class="spl-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="#fff" width="18" height="18"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+      <div class="spl-title">${pl.title || 'Untitled Playlist'}</div>
+      <div class="spl-desc">${pl.description || 'A curated playlist by 444Music.'}</div>
+      <div class="spl-meta">
+        ${activePlatforms.slice(0,3).map(ld => `
+          <div class="spl-platform-dot" style="background:${ld.bg}20">
+            <svg viewBox="0 0 24 24" fill="${ld.bg}" width="11" height="11">${ld.icon}</svg>
+          </div>`).join('')}
+        <span class="spl-track-count">${trackCount}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll(".spl-card").forEach(card => {
+    const pl = allPlaylists.find(p => p.id === card.dataset.playlistId);
+    card.addEventListener("click", () => { if (pl) openPlaylistModal(pl); });
+    card.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") card.click(); });
+  });
+}
+
+document.getElementById("view-all-playlists-btn").addEventListener("click", () => {
+  document.getElementById("playlists-section").scrollIntoView({ behavior:"smooth" });
+});
+
+function openPlaylistModal(pl) {
+  const img = pl.coverImage
+    ? (pl.coverImage.startsWith("http") || pl.coverImage.startsWith("data:") ? pl.coverImage : "data:image/jpeg;base64," + pl.coverImage)
+    : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop";
+  document.getElementById("pm-img-el").src = img;
+  document.getElementById("pm-img-el").alt = pl.title || "Playlist";
+  document.getElementById("pm-badge").textContent = pl.genre || "Playlist";
+  document.getElementById("pm-genre").textContent = (pl.genre || "Curated Playlist").toUpperCase();
+  document.getElementById("pm-title").textContent = pl.title || "Untitled Playlist";
+  document.getElementById("pm-desc").textContent = pl.description || "A curated playlist by 444Music editors.";
+
+  const links = pl.links || {};
+  const linkDefs = [
+    { key:"spotify",   label:"Spotify",     cls:"spotify",   bg:"#1db954", icon:`<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/>` },
+    { key:"audiomack", label:"Audiomack",   cls:"audiomack", bg:"#f5a623", icon:`<path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm-.5 5l5 4-5 4V8z"/>` },
+    { key:"apple",     label:"Apple Music", cls:"apple",     bg:"#fc3c44", icon:`<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.22 1.3-2.2 3.87.04 3.06 2.68 4.08 2.71 4.1-.03.07-.42 1.44-1.38 2.61z"/>` },
+    { key:"boomplay",  label:"Boomplay",    cls:"boomplay",  bg:"#ff6b35", icon:`<circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="2"/><polygon points="10 8 16 12 10 16 10 8" fill="#fff"/>` },
+    { key:"youtube",   label:"YouTube",     cls:"youtube",   bg:"#ff0000", icon:`<path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>` },
+  ];
+
+  const available = linkDefs.filter(ld => links[ld.key]);
+  const linksGrid = document.getElementById("pm-links-grid");
+  linksGrid.innerHTML = available.length === 0
+    ? '<span style="font-size:.85rem;color:var(--text-subtle)">No streaming links added yet.</span>'
+    : available.map(ld => `
+      <a class="pm-link-btn ${ld.cls}" href="${links[ld.key]}" target="_blank" rel="noopener">
+        <div class="pm-link-icon" style="background:${ld.bg}">
+          <svg viewBox="0 0 24 24" fill="#fff" width="18" height="18">${ld.icon}</svg>
+        </div>
+        Listen on ${ld.label}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="margin-left:auto"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>`).join('');
+
+  document.getElementById("playlist-modal-overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+  document.getElementById("playlist-modal-card").focus();
+}
+
+function closePlaylistModal() {
+  document.getElementById("playlist-modal-overlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+document.getElementById("pm-close").addEventListener("click", closePlaylistModal);
+document.getElementById("playlist-modal-overlay").addEventListener("click", e => { if(e.target === e.currentTarget) closePlaylistModal(); });
 
 /* ─────────── LOAD POSTS ─────────── */
 showSkeletons(6);
 loadPosts();
 
-// Check URL for ?post=ID (deep link)
 window.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const postId = params.get("post");
@@ -1304,9 +1488,8 @@ function populateEditorial(posts) {
   featured.onkeydown = e => { if (e.key === "Enter") openModal(fp); };
   sidebar.innerHTML = rest.slice(0,3).map(p => {
     const img = p.image ? (p.image.startsWith("http") || p.image.startsWith("data:") ? p.image : "data:image/jpeg;base64,"+p.image) : "";
-    return `
-    <div class="ed-mini" tabindex="0" role="button" aria-label="Play ${p.title}" data-id="${p.id}">
-      <div class="ed-mini-img">${img ? `<img src="${img}" alt="${p.title || ''}">` : '<div style="width:100%;height:100%;background:var(--bg-elevated)"></div>'}</div>
+    return `<div class="ed-mini" tabindex="0" role="button" aria-label="Play ${p.title}" data-id="${p.id}">
+      <div class="ed-mini-img">${img ? `<img src="${img}" alt="${p.title||''}">` : '<div style="width:100%;height:100%;background:var(--bg-elevated)"></div>'}</div>
       <div>
         <div class="ed-mini-genre">${p.genre || "Music"}</div>
         <div class="ed-mini-title">${p.title || "Untitled"}</div>
@@ -1382,14 +1565,13 @@ function renderPosts(posts) {
               Stream Now
             </a>`
           : '<span style="font-size:.72rem;color:var(--text-subtle);font-family:var(--ff-display)">No link yet</span>'}
-        <button class="card-share-btn" data-post-id="${post.id}" onclick="event.stopPropagation()" aria-label="Share this post">
+        <button class="card-share-btn" onclick="event.stopPropagation()" aria-label="Share this post">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           Share
         </button>
       </div>
     `;
 
-    // Share button
     card.querySelector(".card-share-btn").addEventListener("click", (e) => {
       e.stopPropagation();
       const alreadyOpen = sharePanel.classList.contains("open");
@@ -1406,7 +1588,7 @@ function renderPosts(posts) {
     requestAnimationFrame(() => {
       const obs = new IntersectionObserver(entries => {
         entries.forEach(en => { if(en.isIntersecting){ card.classList.add("visible"); obs.disconnect(); } });
-      }, { threshold: 0.1 });
+      }, { threshold:0.1 });
       obs.observe(card);
     });
   });
@@ -1439,7 +1621,6 @@ function openModal(post) {
     <span class="modal-chip">2 min read</span>
   `;
 
-  // Modal share button
   const modalShareBtn = document.getElementById("modal-share-btn");
   modalShareBtn.onclick = (e) => {
     e.stopPropagation();
@@ -1458,7 +1639,6 @@ function openModal(post) {
       </a>`
     : '<span style="font-size:.85rem;color:var(--text-subtle)">No streaming link available yet.</span>';
 
-  // Update URL without page reload
   const shareUrl = buildShareUrl(post.id);
   window.history.replaceState({}, '', shareUrl);
 
@@ -1476,134 +1656,6 @@ function closeModal() {
 document.getElementById("modal-close").addEventListener("click", closeModal);
 document.getElementById("modal-overlay").addEventListener("click", e => { if(e.target === e.currentTarget) closeModal(); });
 document.addEventListener("keydown", e => { if(e.key==="Escape") { closeModal(); closePlaylistModal(); closeSharePanel(); } });
-
-/* ─────────── PLAYLISTS ─────────── */
-let allPlaylists = [];
-loadPlaylists();
-
-async function loadPlaylists(limit = 6) {
-  try {
-    const snap = await db.collection("playlists").orderBy("createdAt","desc").limit(limit).get();
-    allPlaylists = [];
-    snap.forEach(doc => allPlaylists.push({ id: doc.id, ...doc.data() }));
-    renderPlaylists(allPlaylists.slice(0, 3));
-  } catch (err) {
-    document.getElementById("playlists-grid").innerHTML = `<div class="playlists-empty"><span>🎵</span>No playlists yet — check back soon!</div>`;
-  }
-}
-
-function renderPlaylists(playlists) {
-  const grid = document.getElementById("playlists-grid");
-  if (!playlists.length) {
-    grid.innerHTML = `<div class="playlists-empty"><span>🎵</span>No playlists yet — check back soon!</div>`;
-    return;
-  }
-  grid.innerHTML = playlists.map(pl => {
-    const img = pl.coverImage
-      ? (pl.coverImage.startsWith("http") || pl.coverImage.startsWith("data:") ? pl.coverImage : "data:image/jpeg;base64,"+pl.coverImage)
-      : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=75&fit=crop";
-    const links = pl.links || {};
-    const hasSpotify    = !!links.spotify;
-    const hasAudiomack  = !!links.audiomack;
-    const hasApple      = !!links.apple;
-    const hasBoomplay   = !!links.boomplay;
-    const hasYoutube    = !!links.youtube;
-    const linkCount = [hasSpotify,hasAudiomack,hasApple,hasBoomplay,hasYoutube].filter(Boolean).length;
-
-    return `
-    <div class="playlist-card" tabindex="0" role="button" aria-label="Open playlist: ${pl.title || 'Playlist'}" data-playlist-id="${pl.id}">
-      <div class="playlist-card-img">
-        <img src="${img}" alt="${pl.title || 'Playlist'}" loading="lazy">
-        <div class="playlist-img-overlay">
-          <span class="playlist-listen-badge">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M8 5v14l11-7z"/></svg>
-            Listen Now
-          </span>
-        </div>
-      </div>
-      <div class="playlist-card-body">
-        <div class="playlist-cat">${pl.genre || "Playlist"}</div>
-        <div class="playlist-title">${pl.title || "Untitled Playlist"}</div>
-        <div class="playlist-desc">${pl.description || "A curated playlist by 444Music."}</div>
-        <div class="playlist-meta-row">
-          ${hasSpotify ? `<div class="playlist-platform-dot" style="background:#f0fef4"><svg viewBox="0 0 24 24" fill="#1db954" width="13" height="13"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/></svg></div>` : ""}
-          ${hasAudiomack ? `<div class="playlist-platform-dot" style="background:#fffbf0"><svg viewBox="0 0 24 24" fill="#f5a623" width="13" height="13"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm-.5 5l5 4-5 4V8z"/></svg></div>` : ""}
-          ${hasApple ? `<div class="playlist-platform-dot" style="background:#fff1f2"><svg viewBox="0 0 24 24" fill="#fc3c44" width="13" height="13"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.22 1.3-2.2 3.87.04 3.06 2.68 4.08 2.71 4.1-.03.07-.42 1.44-1.38 2.61z"/></svg></div>` : ""}
-          ${hasBoomplay ? `<div class="playlist-platform-dot" style="background:#fff4f0"><svg viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></div>` : ""}
-          ${hasYoutube ? `<div class="playlist-platform-dot" style="background:#fff0f0"><svg viewBox="0 0 24 24" fill="#ff0000" width="12" height="12"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg></div>` : ""}
-          <span class="playlist-meta-count">${linkCount} platform${linkCount !== 1 ? 's' : ''}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  grid.querySelectorAll(".playlist-card").forEach(card => {
-    card.addEventListener("click", () => {
-      const pl = allPlaylists.find(p => p.id === card.dataset.playlistId);
-      if (pl) openPlaylistModal(pl);
-    });
-    card.addEventListener("keydown", e => { if(e.key === "Enter") card.click(); });
-  });
-}
-
-/* View all playlists */
-document.getElementById("view-all-playlists-btn").addEventListener("click", async () => {
-  try {
-    const snap = await db.collection("playlists").orderBy("createdAt","desc").get();
-    const all = [];
-    snap.forEach(doc => all.push({ id: doc.id, ...doc.data() }));
-    allPlaylists = all;
-    renderPlaylists(all);
-    document.getElementById("playlists-section").scrollIntoView({ behavior: "smooth" });
-  } catch(e) {}
-});
-
-function openPlaylistModal(pl) {
-  const img = pl.coverImage
-    ? (pl.coverImage.startsWith("http") || pl.coverImage.startsWith("data:") ? pl.coverImage : "data:image/jpeg;base64,"+pl.coverImage)
-    : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop";
-  document.getElementById("pm-img-el").src = img;
-  document.getElementById("pm-img-el").alt = pl.title || "Playlist";
-  document.getElementById("pm-badge").textContent = pl.genre || "Playlist";
-  document.getElementById("pm-genre").textContent = (pl.genre || "Curated Playlist").toUpperCase();
-  document.getElementById("pm-title").textContent = pl.title || "Untitled Playlist";
-  document.getElementById("pm-desc").textContent = pl.description || "A curated playlist by 444Music editors.";
-
-  const links = pl.links || {};
-  const linkDefs = [
-    { key:"spotify",   label:"Spotify",    cls:"spotify",   bg:"#1db954", iconColor:"#fff",    icon:`<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/>` },
-    { key:"audiomack", label:"Audiomack",  cls:"audiomack", bg:"#f5a623", iconColor:"#fff",    icon:`<path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm-.5 5l5 4-5 4V8z"/>` },
-    { key:"apple",     label:"Apple Music",cls:"apple",     bg:"#fc3c44", iconColor:"#fff",    icon:`<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.22 1.3-2.2 3.87.04 3.06 2.68 4.08 2.71 4.1-.03.07-.42 1.44-1.38 2.61z"/>` },
-    { key:"boomplay",  label:"Boomplay",   cls:"boomplay",  bg:"#ff6b35", iconColor:"#fff",    icon:`<circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="2"/><polygon points="10 8 16 12 10 16 10 8" fill="#fff"/>` },
-    { key:"youtube",   label:"YouTube Music",cls:"youtube", bg:"#ff0000", iconColor:"#fff",    icon:`<path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>` },
-  ];
-
-  const linksGrid = document.getElementById("pm-links-grid");
-  const available = linkDefs.filter(ld => links[ld.key]);
-  if (available.length === 0) {
-    linksGrid.innerHTML = '<span style="font-size:.85rem;color:var(--text-subtle)">No streaming links yet.</span>';
-  } else {
-    linksGrid.innerHTML = available.map(ld => `
-      <a class="pm-link-btn ${ld.cls}" href="${links[ld.key]}" target="_blank" rel="noopener">
-        <div class="pm-link-icon" style="background:${ld.bg}">
-          <svg viewBox="0 0 24 24" fill="${ld.iconColor}" width="18" height="18">${ld.icon}</svg>
-        </div>
-        Listen on ${ld.label}
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="margin-left:auto"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      </a>`).join('');
-  }
-
-  document.getElementById("playlist-modal-overlay").classList.add("open");
-  document.body.style.overflow = "hidden";
-  document.getElementById("playlist-modal-card").focus();
-}
-
-function closePlaylistModal() {
-  document.getElementById("playlist-modal-overlay").classList.remove("open");
-  document.body.style.overflow = "";
-}
-document.getElementById("pm-close").addEventListener("click", closePlaylistModal);
-document.getElementById("playlist-modal-overlay").addEventListener("click", e => { if(e.target === e.currentTarget) closePlaylistModal(); });
 
 /* ─────────── SEARCH ─────────── */
 searchBar.addEventListener("input", e => { searchQuery = e.target.value.toLowerCase().trim(); applyFilters(); });
@@ -1626,7 +1678,15 @@ document.getElementById("btn-retry")?.addEventListener("click", () => loadPosts(
 function showEmpty() { emptyState.style.display = "flex"; }
 function showError(msg) { errorState.style.display = "flex"; if(errorMsg) errorMsg.textContent = msg; }
 function hideStates() { emptyState.style.display = "none"; errorState.style.display = "none"; }
-function showSkeletons(n) { postsGrid.innerHTML = ""; for(let i=0;i<n;i++){ const d=document.createElement("div"); d.className="skeleton-card"; d.innerHTML=`<div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:40%"></div><div class="skel-line" style="width:80%"></div><div class="skel-line" style="width:65%"></div><div class="skel-line" style="width:50%"></div></div>`; postsGrid.appendChild(d); } }
+function showSkeletons(n) {
+  postsGrid.innerHTML = "";
+  for(let i=0;i<n;i++){
+    const d=document.createElement("div");
+    d.className="skeleton-card";
+    d.innerHTML=`<div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:40%"></div><div class="skel-line" style="width:80%"></div><div class="skel-line" style="width:65%"></div><div class="skel-line" style="width:50%"></div></div>`;
+    postsGrid.appendChild(d);
+  }
+}
 function clearSkeletons() { document.querySelectorAll(".skeleton-card").forEach(e => e.remove()); }
 </script>
 </body>
