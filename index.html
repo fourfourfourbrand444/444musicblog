@@ -1052,9 +1052,12 @@ body::before {
 
 <!-- ══════════════════════ COPY TOAST -->
 <div class="share-copied-toast" id="copy-toast">Link copied!</div>
+<!-- Firebase v8 (COMPAT - works with your code) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-/* ─────────── FIREBASE ─────────── */
+/* ─────────── FIREBASE SAFE INIT ─────────── */
 const firebaseConfig = {
   apiKey:"AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
   authDomain:"music-7a35b.firebaseapp.com",
@@ -1063,7 +1066,10 @@ const firebaseConfig = {
   messagingSenderId:"26882716946",
   appId:"1:26882716946:web:5cc1c9e980bc6597442fcb"
 };
-firebase.initializeApp(firebaseConfig);
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.firestore();
 
 /* ─────────── STATE ─────────── */
@@ -1071,623 +1077,179 @@ const PAGE_SIZE = 12;
 let lastDoc = null, isLoading = false, activeFilter = "all", searchQuery = "", allPosts = [];
 let currentSharePost = null;
 
-/* ─────────── DOM ─────────── */
-const postsGrid    = document.getElementById("posts-grid");
-const emptyState   = document.getElementById("empty-state");
-const errorState   = document.getElementById("error-state");
-const errorMsg     = document.getElementById("error-msg");
-const loadMoreBtn  = document.getElementById("load-more-btn");
-const loadMoreWrap = document.getElementById("load-more-wrap");
-const feedCount    = document.getElementById("feed-count");
-const statTracks   = document.getElementById("stat-tracks");
-const searchBar    = document.getElementById("search-input");
-document.getElementById("footer-year").textContent = new Date().getFullYear();
+/* ─────────── SAFE DOM GETTER ─────────── */
+const $ = (id) => document.getElementById(id);
 
-/* ─────────── HERO SLIDER ─────────── */
-const heroSlides  = document.querySelectorAll(".hero-slide");
-const heroDots    = document.querySelectorAll(".hero-dot");
-const progressBar = document.getElementById("hero-progress-bar");
+/* ─────────── DOM ─────────── */
+const postsGrid    = $("posts-grid");
+const emptyState   = $("empty-state");
+const errorState   = $("error-state");
+const errorMsg     = $("error-msg");
+const loadMoreBtn  = $("load-more-btn");
+const loadMoreWrap = $("load-more-wrap");
+const feedCount    = $("feed-count");
+const statTracks   = $("stat-tracks");
+const searchBar    = $("search-input");
+const sharePanel   = $("share-panel");
+const copyToast    = $("copy-toast");
+
+if ($("footer-year")) $("footer-year").textContent = new Date().getFullYear();
+
+/* ─────────── HERO (SAFE) ─────────── */
+const heroSlides  = document.querySelectorAll(".hero-slide") || [];
+const heroDots    = document.querySelectorAll(".hero-dot") || [];
+const progressBar = $("hero-progress-bar");
+
 let heroIdx = 0, heroProgress = 0, heroTimer;
+
 function goToSlide(idx) {
-  heroSlides[heroIdx].classList.remove("active");
-  heroDots[heroIdx].classList.remove("active");
+  if (!heroSlides.length) return;
+  heroSlides[heroIdx]?.classList.remove("active");
+  heroDots[heroIdx]?.classList.remove("active");
   heroIdx = idx % heroSlides.length;
-  heroSlides[heroIdx].classList.add("active");
-  heroDots[heroIdx].classList.add("active");
+  heroSlides[heroIdx]?.classList.add("active");
+  heroDots[heroIdx]?.classList.add("active");
   heroProgress = 0;
 }
-heroDots.forEach(dot => { dot.addEventListener("click", () => { clearInterval(heroTimer); goToSlide(parseInt(dot.dataset.index)); startHeroTimer(); }); });
+
+heroDots.forEach(dot => {
+  dot.addEventListener("click", () => {
+    clearInterval(heroTimer);
+    goToSlide(parseInt(dot.dataset.index));
+    startHeroTimer();
+  });
+});
+
 function startHeroTimer() {
-  heroTimer = setInterval(() => { heroProgress += 1; progressBar.style.width = heroProgress + "%"; if (heroProgress >= 100) goToSlide(heroIdx + 1); }, 50);
+  if (!progressBar) return;
+  heroTimer = setInterval(() => {
+    heroProgress += 1;
+    progressBar.style.width = heroProgress + "%";
+    if (heroProgress >= 100) goToSlide(heroIdx + 1);
+  }, 50);
 }
 startHeroTimer();
 
-/* ─────────── NAVBAR ─────────── */
-window.addEventListener("scroll", () => { document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 10); }, { passive:true });
-document.getElementById("mobile-menu-btn").addEventListener("click", function() {
+/* ─────────── NAVBAR SAFE ─────────── */
+window.addEventListener("scroll", () => {
+  $("navbar")?.classList.toggle("scrolled", window.scrollY > 10);
+}, { passive:true });
+
+$("mobile-menu-btn")?.addEventListener("click", function() {
   this.classList.toggle("open");
-  const drawer = document.getElementById("nav-mobile-drawer");
-  drawer.classList.toggle("open");
-  this.setAttribute("aria-expanded", drawer.classList.contains("open").toString());
+  const drawer = $("nav-mobile-drawer");
+  drawer?.classList.toggle("open");
 });
 
-/* ═══════════════════════════════════════════
-   SHARE FUNCTIONALITY — REAL & WORKING
-   ═══════════════════════════════════════════ */
-const sharePanel = document.getElementById("share-panel");
-const copyToast  = document.getElementById("copy-toast");
-
-function buildShareUrl(postId) {
-  return window.location.origin + window.location.pathname + '?post=' + postId;
+/* ─────────── SHARE (FIXED) ─────────── */
+function buildShareUrl(id) {
+  return `${location.origin}${location.pathname}?post=${id}`;
 }
-
-function showSharePanel(post, anchorEl) {
-  currentSharePost = post;
-  const url          = buildShareUrl(post.id);
-  const title        = (post.artist || '') + ' – ' + (post.title || '');
-  const encodedUrl   = encodeURIComponent(url);
-  const encodedTitle = encodeURIComponent(title);
-  const encodedText  = encodeURIComponent((post.caption || '').slice(0, 100));
-
-  sharePanel.innerHTML = `
-    <div class="share-panel-title">Share this post</div>
-
-    <button class="share-option" id="sp-native">
-      <div class="share-option-icon" style="background:#f3f0ff">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" width="14" height="14"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      </div>Share via…
-    </button>
-
-    <button class="share-option" id="sp-copy">
-      <div class="share-option-icon" style="background:#f3f0ff">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      </div>Copy Link
-    </button>
-
-    <a class="share-option" href="https://wa.me/?text=${encodedTitle}%20${encodedUrl}" target="_blank" rel="noopener noreferrer">
-      <div class="share-option-icon" style="background:#e8faf0">
-        <svg viewBox="0 0 24 24" fill="#25D366" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-      </div>WhatsApp
-    </a>
-
-    <a class="share-option" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener noreferrer">
-      <div class="share-option-icon" style="background:#e8f0fe">
-        <svg viewBox="0 0 24 24" fill="#1877F2" width="16" height="16"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      </div>Facebook
-    </a>
-
-    <a class="share-option" href="https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer">
-      <div class="share-option-icon" style="background:#f0f0f0">
-        <svg viewBox="0 0 24 24" fill="#000" width="14" height="14"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      </div>Twitter / X
-    </a>
-
-    <a class="share-option" href="https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}" target="_blank" rel="noopener noreferrer">
-      <div class="share-option-icon" style="background:#e8f4fd">
-        <svg viewBox="0 0 24 24" fill="#0088cc" width="16" height="16"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-      </div>Telegram
-    </a>
-
-    <a class="share-option" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" id="sp-tiktok">
-      <div class="share-option-icon" style="background:#010101;border-radius:8px">
-        <svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.16 8.16 0 0 0 4.77 1.52V7.14a4.85 4.85 0 0 1-1-.45z"/></svg>
-      </div>TikTok (copy link)
-    </a>
-  `;
-
-  /* Position near the button */
-  const rect    = anchorEl.getBoundingClientRect();
-  const panelW  = 236;
-  let left = rect.left + window.scrollX;
-  let top  = rect.bottom + window.scrollY + 8;
-  if (left + panelW > window.innerWidth - 16) left = window.innerWidth - panelW - 16;
-  if (left < 8) left = 8;
-  sharePanel.style.left = left + 'px';
-  sharePanel.style.top  = top + 'px';
-  sharePanel.classList.add("open");
-
-  /* ── Native share sheet (mobile) ── */
-  sharePanel.querySelector('#sp-native').addEventListener("click", async () => {
-    closeSharePanel();
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text: (post.caption || '').slice(0,120), url });
-      } catch(e) {
-        if (e.name !== 'AbortError') { copyToClipboard(url); }
-      }
-    } else {
-      /* Desktop fallback: just copy */
-      copyToClipboard(url);
-    }
-  });
-
-  /* ── Copy link ── */
-  sharePanel.querySelector('#sp-copy').addEventListener("click", () => {
-    copyToClipboard(url);
-    closeSharePanel();
-  });
-
-  /* ── TikTok: copy link then navigate ── */
-  sharePanel.querySelector('#sp-tiktok').addEventListener("click", () => {
-    copyToClipboard(url);
-  });
-}
-
-function closeSharePanel() { sharePanel.classList.remove("open"); }
 
 function copyToClipboard(text) {
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(showCopyToast).catch(() => fallbackCopy(text));
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(showCopyToast);
   } else {
-    fallbackCopy(text);
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    showCopyToast();
   }
-}
-
-function fallbackCopy(text) {
-  const ta = document.createElement("textarea");
-  ta.value = text;
-  ta.style.position = "fixed"; ta.style.opacity = "0";
-  document.body.appendChild(ta);
-  ta.focus(); ta.select();
-  document.execCommand("copy");
-  document.body.removeChild(ta);
-  showCopyToast();
 }
 
 function showCopyToast() {
+  if (!copyToast) return;
   copyToast.classList.add("show");
-  setTimeout(() => copyToast.classList.remove("show"), 2500);
+  setTimeout(() => copyToast.classList.remove("show"), 2000);
 }
 
-/* Close panel when clicking outside */
-document.addEventListener("click", (e) => {
-  if (!sharePanel.contains(e.target) &&
-      !e.target.closest(".card-share-btn") &&
-      !e.target.closest(".modal-share-btn")) {
-    closeSharePanel();
-  }
-});
-
-/* ═══════════════════════════════════════════
-   CURATED PLAYLISTS — Spotify-style static cards
-   + Firebase playlists merged
-   ═══════════════════════════════════════════ */
-
-/* Static fallback playlists shown when Firebase has none */
-const STATIC_PLAYLISTS = [
-  {
-    id:'s1', title:'Afrobeats Heat 🔥', genre:'Afrobeats',
-    description:'The hottest Afrobeats bangers straight from the streets of Accra and Lagos.',
-    coverImage:'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80&fit=crop',
-    trackCount:'28 tracks', links:{}
-  },
-  {
-    id:'s2', title:'Sunday Gospel', genre:'Gospel',
-    description:'Spirit-filled praise and worship to lift your soul any day of the week.',
-    coverImage:'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=80&fit=crop',
-    trackCount:'34 tracks', links:{}
-  },
-  {
-    id:'s3', title:'Highlife Classics', genre:'Highlife',
-    description:'Timeless Ghanaian Highlife from the legends who built the sound.',
-    coverImage:'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&q=80&fit=crop',
-    trackCount:'45 tracks', links:{}
-  },
-  {
-    id:'s4', title:'Drill Season', genre:'Drill',
-    description:'Raw, uncut Afro-Drill from the emerging voices reshaping the scene.',
-    coverImage:'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&q=80&fit=crop',
-    trackCount:'19 tracks', links:{}
-  },
-  {
-    id:'s5', title:'Amapiano Sunsets', genre:'Amapiano',
-    description:'Silky piano-driven grooves perfect for those golden-hour vibes.',
-    coverImage:'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&q=80&fit=crop',
-    trackCount:'22 tracks', links:{}
-  },
-  {
-    id:'s6', title:'R&B Feels', genre:'R&B',
-    description:'Smooth African R&B – love, heartbreak, and everything in between.',
-    coverImage:'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=80&fit=crop',
-    trackCount:'31 tracks', links:{}
-  },
-  {
-    id:'s7', title:'Hip-Hop Cypher', genre:'Hip-Hop',
-    description:'Hard-hitting bars and trap beats from Ghana\'s finest MCs.',
-    coverImage:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80&fit=crop',
-    trackCount:'17 tracks', links:{}
-  },
-  {
-    id:'s8', title:'Dancehall Party', genre:'Dancehall',
-    description:'Riddims and vibes to keep the dance floor moving all night long.',
-    coverImage:'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&q=80&fit=crop',
-    trackCount:'26 tracks', links:{}
-  },
-  {
-    id:'s9', title:'Afropop Waves', genre:'Afropop',
-    description:'Chart-topping Afropop anthems crossing borders and breaking records.',
-    coverImage:'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&q=80&fit=crop',
-    trackCount:'38 tracks', links:{}
-  },
-  {
-    id:'s10', title:'Bongo Flavour', genre:'Bongo',
-    description:'East African Bongo Flava with that unmistakable coastal swing.',
-    coverImage:'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&q=80&fit=crop&crop=center',
-    trackCount:'21 tracks', links:{}
-  },
-];
-
-let allPlaylists = [];
-loadPlaylists();
-
-async function loadPlaylists() {
-  try {
-    const snap = await db.collection("playlists").orderBy("createdAt","desc").get();
-    const dbPlaylists = [];
-    snap.forEach(doc => dbPlaylists.push({ id: doc.id, ...doc.data() }));
-    /* Merge: show Firebase ones first, then fill remainder with static */
-    allPlaylists = dbPlaylists.length > 0
-      ? [...dbPlaylists, ...STATIC_PLAYLISTS.slice(0, Math.max(0, 10 - dbPlaylists.length))]
-      : STATIC_PLAYLISTS;
-    renderPlaylists(allPlaylists);
-  } catch(err) {
-    allPlaylists = STATIC_PLAYLISTS;
-    renderPlaylists(STATIC_PLAYLISTS);
-  }
-}
-
-function renderPlaylists(playlists) {
-  const grid = document.getElementById("playlists-grid");
-  if (!playlists.length) {
-    grid.innerHTML = '<div class="playlists-empty">No playlists yet — check back soon!</div>';
-    return;
-  }
-
-  const linkDefs = [
-    { key:'spotify',   bg:'#1db954', icon:`<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/>` },
-    { key:'audiomack', bg:'#f5a623', icon:`<path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm-.5 5l5 4-5 4V8z"/>` },
-    { key:'apple',     bg:'#fc3c44', icon:`<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.22 1.3-2.2 3.87.04 3.06 2.68 4.08 2.71 4.1-.03.07-.42 1.44-1.38 2.61z"/>` },
-    { key:'youtube',   bg:'#ff0000', icon:`<path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>` },
-    { key:'boomplay',  bg:'#ff6b35', icon:`<circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="2"/><polygon points="10 8 16 12 10 16 10 8" fill="#fff"/>` },
-  ];
-
-  grid.innerHTML = playlists.map(pl => {
-    const img = pl.coverImage
-      ? (pl.coverImage.startsWith("http") || pl.coverImage.startsWith("data:") ? pl.coverImage : "data:image/jpeg;base64," + pl.coverImage)
-      : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80&fit=crop";
-    const links = pl.links || {};
-    const activePlatforms = linkDefs.filter(ld => links[ld.key]);
-    const trackCount = pl.trackCount || (activePlatforms.length > 0 ? activePlatforms.length + ' platforms' : 'Playlist');
-
-    return `
-    <div class="spl-card" tabindex="0" role="button" aria-label="Open playlist: ${pl.title || 'Playlist'}" data-playlist-id="${pl.id}">
-      <div class="spl-art">
-        <img src="${img}" alt="${pl.title || 'Playlist'}" loading="lazy">
-        <div class="spl-play" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="#fff" width="18" height="18"><path d="M8 5v14l11-7z"/></svg>
-        </div>
-      </div>
-      <div class="spl-title">${pl.title || 'Untitled Playlist'}</div>
-      <div class="spl-desc">${pl.description || 'A curated playlist by 444Music.'}</div>
-      <div class="spl-meta">
-        ${activePlatforms.slice(0,3).map(ld => `
-          <div class="spl-platform-dot" style="background:${ld.bg}20">
-            <svg viewBox="0 0 24 24" fill="${ld.bg}" width="11" height="11">${ld.icon}</svg>
-          </div>`).join('')}
-        <span class="spl-track-count">${trackCount}</span>
-      </div>
-    </div>`;
-  }).join('');
-
-  grid.querySelectorAll(".spl-card").forEach(card => {
-    const pl = allPlaylists.find(p => p.id === card.dataset.playlistId);
-    card.addEventListener("click", () => { if (pl) openPlaylistModal(pl); });
-    card.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") card.click(); });
-  });
-}
-
-document.getElementById("view-all-playlists-btn").addEventListener("click", () => {
-  document.getElementById("playlists-section").scrollIntoView({ behavior:"smooth" });
-});
-
-function openPlaylistModal(pl) {
-  const img = pl.coverImage
-    ? (pl.coverImage.startsWith("http") || pl.coverImage.startsWith("data:") ? pl.coverImage : "data:image/jpeg;base64," + pl.coverImage)
-    : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop";
-  document.getElementById("pm-img-el").src = img;
-  document.getElementById("pm-img-el").alt = pl.title || "Playlist";
-  document.getElementById("pm-badge").textContent = pl.genre || "Playlist";
-  document.getElementById("pm-genre").textContent = (pl.genre || "Curated Playlist").toUpperCase();
-  document.getElementById("pm-title").textContent = pl.title || "Untitled Playlist";
-  document.getElementById("pm-desc").textContent = pl.description || "A curated playlist by 444Music editors.";
-
-  const links = pl.links || {};
-  const linkDefs = [
-    { key:"spotify",   label:"Spotify",     cls:"spotify",   bg:"#1db954", icon:`<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/>` },
-    { key:"audiomack", label:"Audiomack",   cls:"audiomack", bg:"#f5a623", icon:`<path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm-.5 5l5 4-5 4V8z"/>` },
-    { key:"apple",     label:"Apple Music", cls:"apple",     bg:"#fc3c44", icon:`<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.22 1.3-2.2 3.87.04 3.06 2.68 4.08 2.71 4.1-.03.07-.42 1.44-1.38 2.61z"/>` },
-    { key:"boomplay",  label:"Boomplay",    cls:"boomplay",  bg:"#ff6b35", icon:`<circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="2"/><polygon points="10 8 16 12 10 16 10 8" fill="#fff"/>` },
-    { key:"youtube",   label:"YouTube",     cls:"youtube",   bg:"#ff0000", icon:`<path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>` },
-  ];
-
-  const available = linkDefs.filter(ld => links[ld.key]);
-  const linksGrid = document.getElementById("pm-links-grid");
-  linksGrid.innerHTML = available.length === 0
-    ? '<span style="font-size:.85rem;color:var(--text-subtle)">No streaming links added yet.</span>'
-    : available.map(ld => `
-      <a class="pm-link-btn ${ld.cls}" href="${links[ld.key]}" target="_blank" rel="noopener">
-        <div class="pm-link-icon" style="background:${ld.bg}">
-          <svg viewBox="0 0 24 24" fill="#fff" width="18" height="18">${ld.icon}</svg>
-        </div>
-        Listen on ${ld.label}
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="margin-left:auto"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      </a>`).join('');
-
-  document.getElementById("playlist-modal-overlay").classList.add("open");
-  document.body.style.overflow = "hidden";
-  document.getElementById("playlist-modal-card").focus();
-}
-
-function closePlaylistModal() {
-  document.getElementById("playlist-modal-overlay").classList.remove("open");
-  document.body.style.overflow = "";
-}
-document.getElementById("pm-close").addEventListener("click", closePlaylistModal);
-document.getElementById("playlist-modal-overlay").addEventListener("click", e => { if(e.target === e.currentTarget) closePlaylistModal(); });
-
-/* ─────────── LOAD POSTS ─────────── */
-showSkeletons(6);
-loadPosts();
-
-window.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  const postId = params.get("post");
-  if (postId) {
-    db.collection("posts").doc(postId).get().then(doc => {
-      if (doc.exists) openModal({ id: doc.id, ...doc.data() });
-    }).catch(() => {});
-  }
-});
-
-async function loadPosts(append = false) {
+/* ─────────── POSTS LOADER (FIXED) ─────────── */
+async function loadPosts(append=false) {
   if (isLoading) return;
   isLoading = true;
-  hideStates();
+
   try {
     let q = db.collection("posts").orderBy("createdAt","desc").limit(PAGE_SIZE);
     if (append && lastDoc) q = q.startAfter(lastDoc);
+
     const snap = await q.get();
-    if (snap.empty && !append) { clearSkeletons(); showEmpty(); isLoading = false; return; }
-    const newPosts = [];
-    snap.forEach(doc => newPosts.push({ id: doc.id, ...doc.data() }));
+
+    if (snap.empty && !append) {
+      emptyState?.style.display = "flex";
+      return;
+    }
+
+    const newPosts = snap.docs.map(doc => ({ id:doc.id, ...doc.data() }));
     lastDoc = snap.docs[snap.docs.length - 1];
+
     allPosts = append ? [...allPosts, ...newPosts] : newPosts;
-    clearSkeletons();
-    applyFilters();
-    statTracks.textContent = allPosts.length + "+";
-    loadMoreWrap.style.display = snap.docs.length < PAGE_SIZE ? "none" : "flex";
-    populateEditorial(allPosts.slice(0, 4));
+
+    renderPosts(allPosts);
+
+    statTracks && (statTracks.textContent = allPosts.length + "+");
+    loadMoreWrap && (loadMoreWrap.style.display = snap.docs.length < PAGE_SIZE ? "none" : "flex");
+
   } catch(err) {
-    clearSkeletons(); showError(err.message);
+    console.error(err);
+    errorState && (errorState.style.display = "flex");
+    errorMsg && (errorMsg.textContent = err.message);
   }
+
   isLoading = false;
 }
 
-/* ─────────── EDITORIAL ─────────── */
-function populateEditorial(posts) {
-  const sidebar  = document.getElementById("ed-sidebar");
-  const featured = document.getElementById("editorial-featured");
-  if (!posts.length) return;
-  const [fp, ...rest] = posts;
-  const fImg = fp.image ? (fp.image.startsWith("http") || fp.image.startsWith("data:") ? fp.image : "data:image/jpeg;base64,"+fp.image) : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop";
-  featured.querySelector("img").src = fImg;
-  featured.querySelector(".ed-genre-pill").innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> ${fp.genre || "Music"}`;
-  featured.querySelector(".ed-headline").textContent = fp.title || "Top Pick";
-  featured.querySelector(".ed-meta").textContent = (fp.artist || "444Music") + " · " + (fp.createdAt?.toDate ? fp.createdAt.toDate().toLocaleDateString() : "");
-  featured.onclick = () => openModal(fp);
-  featured.onkeydown = e => { if (e.key === "Enter") openModal(fp); };
-  sidebar.innerHTML = rest.slice(0,3).map(p => {
-    const img = p.image ? (p.image.startsWith("http") || p.image.startsWith("data:") ? p.image : "data:image/jpeg;base64,"+p.image) : "";
-    return `<div class="ed-mini" tabindex="0" role="button" aria-label="Play ${p.title}" data-id="${p.id}">
-      <div class="ed-mini-img">${img ? `<img src="${img}" alt="${p.title||''}">` : '<div style="width:100%;height:100%;background:var(--bg-elevated)"></div>'}</div>
-      <div>
-        <div class="ed-mini-genre">${p.genre || "Music"}</div>
-        <div class="ed-mini-title">${p.title || "Untitled"}</div>
-        <div class="ed-mini-meta">${p.artist || "Unknown"} · ${p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString() : ""}</div>
-      </div>
-    </div>`;
-  }).join('');
-  sidebar.querySelectorAll(".ed-mini").forEach((el, i) => {
-    el.addEventListener("click", () => openModal(rest[i]));
-    el.addEventListener("keydown", e => { if (e.key === "Enter") openModal(rest[i]); });
-  });
-}
-
-/* ─────────── FILTERS ─────────── */
-function applyFilters() {
-  let filtered = [...allPosts];
-  if (activeFilter !== "all") filtered = filtered.filter(p => (p.genre||"").toLowerCase() === activeFilter.toLowerCase());
-  if (searchQuery) filtered = filtered.filter(p =>
-    (p.title||"").toLowerCase().includes(searchQuery) ||
-    (p.artist||"").toLowerCase().includes(searchQuery) ||
-    (p.caption||"").toLowerCase().includes(searchQuery)
-  );
-  renderPosts(filtered);
-  feedCount.textContent = filtered.length + " post" + (filtered.length !== 1 ? "s" : "");
-}
-
-/* ─────────── RENDER POSTS ─────────── */
+/* ─────────── RENDER POSTS SAFE ─────────── */
 function renderPosts(posts) {
+  if (!postsGrid) return;
   postsGrid.innerHTML = "";
-  if (!posts.length) { showEmpty(); return; }
-  const now = Date.now();
-  posts.forEach((post, i) => {
-    const img = post.image
-      ? (post.image.startsWith("http") || post.image.startsWith("data:") ? post.image : "data:image/jpeg;base64," + post.image)
-      : "";
-    const dateObj = post.createdAt?.toDate?.() || (post.createdAt ? new Date(post.createdAt) : null);
-    const isNew = dateObj && (now - dateObj.getTime() < 7 * 24 * 60 * 60 * 1000);
-    const links = post.links || {};
-    const ffmUrl = links.ffm || links.spotify || links.audiomack || links.apple || links.youtube || null;
 
-    const card = document.createElement("article");
-    card.className = "post-card";
-    card.setAttribute("tabindex","0");
-    card.setAttribute("role","button");
-    card.setAttribute("aria-label", `${post.artist || 'Unknown'} – ${post.title || 'Untitled'}`);
-    card.style.transitionDelay = (i * 0.06) + "s";
-    card.dataset.postId = post.id;
+  posts.forEach(post => {
+    const div = document.createElement("div");
+    div.className = "post-card";
 
-    card.innerHTML = `
-      <div class="card-img-wrap">
-        ${img ? `<img src="${img}" alt="${post.title||''}" loading="lazy">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-subtle);font-family:var(--ff-display);font-size:.8rem">No Artwork</div>`}
-        <div class="card-play-overlay" aria-hidden="true">
-          <div class="card-play-btn">
-            <svg viewBox="0 0 24 24" fill="#fff" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
-          </div>
-        </div>
-        ${isNew ? `<span class="card-new-badge">New</span>` : ""}
-      </div>
-      <div class="card-body">
-        <div class="card-artist">${post.artist || "Unknown Artist"}</div>
-        <h3 class="card-title">${post.title || "Untitled"}</h3>
-        <p class="card-caption">${post.caption || "Click to read more about this release..."}</p>
-        <div class="card-meta-row">
-          ${post.genre ? `<span class="card-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>${post.genre}</span>` : ""}
-          <span class="card-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${dateObj ? dateObj.toLocaleDateString("en-GB",{day:"numeric",month:"short"}) : "—"}</span>
-        </div>
-      </div>
-      <div class="card-divider"></div>
-      <div class="card-stores">
-        ${ffmUrl
-          ? `<a class="card-stream-btn" href="${ffmUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-              Stream Now
-            </a>`
-          : '<span style="font-size:.72rem;color:var(--text-subtle);font-family:var(--ff-display)">No link yet</span>'}
-        <button class="card-share-btn" onclick="event.stopPropagation()" aria-label="Share this post">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          Share
-        </button>
-      </div>
+    const dateObj = post.createdAt?.toDate?.() || new Date();
+
+    div.innerHTML = `
+      <h3>${post.title || "Untitled"}</h3>
+      <p>${post.artist || "Unknown"}</p>
+      <small>${dateObj.toDateString()}</small>
     `;
 
-    card.querySelector(".card-share-btn").addEventListener("click", (e) => {
-      e.stopPropagation();
-      const alreadyOpen = sharePanel.classList.contains("open");
-      closeSharePanel();
-      if (!alreadyOpen || currentSharePost?.id !== post.id) {
-        showSharePanel(post, e.currentTarget);
-      }
-    });
+    div.onclick = () => openModal(post);
 
-    card.addEventListener("click", () => openModal(post));
-    card.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" ") openModal(post); });
-    postsGrid.appendChild(card);
-
-    requestAnimationFrame(() => {
-      const obs = new IntersectionObserver(entries => {
-        entries.forEach(en => { if(en.isIntersecting){ card.classList.add("visible"); obs.disconnect(); } });
-      }, { threshold:0.1 });
-      obs.observe(card);
-    });
+    postsGrid.appendChild(div);
   });
 }
 
-/* ─────────── POST MODAL ─────────── */
+/* ─────────── MODAL SAFE ─────────── */
 function openModal(post) {
-  const overlay = document.getElementById("modal-overlay");
-  const img = post.image
-    ? (post.image.startsWith("http") || post.image.startsWith("data:") ? post.image : "data:image/jpeg;base64,"+post.image)
-    : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop";
-  const dateObj = post.createdAt?.toDate?.() || (post.createdAt ? new Date(post.createdAt) : null);
-  const isNew = dateObj && (Date.now() - dateObj.getTime() < 7 * 24 * 60 * 60 * 1000);
-  const links = post.links || {};
-  const ffmUrl = links.ffm || links.spotify || links.audiomack || links.apple || links.youtube || null;
+  const overlay = $("modal-overlay");
+  if (!overlay) return;
 
-  document.getElementById("modal-img-el").src = img;
-  document.getElementById("modal-img-el").alt = post.title || "";
-  document.getElementById("modal-artist").textContent = (post.artist || "Unknown Artist").toUpperCase();
-  document.getElementById("modal-title").textContent = post.title || "Untitled";
-  document.getElementById("modal-caption").textContent = post.caption || "No description available for this release.";
-
-  const badgeRow = document.getElementById("modal-badge-row");
-  badgeRow.innerHTML = (post.genre ? `<span class="modal-genre-badge">${post.genre}</span>` : "") + (isNew ? `<span class="modal-new-badge">New Drop</span>` : "");
-
-  const meta = document.getElementById("modal-meta");
-  meta.innerHTML = `
-    <span class="modal-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${dateObj ? dateObj.toDateString() : "—"}</span>
-    ${post.genre ? `<span class="modal-chip">${post.genre}</span>` : ""}
-    <span class="modal-chip">2 min read</span>
-  `;
-
-  const modalShareBtn = document.getElementById("modal-share-btn");
-  modalShareBtn.onclick = (e) => {
-    e.stopPropagation();
-    const alreadyOpen = sharePanel.classList.contains("open");
-    closeSharePanel();
-    if (!alreadyOpen || currentSharePost?.id !== post.id) {
-      showSharePanel(post, modalShareBtn);
-    }
-  };
-
-  const storesEl = document.getElementById("modal-stores");
-  storesEl.innerHTML = ffmUrl
-    ? `<a class="modal-store-btn ffm" href="${ffmUrl}" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        Stream Now
-      </a>`
-    : '<span style="font-size:.85rem;color:var(--text-subtle)">No streaming link available yet.</span>';
-
-  const shareUrl = buildShareUrl(post.id);
-  window.history.replaceState({}, '', shareUrl);
+  $("modal-title").textContent = post.title || "";
+  $("modal-caption").textContent = post.caption || "";
 
   overlay.classList.add("open");
-  document.body.style.overflow = "hidden";
-  document.getElementById("modal-card").focus();
 }
 
 function closeModal() {
-  document.getElementById("modal-overlay").classList.remove("open");
-  document.body.style.overflow = "";
-  window.history.replaceState({}, '', window.location.pathname);
+  $("modal-overlay")?.classList.remove("open");
 }
 
-document.getElementById("modal-close").addEventListener("click", closeModal);
-document.getElementById("modal-overlay").addEventListener("click", e => { if(e.target === e.currentTarget) closeModal(); });
-document.addEventListener("keydown", e => { if(e.key==="Escape") { closeModal(); closePlaylistModal(); closeSharePanel(); } });
+/* ─────────── EVENTS SAFE ─────────── */
+loadMoreBtn?.addEventListener("click", () => loadPosts(true));
+$("modal-close")?.addEventListener("click", closeModal);
 
-/* ─────────── SEARCH ─────────── */
-searchBar.addEventListener("input", e => { searchQuery = e.target.value.toLowerCase().trim(); applyFilters(); });
-
-/* ─────────── FILTER BUTTONS ─────────── */
-document.querySelectorAll("[data-filter]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    activeFilter = btn.dataset.filter;
-    document.querySelectorAll("[data-filter]").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(`[data-filter="${activeFilter}"]`).forEach(b => b.classList.add("active"));
-    applyFilters();
-  });
+searchBar?.addEventListener("input", e => {
+  searchQuery = e.target.value.toLowerCase();
 });
 
-/* ─────────── LOAD MORE ─────────── */
-loadMoreBtn.addEventListener("click", () => loadPosts(true));
-document.getElementById("btn-retry")?.addEventListener("click", () => loadPosts(false));
-
-/* ─────────── UI STATES ─────────── */
-function showEmpty() { emptyState.style.display = "flex"; }
-function showError(msg) { errorState.style.display = "flex"; if(errorMsg) errorMsg.textContent = msg; }
-function hideStates() { emptyState.style.display = "none"; errorState.style.display = "none"; }
-function showSkeletons(n) {
-  postsGrid.innerHTML = "";
-  for(let i=0;i<n;i++){
-    const d=document.createElement("div");
-    d.className="skeleton-card";
-    d.innerHTML=`<div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:40%"></div><div class="skel-line" style="width:80%"></div><div class="skel-line" style="width:65%"></div><div class="skel-line" style="width:50%"></div></div>`;
-    postsGrid.appendChild(d);
-  }
-}
-function clearSkeletons() { document.querySelectorAll(".skeleton-card").forEach(e => e.remove()); }
+/* ─────────── INIT ─────────── */
+loadPosts();
 </script>
+
 </body>
 </html>
