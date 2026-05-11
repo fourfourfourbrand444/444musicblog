@@ -140,6 +140,17 @@ body::before {
   border:1px solid var(--border-md);
 }
 
+/* ── VERIFIED badge ── */
+.verified-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:2px 8px; border-radius:20px;
+  background:linear-gradient(135deg,#0ea5e9,#0284c7);
+  color:#fff; font-size:.58rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+  box-shadow:0 2px 8px rgba(14,165,233,.35);
+}
+.verified-badge svg { flex-shrink:0; }
+
 .nav-center {
   display:flex; align-items:center; gap:3px;
   flex:1; overflow-x:auto; scrollbar-width:none;
@@ -168,15 +179,38 @@ body::before {
   transition:all var(--t) var(--ease); background:var(--bg-white);
 }
 .nav-icon-btn:hover { background:var(--purple-soft); color:var(--purple); border-color:var(--border-strong); }
-.nav-cta-btn {
-  display:inline-flex; align-items:center; gap:6px;
+
+/* ── BROWSE PLAYLIST CTA (desktop only) ── */
+.nav-playlist-btn {
+  display:inline-flex; align-items:center; gap:7px;
   padding:9px 18px; border-radius:40px;
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
+  background:linear-gradient(135deg,#1db954,#17a848);
   color:#fff; font-family:var(--ff-display); font-size:.78rem; font-weight:700;
-  letter-spacing:.03em; box-shadow:0 4px 16px var(--purple-glow);
+  letter-spacing:.03em; box-shadow:0 4px 16px rgba(29,185,84,.28);
+  transition:all var(--t) var(--ease); border:none;
+  white-space:nowrap;
+}
+.nav-playlist-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(29,185,84,.38); }
+.nav-playlist-btn .btn-dot {
+  width:7px; height:7px; border-radius:50%;
+  background:rgba(255,255,255,.7);
+  animation:pulse-dot 2s infinite;
+}
+
+/* Mobile playlist CTA row (shown inside drawer) */
+.mobile-playlist-row {
+  display:flex; gap:10px; padding-bottom:4px;
+}
+.mobile-playlist-btn {
+  flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px 16px; border-radius:14px;
+  background:linear-gradient(135deg,#1db954,#17a848);
+  color:#fff; font-family:var(--ff-display); font-size:.85rem; font-weight:700;
+  letter-spacing:.02em; box-shadow:0 6px 20px rgba(29,185,84,.3);
   transition:all var(--t) var(--ease); border:none;
 }
-.nav-cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px var(--purple-glow); }
+.mobile-playlist-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(29,185,84,.4); }
+/* ── End playlist btn ── */
 
 .mobile-menu-btn {
   display:none; flex-direction:column; gap:5px;
@@ -330,6 +364,13 @@ body::before {
   border:1.5px solid rgba(255,255,255,.3); backdrop-filter:blur(10px);
 }
 .hero-cta.secondary:hover { background:rgba(255,255,255,.2); transform:translateY(-2px); }
+
+/* ── Playlist hero CTA (new) ── */
+.hero-cta.playlist {
+  background:linear-gradient(135deg,#1db954,#17a848);
+  color:#fff; box-shadow:0 8px 28px rgba(29,185,84,.3);
+}
+.hero-cta.playlist:hover { transform:translateY(-3px); box-shadow:0 16px 40px rgba(29,185,84,.45); }
 
 .hero-chips {
   position:absolute; top:32px; right:44px; z-index:4;
@@ -533,6 +574,37 @@ body::before {
 }
 .trust-val { font-family:var(--ff-display); font-size:1.6rem; font-weight:800; letter-spacing:-.04em; }
 .trust-label { font-size:.74rem; font-weight:500; opacity:.75; margin-top:2px; }
+
+/* ================================================================
+   PLATFORM STRIP (NEW — pro upgrade)
+   ================================================================ */
+.platform-strip {
+  background:var(--bg-white); border-bottom:1px solid var(--border);
+  padding:20px 0;
+}
+.platform-inner {
+  max-width:1240px; margin:0 auto; padding:0 28px;
+  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+}
+.platform-label {
+  font-family:var(--ff-display); font-size:.68rem; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--text-subtle);
+  flex-shrink:0;
+}
+.platform-pills { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.platform-pill {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:7px 16px; border-radius:40px;
+  border:1.5px solid var(--border-md); background:var(--bg-white);
+  font-family:var(--ff-display); font-size:.72rem; font-weight:700;
+  color:var(--text-muted); box-shadow:var(--shadow-xs);
+  transition:all var(--t) var(--ease); text-decoration:none;
+}
+.platform-pill:hover { transform:translateY(-2px); box-shadow:var(--shadow-hover); }
+.platform-pill.spotify:hover { border-color:#1db954; color:#1db954; background:#f0fef4; }
+.platform-pill.audiomack:hover { border-color:#f59e0b; color:#f59e0b; background:#fffbf0; }
+.platform-pill.boomplay:hover { border-color:#e6002d; color:#e6002d; background:#fff0f2; }
+.platform-pill-dot { width:8px;height:8px;border-radius:50%; }
 
 /* ================================================================
    MAIN FEED
@@ -1014,12 +1086,13 @@ body::before {
   .trust-grid { grid-template-columns:repeat(2,1fr); }
   .blog-grid { grid-template-columns:repeat(2,1fr); }
   .footer-top { grid-template-columns:1fr 1fr; gap:32px; }
+  /* Hide desktop playlist btn on mobile */
+  .nav-playlist-btn { display:none; }
 }
 
 @media(max-width:768px){
   :root { --nav-h: 60px; }
   .nav-inner { padding:0 16px; gap:10px; }
-  .nav-cta-btn { display:none; }
   .logo-text { display:none; }
   .hero-inner { padding:0 20px 56px; }
   #hero { min-height:460px; }
@@ -1045,6 +1118,7 @@ body::before {
   .ad-inner { padding:0 16px; }
   .trust-inner { padding:0 16px; }
   .share-hint { display:none; }
+  .platform-inner { padding:0 16px; gap:12px; }
 }
 
 @media(max-width:480px){
@@ -1064,6 +1138,7 @@ body::before {
   .feed-toolbar { gap:8px; }
   .search-wrap { max-width:100%; }
   #main { padding:36px 0 80px; }
+  .mobile-playlist-row { flex-direction:column; }
 }
 
 @media(max-width:360px){
@@ -1101,16 +1176,32 @@ body::before {
       <a href="admin.html" class="nav-icon-btn" aria-label="Admin panel">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </a>
-      <a href="after.html" class="nav-cta-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Submit
+
+      <!-- DESKTOP: Browse Playlist button -->
+      <a href="https://open.spotify.com/user/31frfy7crckfepbtzdjtjclm7kxm?si=28821c9752d7430e" target="_blank" rel="noopener" class="nav-playlist-btn" aria-label="Browse our Spotify playlist">
+        <span class="btn-dot"></span>
+        <svg viewBox="0 0 168 168" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
+        Browse Playlist
       </a>
+
       <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
+
+  <!-- MOBILE DRAWER -->
   <div class="nav-mobile-drawer" id="nav-mobile-drawer" aria-label="Mobile menu">
+    <!-- Mobile Browse Playlist prominent buttons -->
+    <div class="mobile-playlist-row">
+      <a href="https://open.spotify.com/user/31frfy7crckfepbtzdjtjclm7kxm?si=28821c9752d7430e" target="_blank" rel="noopener" class="mobile-playlist-btn" aria-label="Browse our Spotify playlist">
+        <svg viewBox="0 0 168 168" width="17" height="17" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
+        Browse Playlist
+      </a>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin:2px 0 6px;"></div>
+
     <button class="nav-link active" data-filter="all">All</button>
     <button class="nav-link" data-filter="afrobeats">Afrobeats</button>
     <button class="nav-link" data-filter="gospel">Gospel</button>
@@ -1119,7 +1210,7 @@ body::before {
     <button class="nav-link" data-filter="amapiano">Amapiano</button>
     <button class="nav-link" data-filter="reggae">Reggae</button>
     <div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px;">
-      <a href="promote.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:40px;background:linear-gradient(135deg,var(--purple),var(--purple-lt));color:#fff;font-family:var(--ff-display);font-size:.82rem;font-weight:700;width:100%;justify-content:center;">
+      <a href="after.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:40px;background:linear-gradient(135deg,var(--purple),var(--purple-lt));color:#fff;font-family:var(--ff-display);font-size:.82rem;font-weight:700;width:100%;justify-content:center;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Submit Your Music
       </a>
@@ -1190,6 +1281,10 @@ body::before {
         <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M8 5v14l11-7z"/></svg>
         Explore Releases
       </a>
+      <a href="https://open.spotify.com/user/31frfy7crckfepbtzdjtjclm7kxm?si=28821c9752d7430e" target="_blank" rel="noopener" class="hero-cta playlist">
+        <svg viewBox="0 0 168 168" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
+        Browse Playlist
+      </a>
       <a href="promote.html" class="hero-cta secondary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Submit Your Music
@@ -1224,6 +1319,40 @@ body::before {
 
   <div class="hero-progress"><div class="hero-progress-bar" id="hero-progress-bar"></div></div>
 </header>
+
+<!-- ══════════════════════ PLATFORM STRIP (NEW) -->
+<div class="platform-strip" role="region" aria-label="Listen on your platform">
+  <div class="platform-inner">
+    <span class="platform-label">Stream us on</span>
+    <div class="platform-pills">
+      <a href="https://open.spotify.com/user/31frfy7crckfepbtzdjtjclm7kxm?si=28821c9752d7430e" target="_blank" rel="noopener" class="platform-pill spotify" aria-label="Listen on Spotify">
+        <span class="platform-pill-dot" style="background:#1db954"></span>
+        <svg viewBox="0 0 168 168" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="#1db954" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
+        Spotify
+      </a>
+      <a href="https://audiomack.com/444music-playlist" target="_blank" rel="noopener" class="platform-pill audiomack" aria-label="Listen on Audiomack">
+        <span class="platform-pill-dot" style="background:#f59e0b"></span>
+        <svg viewBox="0 0 100 100" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="50" width="10" height="35" rx="5" fill="#f59e0b"/>
+          <rect x="26" y="30" width="10" height="55" rx="5" fill="#f59e0b"/>
+          <rect x="42" y="15" width="10" height="70" rx="5" fill="#f59e0b"/>
+          <rect x="58" y="30" width="10" height="55" rx="5" fill="#f59e0b"/>
+          <rect x="74" y="45" width="10" height="40" rx="5" fill="#f59e0b"/>
+        </svg>
+        Audiomack
+      </a>
+      <a href="https://www.boomplay.com/user/31frfy7crckfepbtzdjtjclm7kxm?si=3817ZiwKSzGQJATY_FGaDA" target="_blank" rel="noopener" class="platform-pill boomplay" aria-label="Listen on Boomplay">
+        <span class="platform-pill-dot" style="background:#e6002d"></span>
+        <svg viewBox="0 0 100 100" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="#e6002d" stroke-width="10"/>
+          <circle cx="50" cy="50" r="18" fill="#e6002d"/>
+          <polygon points="44,42 44,58 60,50" fill="white"/>
+        </svg>
+        Boomplay
+      </a>
+    </div>
+  </div>
+</div>
 
 <!-- ══════════════════════ STATS BAR -->
 <div class="stats-bar" role="region" aria-label="Site statistics">
@@ -1732,18 +1861,14 @@ function toggleShare(btn) {
   const storesDiv = btn.closest('.card-stores');
   const panel = storesDiv.querySelector('.share-expand');
   const isOpen = panel.classList.contains('open');
-
-  // Close all other open share panels
   document.querySelectorAll('.share-expand.open').forEach(p => {
     p.classList.remove('open');
     const b = p.closest('.card-stores').querySelector('.share-btn');
     if (b) b.classList.remove('active');
   });
-
   if (!isOpen) {
     panel.classList.add('open');
     btn.classList.add('active');
-    // Auto-select the URL for easy copying
     setTimeout(() => {
       const urlInput = panel.querySelector('.share-url');
       if (urlInput) urlInput.select();
@@ -1765,23 +1890,16 @@ function copyShareLink(btn) {
 function fallbackCopy(btn, url) {
   const panel = btn.closest('.share-expand');
   const inp = panel ? panel.querySelector('.share-url') : null;
-  if (inp) {
-    inp.select();
-    try { document.execCommand('copy'); } catch(e) {}
-  }
+  if (inp) { inp.select(); try { document.execCommand('copy'); } catch(e) {} }
   showCopied(btn);
 }
 
 function showCopied(btn) {
   btn.textContent = '✓ Copied!';
   btn.classList.add('copied');
-  setTimeout(() => {
-    btn.textContent = 'Copy Link';
-    btn.classList.remove('copied');
-  }, 2200);
+  setTimeout(() => { btn.textContent = 'Copy Link'; btn.classList.remove('copied'); }, 2200);
 }
 
-// Close share panels when clicking elsewhere on the page
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.card-stores')) {
     document.querySelectorAll('.share-expand.open').forEach(p => {
