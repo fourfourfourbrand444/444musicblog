@@ -7,498 +7,554 @@
 <meta name="description" content="Submit your music for 444Music promotion. Get on Spotify, Audiomack & Boomplay playlists + social media blast for ₵99.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --black:   #0a0a0a;
-  --dark:    #111111;
-  --dark2:   #1a1a1a;
-  --border:  #2a2a2a;
-  --border2: #333333;
-  --text:    #f0f0f0;
-  --text2:   #999999;
-  --text3:   #555555;
-  --gold:    #c9a84c;
-  --gold2:   #e8c96d;
-  --gold-dim:#c9a84c22;
-  --white:   #ffffff;
-  --red:     #dc2626;
-  --green:   #16a34a;
-  --ff-head: 'Sora', sans-serif;
-  --ff-body: 'Inter', sans-serif;
-  --r:       10px;
-  --r-lg:    16px;
-  --ease:    cubic-bezier(.4,0,.2,1);
-  --nav-h:   60px;
+  --white:       #ffffff;
+  --off-white:   #f8f7fc;
+  --bg:          #f4f2fa;
+  --purple:      #4a1fa8;
+  --purple2:     #6234c3;
+  --purple3:     #7c52d9;
+  --purple-pale: #ede8fb;
+  --purple-dim:  rgba(74,31,168,.08);
+  --purple-mid:  rgba(74,31,168,.15);
+  --ink:         #12082e;
+  --ink2:        #3d2e5c;
+  --ink3:        #7a6fa0;
+  --ink4:        #b0a8cc;
+  --border:      #e4dff5;
+  --border2:     #d0c8ee;
+  --green:       #15803d;
+  --red:         #dc2626;
+  --ff-head:     'Playfair Display', Georgia, serif;
+  --ff-body:     'DM Sans', sans-serif;
+  --r:           10px;
+  --r-lg:        16px;
+  --nav-h:       68px;
+  --shadow-sm:   0 1px 4px rgba(74,31,168,.07), 0 2px 12px rgba(74,31,168,.05);
+  --shadow:      0 4px 24px rgba(74,31,168,.10), 0 1px 4px rgba(74,31,168,.06);
+  --shadow-lg:   0 8px 48px rgba(74,31,168,.14), 0 2px 8px rgba(74,31,168,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+body{
+  font-family:var(--ff-body);
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none;}
+button,input,select,textarea{font-family:var(--ff-body);}
+button{cursor:pointer;border:none;background:none;}
+img{display:block;max-width:100%;}
+
+/* ── NAV ── */
+#nav{
+  position:sticky;top:0;z-index:100;
+  height:var(--nav-h);
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 2px 16px rgba(74,31,168,.06);
+}
+.nav-inner{
+  max-width:900px;margin:0 auto;padding:0 32px;
+  height:100%;display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{display:flex;align-items:center;gap:11px;}
+.logo-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--purple);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 2px 8px rgba(74,31,168,.35);
+}
+.logo-text{
+  font-family:var(--ff-head);
+  font-size:1.2rem;font-weight:800;
+  color:var(--ink);letter-spacing:-.02em;
+}
+.logo-text span{color:var(--purple);}
+.nav-pill{
+  font-size:.72rem;font-weight:600;
+  color:var(--purple);
+  background:var(--purple-pale);
+  border:1px solid var(--border2);
+  padding:5px 14px;border-radius:100px;
+  letter-spacing:.04em;text-transform:uppercase;
+  font-family:var(--ff-body);
 }
 
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
-body {
-  font-family: var(--ff-body);
-  background: var(--black);
-  color: var(--text);
-  min-height: 100vh;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-a { color: inherit; text-decoration: none; }
-button, input, select, textarea { font-family: var(--ff-body); }
-button { cursor: pointer; border: none; background: none; }
-img { display:block; max-width:100%; }
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:0 32px 80px;}
 
-/* NAV */
-#nav {
-  position: sticky; top: 0; z-index: 100;
-  height: var(--nav-h);
-  background: rgba(10,10,10,.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+/* ── HERO BANNER ── */
+.hero-banner{
+  position:relative;
+  border-radius:20px;
+  overflow:hidden;
+  margin:32px 0 36px;
+  min-height:320px;
+  display:flex;align-items:flex-end;
+  box-shadow:var(--shadow-lg);
 }
-.nav-inner {
-  max-width: 760px; margin: 0 auto; padding: 0 24px;
-  height: 100%; display: flex; align-items: center; justify-content: space-between;
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(135deg, #2a0a6b 0%, #4a1fa8 45%, #7c52d9 100%);
 }
-.nav-logo {
-  display: flex; align-items: center; gap: 10px;
+.hero-bg-img{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200&q=80&auto=format&fit=crop');
+  background-size:cover;background-position:center;
+  opacity:.18;
+  mix-blend-mode:luminosity;
 }
-.logo-icon {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: var(--gold);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(30,8,70,.95) 0%, rgba(74,31,168,.6) 50%, transparent 100%);
 }
-.logo-icon svg { display:block; }
-.logo-text {
-  font-family: var(--ff-head);
-  font-size: 1.1rem; font-weight: 800;
-  letter-spacing: -.03em; color: var(--white);
+.hero-content{
+  position:relative;z-index:2;
+  padding:44px 44px 44px;
+  width:100%;
 }
-.logo-text span { color: var(--gold); }
-.nav-badge {
-  font-size: .7rem; font-weight: 600;
-  color: var(--text2);
-  border: 1px solid var(--border2);
-  padding: 4px 12px; border-radius: 100px;
-  font-family: var(--ff-head);
-  letter-spacing: .04em;
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.7rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.7);
+  margin-bottom:14px;
+  border:1px solid rgba(255,255,255,.2);
+  padding:5px 14px;border-radius:100px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(6px);
 }
+.hero-eyebrow-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:#a78bfa;
+  box-shadow:0 0 8px #a78bfa;
+}
+.hero h1{
+  font-family:var(--ff-head);
+  font-size:clamp(2rem,4.5vw,3.2rem);
+  font-weight:800;letter-spacing:-.03em;
+  color:#ffffff;line-height:1.1;
+  margin-bottom:12px;
+}
+.hero h1 em{
+  font-style:normal;
+  color:#c4b5fd;
+}
+.hero-sub{
+  font-size:.95rem;color:rgba(255,255,255,.72);
+  max-width:520px;line-height:1.75;margin-bottom:28px;
+}
+.hero-sub strong{color:#fff;}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;}
+.hero-tag{
+  display:flex;align-items:center;gap:7px;
+  padding:7px 14px;border-radius:8px;
+  font-size:.78rem;font-weight:600;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.88);
+  backdrop-filter:blur(4px);
+}
+.hero-tag svg{flex-shrink:0;color:#c4b5fd;}
+.hero-price-badge{
+  position:absolute;top:32px;right:36px;z-index:2;
+  background:#ffffff;
+  border-radius:14px;
+  padding:16px 22px;
+  text-align:center;
+  box-shadow:0 4px 24px rgba(0,0,0,.25);
+}
+.hpb-amount{
+  font-family:var(--ff-head);
+  font-size:2rem;font-weight:800;
+  color:var(--purple);letter-spacing:-.04em;
+  line-height:1;
+}
+.hpb-label{font-size:.68rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+.hpb-sub{font-size:.67rem;color:var(--ink4);margin-top:2px;}
 
-/* LAYOUT */
-.wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+/* ── PLATFORM STRIP ── */
+.platform-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-bottom:28px;
+}
+.plat-card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:20px 18px;
+  display:flex;flex-direction:column;gap:10px;
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s, transform .2s, border-color .2s;
+}
+.plat-card:hover{box-shadow:var(--shadow);transform:translateY(-2px);border-color:var(--border2);}
+.plat-icon{
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.pi-spotify{background:#1db95414;}
+.pi-audiomack{background:#f5a62314;}
+.pi-boomplay{background:#ff3c3c14;}
+.plat-name{font-family:var(--ff-head);font-size:.88rem;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
+.plat-desc{font-size:.73rem;color:var(--ink3);line-height:1.6;}
 
-/* HERO */
-.hero {
-  margin-bottom: 40px;
-  padding-bottom: 40px;
-  border-bottom: 1px solid var(--border);
+/* ── STATS ── */
+.stats-row{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);overflow:hidden;
+  background:var(--white);
+  box-shadow:var(--shadow-sm);
+  margin-bottom:28px;
 }
-.hero-label {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: .72rem; font-weight: 600; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--gold);
-  margin-bottom: 16px;
-  font-family: var(--ff-head);
+.stat-cell{
+  padding:24px 20px;text-align:center;
+  border-right:1px solid var(--border);
 }
-.hero-label-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--gold);
+.stat-cell:last-child{border-right:none;}
+.stat-num{
+  font-family:var(--ff-head);
+  font-size:2rem;font-weight:800;letter-spacing:-.04em;
+  color:var(--purple);line-height:1;margin-bottom:4px;
 }
-.hero h1 {
-  font-family: var(--ff-head);
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  font-weight: 800; letter-spacing: -.04em;
-  color: var(--white); line-height: 1.1;
-  margin-bottom: 14px;
-}
-.hero h1 span { color: var(--gold); }
-.hero-sub {
-  font-size: .92rem; color: var(--text2);
-  max-width: 480px; line-height: 1.75; margin-bottom: 28px;
-}
-.hero-sub strong { color: var(--text); font-weight: 600; }
+.stat-lbl{font-size:.72rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;}
 
-.inclusions {
-  display: flex; flex-wrap: wrap; gap: 10px;
+/* ── INFO CARDS ROW ── */
+.info-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;}
+.info-card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  box-shadow:var(--shadow-sm);
 }
-.inclusion-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 14px;
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  font-size: .78rem; font-weight: 500; color: var(--text2);
-  background: var(--dark);
-  transition: border-color .2s;
+.info-card-img{
+  width:100%;height:160px;
+  object-fit:cover;
+  display:block;
 }
-.inclusion-item svg { flex-shrink:0; color: var(--gold); }
-.inclusion-item:hover { border-color: var(--border2); }
+.info-card-img-div{
+  width:100%;height:160px;
+  background-size:cover;background-position:center;
+}
+.info-card-body{padding:18px 20px;}
+.ic-title{font-family:var(--ff-head);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.ic-text{font-size:.78rem;color:var(--ink3);line-height:1.7;}
 
-/* PLATFORM SHOWCASE */
-.platforms-row {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 12px; margin-bottom: 32px;
+/* ── NOTICE ── */
+.notice{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:18px 20px;border-radius:var(--r-lg);
+  background:var(--white);
+  border:1px solid var(--border);
+  border-left:3px solid var(--purple);
+  margin-bottom:32px;
+  box-shadow:var(--shadow-sm);
 }
-.platform-card {
-  background: var(--dark);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 20px 16px;
-  display: flex; flex-direction: column; gap: 10px;
-  transition: border-color .2s var(--ease);
+.notice-icon{
+  width:34px;height:34px;border-radius:10px;
+  background:var(--purple-pale);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--purple);
 }
-.platform-card:hover { border-color: var(--border2); }
-.platform-icon {
-  width: 36px; height: 36px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.pc-spotify { background: #1db95418; }
-.pc-audiomack { background: #f5a62318; }
-.pc-boomplay { background: #ff3c3c18; }
-.platform-name {
-  font-family: var(--ff-head);
-  font-size: .8rem; font-weight: 700; color: var(--text);
-  letter-spacing: -.01em;
-}
-.platform-desc { font-size: .72rem; color: var(--text2); }
+.notice-title{font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.notice-body{font-size:.79rem;color:var(--ink3);line-height:1.7;}
+.notice-body strong{color:var(--purple);font-weight:600;}
 
-/* STATS */
-.stats-row {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  margin-bottom: 40px;
+/* ── FORM SECTIONS ── */
+.form-section{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  margin-bottom:16px;
+  box-shadow:var(--shadow-sm);
 }
-.stat-item {
-  padding: 24px 20px; text-align: center;
-  border-right: 1px solid var(--border);
-  background: var(--dark);
+.section-head{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 24px;
+  border-bottom:1px solid var(--border);
+  background:var(--off-white);
 }
-.stat-item:last-child { border-right: none; }
-.stat-num {
-  font-family: var(--ff-head);
-  font-size: 1.6rem; font-weight: 800;
-  color: var(--gold); letter-spacing: -.04em;
-  line-height: 1; margin-bottom: 4px;
+.sh-num{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--purple);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:var(--ff-body);
+  font-size:.75rem;font-weight:800;color:#fff;
+  box-shadow:0 2px 8px rgba(74,31,168,.3);
 }
-.stat-label { font-size: .72rem; color: var(--text2); font-weight: 500; }
+.sh-title{font-family:var(--ff-head);font-size:.95rem;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
+.sh-sub{font-size:.72rem;color:var(--ink3);margin-top:1px;}
+.section-body{padding:24px;display:flex;flex-direction:column;gap:18px;}
 
-/* NOTICE */
-.notice {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 16px 18px; border-radius: var(--r);
-  background: var(--dark);
-  border: 1px solid var(--border2);
-  margin-bottom: 32px;
-}
-.notice-icon {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: var(--gold-dim);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; color: var(--gold);
-}
-.notice-title { font-size: .82rem; font-weight: 600; color: var(--text); margin-bottom: 2px; font-family: var(--ff-head); }
-.notice-body { font-size: .78rem; color: var(--text2); line-height: 1.65; }
-.notice-body strong { color: var(--gold); font-weight: 600; }
+/* ── GRID ── */
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 
-/* FORM SECTION */
-.form-section {
-  background: var(--dark);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden; margin-bottom: 16px;
+/* ── FIELD ── */
+.field{display:flex;flex-direction:column;gap:6px;}
+.field-label{
+  font-size:.75rem;font-weight:700;color:var(--ink2);
+  letter-spacing:.01em;display:flex;align-items:center;gap:7px;
+  text-transform:uppercase;
 }
-.section-head {
-  display: flex; align-items: center; gap: 12px;
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--border);
-  background: var(--dark2);
+.req{color:var(--purple);}
+.input-wrap{position:relative;}
+.field-icon{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;z-index:1;color:var(--ink4);
 }
-.sh-num {
-  width: 28px; height: 28px; border-radius: 7px;
-  background: var(--gold);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  font-family: var(--ff-head);
-  font-size: .72rem; font-weight: 800; color: var(--black);
-}
-.sh-title {
-  font-family: var(--ff-head);
-  font-size: .88rem; font-weight: 700; color: var(--text); letter-spacing: -.01em;
-}
-.sh-sub { font-size: .72rem; color: var(--text3); margin-top: 1px; }
-.section-body { padding: 22px; display: flex; flex-direction: column; gap: 16px; }
+.field-icon svg{display:block;}
+.has-icon-top .field-icon{top:14px;transform:none;}
 
-/* GRID */
-.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+input[type="text"],input[type="email"],input[type="tel"],input[type="url"],select,textarea{
+  width:100%;
+  padding:12px 14px 12px 42px;
+  border-radius:var(--r);
+  border:1.5px solid var(--border2);
+  background:var(--white);
+  color:var(--ink);
+  font-size:.875rem;font-family:var(--ff-body);font-weight:400;
+  outline:none;
+  transition:border-color .18s, box-shadow .18s;
+  -webkit-appearance:none;
+}
+input::placeholder,textarea::placeholder{color:var(--ink4);}
+input:hover,select:hover,textarea:hover{border-color:#b5a8e0;}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--purple);
+  box-shadow:0 0 0 3px var(--purple-dim);
+}
+input.error,select.error,textarea.error{
+  border-color:var(--red)!important;
+  box-shadow:0 0 0 3px rgba(220,38,38,.1)!important;
+}
+select{padding-right:36px;cursor:pointer;}
+select option{background:var(--white);color:var(--ink);}
+.select-arrow{position:absolute;right:13px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--ink3);}
+textarea{resize:vertical;min-height:88px;line-height:1.65;padding-top:12px;}
+.field-hint{font-size:.7rem;color:var(--ink4);display:flex;align-items:center;gap:5px;}
+.field-error{
+  font-size:.7rem;color:var(--red);font-weight:600;
+  display:none;align-items:center;gap:5px;
+}
+.field-error.show{display:flex;}
 
-/* FIELD */
-.field { display: flex; flex-direction: column; gap: 6px; }
-.field-label {
-  font-size: .75rem; font-weight: 600; color: var(--text2);
-  letter-spacing: .01em; display: flex; align-items: center; gap: 6px;
-  font-family: var(--ff-head);
+/* ── PLATFORM LINK BADGES ── */
+.plat-icon-wrap{display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+.plat-label-badge{
+  font-size:.65rem;font-weight:700;padding:2px 9px;
+  border-radius:100px;letter-spacing:.04em;
 }
-.req { color: var(--gold); }
-.input-wrap { position: relative; }
-.field-icon {
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  width: 18px; height: 18px;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none; z-index: 1; color: var(--text3);
-}
-.field-icon svg { display:block; }
-.has-icon-top .field-icon { top: 14px; transform: none; }
+.pb-spotify{background:#1db95420;color:#1db954;}
+.pb-audiomack{background:#f5a62320;color:#d4870f;}
+.pb-boomplay{background:#ff3c3c20;color:#e53535;}
 
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="url"],
-select,
-textarea {
-  width: 100%;
-  padding: 11px 13px 11px 40px;
-  border-radius: var(--r);
-  border: 1px solid var(--border2);
-  background: var(--black);
-  color: var(--text);
-  font-size: .85rem;
-  font-family: var(--ff-body);
-  font-weight: 400;
-  outline: none;
-  transition: border-color .18s var(--ease), box-shadow .18s var(--ease);
-  -webkit-appearance: none;
+/* ── GENRE PILLS ── */
+.pill-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.pill-opt{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 15px;border-radius:8px;
+  border:1.5px solid var(--border2);background:var(--white);
+  font-size:.8rem;font-weight:500;color:var(--ink3);
+  cursor:pointer;
+  transition:all .18s;user-select:none;
 }
-input::placeholder, textarea::placeholder { color: var(--text3); }
-input:hover, select:hover, textarea:hover { border-color: #444; }
-input:focus, select:focus, textarea:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px var(--gold-dim);
+.pill-opt:hover{border-color:#b5a8e0;color:var(--ink);}
+.pill-opt.selected{
+  background:var(--purple-pale);
+  border-color:var(--purple);
+  color:var(--purple);
+  font-weight:700;
 }
-input.error, select.error, textarea.error {
-  border-color: var(--red) !important;
-  box-shadow: 0 0 0 3px rgba(220,38,38,.12) !important;
-}
-select { padding-right: 34px; cursor: pointer; }
-select option { background: var(--dark2); color: var(--text); }
-.select-arrow {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  pointer-events: none; color: var(--text3);
-}
-textarea {
-  resize: vertical; min-height: 88px;
-  line-height: 1.65; padding-top: 11px;
-}
-.field-hint { font-size: .7rem; color: var(--text3); display: flex; align-items: center; gap: 5px; }
-.field-error {
-  font-size: .7rem; color: var(--red); font-weight: 600;
-  display: none; align-items: center; gap: 5px;
-}
-.field-error.show { display: flex; }
+.pill-opt input{display:none;}
 
-/* PLATFORM LINK ICONS */
-.plat-icon-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
-.plat-label-badge {
-  font-size: .65rem; font-weight: 700; padding: 2px 8px;
-  border-radius: 100px; letter-spacing: .04em;
+/* ── SUBMIT ── */
+.submit-section{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  margin-top:24px;
+  box-shadow:var(--shadow);
 }
-.pb-spotify { background: #1db95420; color: #1db954; }
-.pb-audiomack { background: #f5a62320; color: #f5a623; }
-.pb-boomplay { background: #ff3c3c20; color: #ff6b6b; }
+.submit-inner{padding:32px 28px;}
+.submit-title{
+  font-family:var(--ff-head);
+  font-size:1.3rem;font-weight:800;letter-spacing:-.03em;color:var(--ink);
+  margin-bottom:6px;
+}
+.submit-sub{font-size:.84rem;color:var(--ink3);margin-bottom:22px;line-height:1.7;}
+.submit-sub strong{color:var(--purple);}
+.package-summary{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-bottom:24px;padding:16px;
+  background:var(--off-white);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+}
+.pkg-item{
+  display:flex;align-items:center;gap:7px;
+  font-size:.76rem;color:var(--ink2);font-weight:600;
+}
+.pkg-item svg{color:var(--purple);flex-shrink:0;}
+.pkg-price{
+  display:flex;align-items:center;gap:6px;
+  font-size:.84rem;font-weight:800;
+  color:var(--purple);
+  margin-left:auto;font-family:var(--ff-head);
+}
+.submit-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:16px 24px;border-radius:var(--r);
+  background:var(--purple);color:#fff;
+  font-size:.92rem;font-weight:700;letter-spacing:.01em;
+  font-family:var(--ff-body);
+  box-shadow:0 4px 20px rgba(74,31,168,.35);
+  transition:background .2s,transform .15s,box-shadow .2s;cursor:pointer;
+}
+.submit-btn:hover{background:var(--purple2);transform:translateY(-1px);box-shadow:0 6px 28px rgba(74,31,168,.42);}
+.submit-btn:active{transform:translateY(0);}
+.submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+.submit-meta{
+  display:flex;align-items:center;justify-content:center;
+  gap:18px;flex-wrap:wrap;
+  margin-top:14px;font-size:.7rem;color:var(--ink4);
+}
+.submit-meta span{display:flex;align-items:center;gap:5px;}
+.submit-meta svg{color:var(--ink4);}
 
-/* GENRE PILLS */
-.pill-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.pill-opt {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 14px; border-radius: 8px;
-  border: 1px solid var(--border2); background: var(--black);
-  font-size: .78rem; font-weight: 500; color: var(--text2);
-  cursor: pointer;
-  transition: all .18s var(--ease);
-  user-select: none; font-family: var(--ff-body);
+/* ── SUBMIT BANNER ── */
+.submit-banner{
+  position:relative;overflow:hidden;
+  height:100px;
+  background:linear-gradient(110deg, var(--purple) 0%, var(--purple3) 100%);
 }
-.pill-opt:hover { border-color: #555; color: var(--text); }
-.pill-opt.selected {
-  background: var(--gold-dim);
-  border-color: var(--gold);
-  color: var(--gold2);
-  font-weight: 600;
+.submit-banner-img{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=70&auto=format&fit=crop');
+  background-size:cover;background-position:center 30%;
+  opacity:.15;
 }
-.pill-opt input { display: none; }
+.submit-banner-content{
+  position:relative;z-index:1;
+  height:100%;display:flex;align-items:center;
+  padding:0 28px;gap:14px;
+}
+.submit-banner svg{color:rgba(255,255,255,.7);}
+.submit-banner-text{
+  font-family:var(--ff-head);
+  font-size:1.1rem;font-weight:700;color:#fff;
+}
+.submit-banner-sub{font-size:.78rem;color:rgba(255,255,255,.68);margin-top:1px;}
 
-/* SUBMIT SECTION */
-.submit-section {
-  background: var(--dark);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 28px 24px;
-  margin-top: 24px;
-}
-.submit-title {
-  font-family: var(--ff-head);
-  font-size: 1.1rem; font-weight: 800;
-  letter-spacing: -.03em; color: var(--white);
-  margin-bottom: 6px;
-}
-.submit-sub {
-  font-size: .82rem; color: var(--text2);
-  margin-bottom: 20px; line-height: 1.65;
-}
-.submit-sub strong { color: var(--gold); }
-
-.package-summary {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  margin-bottom: 24px; padding: 16px;
-  background: var(--black);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-}
-.pkg-item {
-  display: flex; align-items: center; gap: 6px;
-  font-size: .75rem; color: var(--text2); font-weight: 500;
-}
-.pkg-item svg { color: var(--gold); flex-shrink:0; }
-.pkg-price {
-  display: flex; align-items: center; gap: 6px;
-  font-size: .82rem; font-weight: 700;
-  color: var(--gold2);
-  margin-left: auto;
-  font-family: var(--ff-head);
-}
-
-.submit-btn {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 15px 24px; border-radius: var(--r);
-  background: var(--gold);
-  color: var(--black);
-  font-size: .9rem; font-weight: 700;
-  letter-spacing: .01em;
-  font-family: var(--ff-head);
-  transition: background .2s var(--ease), transform .15s var(--ease), opacity .2s;
-  cursor: pointer;
-}
-.submit-btn:hover { background: var(--gold2); transform: translateY(-1px); }
-.submit-btn:active { transform: translateY(0); }
-.submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
-
-.submit-meta {
-  display: flex; align-items: center; justify-content: center;
-  gap: 16px; flex-wrap: wrap;
-  margin-top: 14px;
-  font-size: .7rem; color: var(--text3);
-}
-.submit-meta span { display: flex; align-items: center; gap: 5px; }
-.submit-meta svg { color: var(--text3); }
-
-/* FOOTER */
-.page-footer {
-  text-align: center; margin-top: 48px;
-  font-size: .72rem; color: var(--text3); line-height: 1.75;
-}
-.page-footer a { color: var(--gold); }
-.page-footer a:hover { text-decoration: underline; }
-
-/* SUCCESS MODAL */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 999;
-  background: rgba(0,0,0,.85);
-  backdrop-filter: blur(6px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px;
-  opacity: 0; pointer-events: none;
-  transition: opacity .3s var(--ease);
-}
-.modal-overlay.active { opacity: 1; pointer-events: all; }
-.modal {
-  background: var(--dark);
-  border: 1px solid var(--border2);
-  border-radius: 20px;
-  padding: 40px 36px;
-  max-width: 440px; width: 100%;
-  text-align: center;
-  transform: translateY(16px) scale(.97);
-  transition: transform .35s var(--ease), opacity .35s;
-  opacity: 0;
-}
-.modal-overlay.active .modal {
-  transform: translateY(0) scale(1);
-  opacity: 1;
-}
-.modal-check {
-  width: 64px; height: 64px; border-radius: 50%;
-  background: #16a34a1a;
-  border: 1.5px solid #16a34a50;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 20px;
-  color: var(--green);
-}
-.modal-title {
-  font-family: var(--ff-head);
-  font-size: 1.3rem; font-weight: 800; letter-spacing: -.03em;
-  color: var(--white); margin-bottom: 10px;
-}
-.modal-body {
-  font-size: .85rem; color: var(--text2); line-height: 1.75;
-  margin-bottom: 28px;
-}
-.modal-body strong { color: var(--text); font-weight: 600; }
-.modal-steps {
-  display: flex; flex-direction: column; gap: 10px;
-  text-align: left; margin-bottom: 28px;
-}
-.modal-step {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 12px 14px;
-  background: var(--dark2);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-}
-.modal-step-num {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--gold); color: var(--black);
-  font-size: .65rem; font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; font-family: var(--ff-head);
-}
-.modal-step-text { font-size: .78rem; color: var(--text2); line-height: 1.55; }
-.modal-step-text strong { color: var(--text); font-weight: 600; }
-.modal-close-btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 13px 20px; border-radius: var(--r);
-  background: var(--gold);
-  color: var(--black);
-  font-size: .85rem; font-weight: 700; font-family: var(--ff-head);
-  transition: background .18s;
-}
-.modal-close-btn:hover { background: var(--gold2); }
-
-/* STREAM ERROR */
-#stream-err {
-  color: var(--red); font-size: .72rem; font-weight: 600;
-  padding: 10px 14px;
-  background: rgba(220,38,38,.08);
-  border: 1px solid rgba(220,38,38,.25);
-  border-radius: var(--r);
-  display: flex; align-items: center; gap: 7px;
+/* ── STREAM ERR ── */
+#stream-err{
+  color:var(--red);font-size:.72rem;font-weight:600;
+  padding:10px 14px;
+  background:rgba(220,38,38,.06);
+  border:1px solid rgba(220,38,38,.2);
+  border-radius:var(--r);
+  display:flex;align-items:center;gap:7px;
 }
 
-/* RESPONSIVE */
-@media(max-width:640px){
-  .wrap { padding: 28px 16px 60px; }
-  .row-2 { grid-template-columns: 1fr; }
-  .platforms-row { grid-template-columns: 1fr; }
-  .stats-row { grid-template-columns: 1fr; }
-  .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
-  .stat-item:last-child { border-bottom: none; }
-  .section-body { padding: 16px; }
-  .submit-section { padding: 20px 16px; }
-  .modal { padding: 28px 20px; }
+/* ── FOOTER ── */
+.page-footer{
+  text-align:center;margin-top:48px;
+  font-size:.72rem;color:var(--ink4);line-height:1.8;
 }
-@media(max-width:480px){
-  .platforms-row { grid-template-columns: 1fr 1fr; }
+.page-footer a{color:var(--purple);}
+.page-footer a:hover{text-decoration:underline;}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:999;
+  background:rgba(18,8,46,.75);
+  backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
 }
+.modal-overlay.active{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:44px 38px;
+  max-width:460px;width:100%;
+  text-align:center;
+  transform:translateY(16px) scale(.97);
+  transition:transform .35s, opacity .35s;opacity:0;
+  box-shadow:var(--shadow-lg);
+}
+.modal-overlay.active .modal{transform:translateY(0) scale(1);opacity:1;}
+.modal-check{
+  width:68px;height:68px;border-radius:50%;
+  background:#dcfce7;border:1.5px solid #86efac;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 22px;color:var(--green);
+}
+.modal-title{
+  font-family:var(--ff-head);
+  font-size:1.4rem;font-weight:800;letter-spacing:-.03em;
+  color:var(--ink);margin-bottom:10px;
+}
+.modal-body{font-size:.86rem;color:var(--ink3);line-height:1.75;margin-bottom:28px;}
+.modal-body strong{color:var(--ink);font-weight:700;}
+.modal-steps{display:flex;flex-direction:column;gap:10px;text-align:left;margin-bottom:28px;}
+.modal-step{
+  display:flex;align-items:flex-start;gap:13px;
+  padding:13px 16px;
+  background:var(--off-white);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+}
+.modal-step-num{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--purple);color:#fff;
+  font-size:.65rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.modal-step-text{font-size:.79rem;color:var(--ink3);line-height:1.6;}
+.modal-step-text strong{color:var(--ink);font-weight:700;}
+.modal-close-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px 20px;border-radius:var(--r);
+  background:var(--purple);color:#fff;
+  font-size:.87rem;font-weight:700;
+  box-shadow:0 4px 16px rgba(74,31,168,.3);
+  transition:background .18s;
+}
+.modal-close-btn:hover{background:var(--purple2);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .wrap{padding:0 16px 60px;}
+  .row-2{grid-template-columns:1fr;}
+  .platform-strip{grid-template-columns:1fr;}
+  .stats-row{grid-template-columns:1fr;}
+  .stat-cell{border-right:none;border-bottom:1px solid var(--border);}
+  .stat-cell:last-child{border-bottom:none;}
+  .section-body{padding:16px;}
+  .submit-inner{padding:22px 16px;}
+  .modal{padding:28px 20px;}
+  .hero-content{padding:28px 24px;}
+  .hero-price-badge{display:none;}
+  .info-cards{grid-template-columns:1fr;}
+}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -507,18 +563,18 @@ textarea {
 <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal">
     <div class="modal-check">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="28" height="28"><polyline points="20 6 9 17 4 12"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="30" height="30"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div class="modal-title" id="modal-title">Submission Sent</div>
+    <div class="modal-title" id="modal-title">Submission Received</div>
     <p class="modal-body">Your track has been submitted to 444Music. Our team will review it and <strong>launch your campaign within 24 hours</strong>.</p>
     <div class="modal-steps">
       <div class="modal-step">
         <div class="modal-step-num">1</div>
-        <div class="modal-step-text"><strong>Check your email</strong> — a confirmation will be sent when your campaign goes live.</div>
+        <div class="modal-step-text"><strong>Check your email</strong> — a confirmation will arrive when your campaign goes live.</div>
       </div>
       <div class="modal-step">
         <div class="modal-step-num">2</div>
-        <div class="modal-step-text"><strong>Complete payment via WhatsApp</strong> — our team will contact you with payment details (&#8373;99).</div>
+        <div class="modal-step-text"><strong>Complete payment via WhatsApp</strong> — our team will send you payment details (&#8373;99).</div>
       </div>
       <div class="modal-step">
         <div class="modal-step-num">3</div>
@@ -527,7 +583,7 @@ textarea {
     </div>
     <button class="modal-close-btn" onclick="closeModal()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
-      Got it, I'll check my email
+      Got it, I will check my email
     </button>
   </div>
 </div>
@@ -538,111 +594,134 @@ textarea {
     <div class="nav-logo">
       <div class="logo-icon">
         <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-          <path d="M9 18V5l12-2v13" stroke="#0a0a0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="6" cy="18" r="3" fill="#0a0a0a"/>
-          <circle cx="18" cy="16" r="3" fill="#0a0a0a"/>
+          <path d="M9 18V5l12-2v13" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="6" cy="18" r="3" fill="#fff"/>
+          <circle cx="18" cy="16" r="3" fill="#fff"/>
         </svg>
       </div>
       <div class="logo-text">444<span>Music</span></div>
     </div>
-    <div class="nav-badge">Submit Your Track</div>
+    <div class="nav-pill">Submit Your Track</div>
   </div>
 </nav>
 
 <div class="wrap">
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-label">
-      <span class="hero-label-dot"></span>
-      Music Promotion Package — &#8373;99
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <div class="hero-bg"></div>
+    <div class="hero-bg-img"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        Music Promotion Package &mdash; &#8373;99
+      </div>
+      <h1>Submit Your Song<br>for <em>Promotion</em></h1>
+      <p class="hero-sub">Fill in the form below. Once we confirm your submission, your campaign goes live within <strong>24 hours</strong>. Confirmation sent to your email and WhatsApp.</p>
+      <div class="hero-tags">
+        <div class="hero-tag">
+          <!-- Spotify -->
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          Spotify Playlist
+        </div>
+        <div class="hero-tag">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          Audiomack Playlist
+        </div>
+        <div class="hero-tag">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          Boomplay Playlist
+        </div>
+        <div class="hero-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Social Media Blast
+        </div>
+        <div class="hero-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Marketing Flyer
+        </div>
+      </div>
     </div>
-    <h1>Submit Your Song<br>for <span>Promotion</span></h1>
-    <p class="hero-sub">Fill in the form below. Once we confirm your submission, your campaign goes live within <strong>24 hours</strong>. We'll send confirmation to your email and WhatsApp.</p>
-    <div class="inclusions">
-      <div class="inclusion-item">
-        <!-- Spotify icon -->
-        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-        Spotify Playlist
-      </div>
-      <div class="inclusion-item">
-        <!-- Play icon for Audiomack -->
-        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M8 5v14l11-7z"/></svg>
-        Audiomack Playlist
-      </div>
-      <div class="inclusion-item">
-        <!-- Play icon for Boomplay -->
-        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-        Boomplay Playlist
-      </div>
-      <div class="inclusion-item">
-        <!-- Share/social icon -->
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        Social Media Blast
-      </div>
-      <div class="inclusion-item">
-        <!-- Image icon -->
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        Marketing Flyer
-      </div>
+    <div class="hero-price-badge">
+      <div class="hpb-amount">&#8373;99</div>
+      <div class="hpb-label">One-time fee</div>
+      <div class="hpb-sub">Full promo package</div>
     </div>
   </div>
 
-  <!-- PLATFORMS -->
-  <div class="platforms-row">
-    <div class="platform-card">
-      <div class="platform-icon pc-spotify">
-        <svg viewBox="0 0 24 24" fill="#1db954" width="20" height="20"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+  <!-- PLATFORM STRIP -->
+  <div class="platform-strip">
+    <div class="plat-card">
+      <div class="plat-icon pi-spotify">
+        <svg viewBox="0 0 24 24" fill="#1db954" width="22" height="22"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
       </div>
-      <div class="platform-name">Spotify</div>
-      <div class="platform-desc">Added to active Ghana & Africa playlists with real listeners</div>
+      <div class="plat-name">Spotify</div>
+      <div class="plat-desc">Added to active Ghana and Africa playlists reaching real engaged listeners.</div>
     </div>
-    <div class="platform-card">
-      <div class="platform-icon pc-audiomack">
-        <svg viewBox="0 0 24 24" fill="#f5a623" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+    <div class="plat-card">
+      <div class="plat-icon pi-audiomack">
+        <svg viewBox="0 0 24 24" fill="#f5a623" width="22" height="22"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
       </div>
-      <div class="platform-name">Audiomack</div>
-      <div class="platform-desc">Featured on curated playlists and artist spotlight posts</div>
+      <div class="plat-name">Audiomack</div>
+      <div class="plat-desc">Featured on curated playlists and artist spotlight posts for African audiences.</div>
     </div>
-    <div class="platform-card">
-      <div class="platform-icon pc-boomplay">
-        <svg viewBox="0 0 24 24" fill="#ff5555" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+    <div class="plat-card">
+      <div class="plat-icon pi-boomplay">
+        <svg viewBox="0 0 24 24" fill="#ff5555" width="22" height="22"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
       </div>
-      <div class="platform-name">Boomplay</div>
-      <div class="platform-desc">Promoted to African music fans on the continent's top platform</div>
+      <div class="plat-name">Boomplay</div>
+      <div class="plat-desc">Promoted across the continent's top streaming platform to millions of fans.</div>
     </div>
   </div>
 
   <!-- STATS -->
   <div class="stats-row">
-    <div class="stat-item">
+    <div class="stat-cell">
       <div class="stat-num">500+</div>
-      <div class="stat-label">Artists Promoted</div>
+      <div class="stat-lbl">Artists Promoted</div>
     </div>
-    <div class="stat-item">
+    <div class="stat-cell">
       <div class="stat-num">3</div>
-      <div class="stat-label">Streaming Platforms</div>
+      <div class="stat-lbl">Streaming Platforms</div>
     </div>
-    <div class="stat-item">
+    <div class="stat-cell">
       <div class="stat-num">24hr</div>
-      <div class="stat-label">Campaign Launch</div>
+      <div class="stat-lbl">Campaign Launch</div>
+    </div>
+  </div>
+
+  <!-- INFO CARDS -->
+  <div class="info-cards">
+    <div class="info-card">
+      <div class="info-card-img-div" style="background-image:url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&q=75&auto=format&fit=crop&crop=center');"></div>
+      <div class="info-card-body">
+        <div class="ic-title">Professional Campaign</div>
+        <div class="ic-text">Every submission is reviewed by our team. We craft personalised playlist placements and a full social media blast designed around your sound.</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-img-div" style="background-image:url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=75&auto=format&fit=crop&crop=center');"></div>
+      <div class="info-card-body">
+        <div class="ic-title">Built for African Artists</div>
+        <div class="ic-text">From Accra to Lagos, Cape Town to Nairobi &mdash; we understand the African music market and connect your sound to the right audiences.</div>
+      </div>
     </div>
   </div>
 
   <!-- NOTICE -->
   <div class="notice">
     <div class="notice-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
     </div>
     <div>
-      <div class="notice-title">Campaign starts within 24 hours</div>
-      <div class="notice-body">After submitting, our team reviews your track and launches your campaign. <strong>Confirmation will be sent to your email and WhatsApp</strong> when your promo goes live. Make sure both are correct.</div>
+      <div class="notice-title">Campaign starts within 24 hours of payment</div>
+      <div class="notice-body">After submitting, our team reviews your track and launches your campaign. <strong>Confirmation will be sent to your email and WhatsApp</strong> when your promo goes live. Make sure both are correct before submitting.</div>
     </div>
   </div>
 
   <!-- FORM -->
   <form id="promo-form" novalidate>
-    <!-- Hidden inputs for FormSubmit -->
     <input type="hidden" name="_subject" value="New 444Music Promotion Submission">
     <input type="hidden" name="_captcha" value="false">
     <input type="hidden" name="_template" value="table">
@@ -660,12 +739,10 @@ textarea {
       <div class="section-body">
         <div class="row-2">
           <div class="field">
-            <label class="field-label" for="real_name">
-              Real Name <span class="req">*</span>
-            </label>
+            <label class="field-label" for="real_name">Real Name <span class="req">*</span></label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               </div>
               <input type="text" id="real_name" name="Real Name" placeholder="e.g. Kwame Mensah" required autocomplete="name">
             </div>
@@ -674,14 +751,11 @@ textarea {
               Please enter your real name
             </div>
           </div>
-
           <div class="field">
-            <label class="field-label" for="artist_name">
-              Artist / Stage Name <span class="req">*</span>
-            </label>
+            <label class="field-label" for="artist_name">Artist / Stage Name <span class="req">*</span></label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
               </div>
               <input type="text" id="artist_name" name="Artist Name" placeholder="e.g. Kofi Beats" required>
             </div>
@@ -694,38 +768,33 @@ textarea {
 
         <div class="row-2">
           <div class="field">
-            <label class="field-label" for="email">
-              Email Address <span class="req">*</span>
-            </label>
+            <label class="field-label" for="email">Email Address <span class="req">*</span></label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               </div>
               <input type="email" id="email" name="Email Address" placeholder="you@example.com" required autocomplete="email">
             </div>
             <div class="field-hint">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-              Campaign updates sent here
+              Campaign updates will be sent here
             </div>
             <div class="field-error" id="err-email">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               Please enter a valid email address
             </div>
           </div>
-
           <div class="field">
-            <label class="field-label" for="email_confirm">
-              Confirm Email <span class="req">*</span>
-            </label>
+            <label class="field-label" for="email_confirm">Confirm Email <span class="req">*</span></label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
               <input type="email" id="email_confirm" placeholder="Re-enter email address" autocomplete="email">
             </div>
             <div class="field-hint">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-              Must match email above
+              Must match the email above
             </div>
             <div class="field-error" id="err-email_confirm">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -736,12 +805,10 @@ textarea {
 
         <div class="row-2">
           <div class="field">
-            <label class="field-label" for="phone">
-              Phone Number <span class="req">*</span>
-            </label>
+            <label class="field-label" for="phone">Phone Number <span class="req">*</span></label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 4.9 2 2 0 0 1 3.59 2.72h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l1.27-.55a2 2 0 0 1 2.11.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.03z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 4.9 2 2 0 0 1 3.59 2.72h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l1.27-.55a2 2 0 0 1 2.11.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.03z"/></svg>
               </div>
               <input type="tel" id="phone" name="Phone Number" placeholder="e.g. 024 000 0000" required autocomplete="tel">
             </div>
@@ -754,14 +821,11 @@ textarea {
               Please enter your phone number
             </div>
           </div>
-
           <div class="field">
-            <label class="field-label" for="location">
-              City / Country <span class="req">*</span>
-            </label>
+            <label class="field-label" for="location">City / Country <span class="req">*</span></label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
               <input type="text" id="location" name="Location" placeholder="e.g. Kumasi, Ghana" required>
             </div>
@@ -786,12 +850,10 @@ textarea {
       <div class="section-body">
         <div class="row-2">
           <div class="field">
-            <label class="field-label" for="release_title">
-              Song Title <span class="req">*</span>
-            </label>
+            <label class="field-label" for="release_title">Song Title <span class="req">*</span></label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
               </div>
               <input type="text" id="release_title" name="Song Title" placeholder="e.g. Blessed Season" required>
             </div>
@@ -800,14 +862,11 @@ textarea {
               Please enter the song title
             </div>
           </div>
-
           <div class="field">
-            <label class="field-label" for="release_type">
-              Release Type <span class="req">*</span>
-            </label>
+            <label class="field-label" for="release_type">Release Type <span class="req">*</span></label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
               </div>
               <select id="release_type" name="Release Type" required>
                 <option value="" disabled selected>Select type</option>
@@ -834,7 +893,7 @@ textarea {
             <label class="pill-opt"><input type="radio" name="Genre" value="Amapiano"> Amapiano</label>
             <label class="pill-opt"><input type="radio" name="Genre" value="Dancehall"> Dancehall</label>
             <label class="pill-opt"><input type="radio" name="Genre" value="Reggae"> Reggae</label>
-            <label class="pill-opt"><input type="radio" name="Genre" value="R&B"> R&B</label>
+            <label class="pill-opt"><input type="radio" name="Genre" value="R&B"> R&amp;B</label>
             <label class="pill-opt"><input type="radio" name="Genre" value="Drill"> Drill</label>
             <label class="pill-opt"><input type="radio" name="Genre" value="Afropop"> Afropop</label>
             <label class="pill-opt"><input type="radio" name="Genre" value="Other"> Other</label>
@@ -850,17 +909,16 @@ textarea {
             <label class="field-label" for="release_date">Release Date</label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </div>
               <input type="text" id="release_date" name="Release Date" placeholder="e.g. 15 Jan 2025 or New">
             </div>
           </div>
-
           <div class="field">
             <label class="field-label" for="description">Short Description</label>
             <div class="input-wrap has-icon-top">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
               </div>
               <textarea id="description" name="Song Description" placeholder="Tell us about your song or yourself" rows="3"></textarea>
             </div>
@@ -875,11 +933,10 @@ textarea {
         <div class="sh-num">3</div>
         <div>
           <div class="sh-title">Streaming Links</div>
-          <div class="sh-sub">Paste your song links — at least one required</div>
+          <div class="sh-sub">Paste your song links &mdash; at least one required</div>
         </div>
       </div>
       <div class="section-body">
-
         <div class="field">
           <div class="plat-icon-wrap">
             <label class="field-label" for="spotify_link">Spotify Link</label>
@@ -889,11 +946,11 @@ textarea {
             <div class="field-icon">
               <svg viewBox="0 0 24 24" fill="#1db954" width="17" height="17"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
             </div>
-            <input type="url" id="spotify_link" name="Spotify Link" placeholder="https://open.spotify.com/track/…">
+            <input type="url" id="spotify_link" name="Spotify Link" placeholder="https://open.spotify.com/track/...">
           </div>
           <div class="field-hint">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-            Must be live on Spotify already
+            Must already be live on Spotify
           </div>
         </div>
 
@@ -906,7 +963,7 @@ textarea {
             <div class="field-icon">
               <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><circle cx="12" cy="12" r="10" stroke="#f5a623" stroke-width="1.5"/><polygon points="10,8 16,12 10,16" fill="#f5a623"/></svg>
             </div>
-            <input type="url" id="audiomack_link" name="Audiomack Link" placeholder="https://audiomack.com/…">
+            <input type="url" id="audiomack_link" name="Audiomack Link" placeholder="https://audiomack.com/...">
           </div>
         </div>
 
@@ -919,10 +976,9 @@ textarea {
             <div class="field-icon">
               <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><circle cx="12" cy="12" r="10" stroke="#ff5555" stroke-width="1.5"/><polygon points="10,8 16,12 10,16" fill="#ff5555"/></svg>
             </div>
-            <input type="url" id="boomplay_link" name="Boomplay Link" placeholder="https://boomplay.com/…">
+            <input type="url" id="boomplay_link" name="Boomplay Link" placeholder="https://boomplay.com/...">
           </div>
         </div>
-
       </div>
     </div>
 
@@ -932,7 +988,7 @@ textarea {
         <div class="sh-num">4</div>
         <div>
           <div class="sh-title">Social Media Handles</div>
-          <div class="sh-sub">We'll tag you when we promote your song</div>
+          <div class="sh-sub">We will tag you when we promote your song</div>
         </div>
       </div>
       <div class="section-body">
@@ -953,15 +1009,14 @@ textarea {
               Please enter your Instagram handle
             </div>
           </div>
-
           <div class="field">
             <label class="field-label" for="tiktok">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" style="color:#fff"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.16 8.16 0 0 0 4.77 1.52V7.14a4.85 4.85 0 0 1-1-.45z"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" style="color:#111"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.16 8.16 0 0 0 4.77 1.52V7.14a4.85 4.85 0 0 1-1-.45z"/></svg>
               TikTok
             </label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="color:#aaa"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.16 8.16 0 0 0 4.77 1.52V7.14a4.85 4.85 0 0 1-1-.45z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="color:var(--ink4)"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.16 8.16 0 0 0 4.77 1.52V7.14a4.85 4.85 0 0 1-1-.45z"/></svg>
               </div>
               <input type="text" id="tiktok" name="TikTok Handle" placeholder="yourhandle (no @)">
             </div>
@@ -971,17 +1026,16 @@ textarea {
         <div class="row-2">
           <div class="field">
             <label class="field-label" for="twitter">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" style="color:#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" style="color:#111"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               X (Twitter)
             </label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15" style="color:#aaa"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15" style="color:var(--ink4)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               </div>
               <input type="text" id="twitter" name="X (Twitter) Handle" placeholder="yourhandle (no @)">
             </div>
           </div>
-
           <div class="field">
             <label class="field-label" for="facebook">
               <svg viewBox="0 0 24 24" fill="#1877f2" width="13" height="13"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -1002,7 +1056,7 @@ textarea {
               <svg viewBox="0 0 24 24" fill="#25d366" width="13" height="13"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
               WhatsApp Number <span class="req">*</span>
             </label>
-            <span class="plat-label-badge" style="background:#25d36618;color:#25d366;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:.04em;">Required</span>
+            <span class="plat-label-badge" style="background:#25d36618;color:#16a34a;font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:100px;letter-spacing:.04em;">Required</span>
           </div>
           <div class="input-wrap">
             <div class="field-icon">
@@ -1012,7 +1066,7 @@ textarea {
           </div>
           <div class="field-hint">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-            We'll send payment details and updates via WhatsApp
+            Payment details and updates will be sent via WhatsApp
           </div>
           <div class="field-error" id="err-whatsapp">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -1037,7 +1091,7 @@ textarea {
             <label class="field-label" for="referral">How did you hear about us?</label>
             <div class="input-wrap">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               </div>
               <select name="Referral Source">
                 <option value="" selected>Choose</option>
@@ -1055,12 +1109,11 @@ textarea {
               </div>
             </div>
           </div>
-
           <div class="field">
             <label class="field-label" for="notes">Special Requests / Notes</label>
             <div class="input-wrap has-icon-top">
               <div class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               </div>
               <textarea id="notes" name="Special Requests" placeholder="Any special instructions or preferences" rows="3"></textarea>
             </div>
@@ -1071,54 +1124,66 @@ textarea {
 
     <!-- SUBMIT -->
     <div class="submit-section">
-      <div class="submit-title">Ready to Submit</div>
-      <p class="submit-sub">Your campaign will be reviewed and launched within <strong>24 hours</strong>. Confirmation sent to your email and WhatsApp.</p>
-
-      <div class="package-summary">
-        <div class="pkg-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
-          Spotify Playlist
-        </div>
-        <div class="pkg-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
-          Audiomack Playlist
-        </div>
-        <div class="pkg-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
-          Boomplay Playlist
-        </div>
-        <div class="pkg-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
-          Social Media Blast
-        </div>
-        <div class="pkg-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
-          Marketing Flyer
-        </div>
-        <div class="pkg-price">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          &#8373;99 Only
+      <div class="submit-banner">
+        <div class="submit-banner-img"></div>
+        <div class="submit-banner-content">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <div>
+            <div class="submit-banner-text">Ready to Launch Your Campaign</div>
+            <div class="submit-banner-sub">Playlists + Social Blast + Marketing Flyer &mdash; &#8373;99 only</div>
+          </div>
         </div>
       </div>
+      <div class="submit-inner">
+        <div class="submit-title">Review and Submit</div>
+        <p class="submit-sub">Your campaign will be reviewed and launched within <strong>24 hours</strong>. Confirmation will be sent to your email and WhatsApp.</p>
 
-      <button type="submit" class="submit-btn" id="submit-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        Send My Submission to 444Music
-      </button>
+        <div class="package-summary">
+          <div class="pkg-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
+            Spotify Playlist
+          </div>
+          <div class="pkg-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
+            Audiomack Playlist
+          </div>
+          <div class="pkg-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
+            Boomplay Playlist
+          </div>
+          <div class="pkg-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
+            Social Media Blast
+          </div>
+          <div class="pkg-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
+            Marketing Flyer
+          </div>
+          <div class="pkg-price">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            &#8373;99 Only
+          </div>
+        </div>
 
-      <div class="submit-meta">
-        <span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          Secure submission
-        </span>
-        <span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Response within 24 hours
-        </span>
-        <span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          444musicdistro@gmail.com
-        </span>
+        <button type="submit" class="submit-btn" id="submit-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send My Submission to 444Music
+        </button>
+
+        <div class="submit-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Secure submission
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Response within 24 hours
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            444musicdistro@gmail.com
+          </span>
+        </div>
       </div>
     </div>
   </form>
@@ -1132,12 +1197,12 @@ textarea {
 </div>
 
 <script>
-// Navbar scroll
 window.addEventListener('scroll', () => {
-  document.getElementById('nav').style.borderBottomColor = window.scrollY > 10 ? '#333' : '#2a2a2a';
+  document.getElementById('nav').style.boxShadow = window.scrollY > 10
+    ? '0 4px 24px rgba(74,31,168,.12)'
+    : '0 2px 16px rgba(74,31,168,.06)';
 }, { passive: true });
 
-// Genre pills
 document.querySelectorAll('.pill-opt input[type="radio"]').forEach(radio => {
   radio.addEventListener('change', function() {
     document.querySelectorAll('.pill-opt').forEach(p => p.classList.remove('selected'));
@@ -1145,13 +1210,11 @@ document.querySelectorAll('.pill-opt input[type="radio"]').forEach(radio => {
   });
 });
 
-// Remove errors on input
 document.querySelectorAll('input, select, textarea').forEach(el => {
   el.addEventListener('input', () => el.classList.remove('error'));
   el.addEventListener('change', () => el.classList.remove('error'));
 });
 
-// Modal
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('active');
   document.body.style.overflow = '';
@@ -1159,21 +1222,16 @@ function closeModal() {
 document.getElementById('modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 function showModal() {
   document.getElementById('modal-overlay').classList.add('active');
   document.body.style.overflow = 'hidden';
 }
 
-// FORM SUBMIT
 document.getElementById('promo-form').addEventListener('submit', async function(e) {
   e.preventDefault();
-
   let valid = true;
 
-  // Required fields
   const required = [
     { id: 'real_name',     errId: 'err-real_name' },
     { id: 'artist_name',   errId: 'err-artist_name' },
@@ -1197,7 +1255,6 @@ document.getElementById('promo-form').addEventListener('submit', async function(
     }
   });
 
-  // Email format
   const emailEl = document.getElementById('email');
   if (emailEl && emailEl.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
     emailEl.classList.add('error');
@@ -1205,36 +1262,23 @@ document.getElementById('promo-form').addEventListener('submit', async function(
     valid = false;
   }
 
-  // Email confirm
   const ecEl = document.getElementById('email_confirm');
   const ecErr = document.getElementById('err-email_confirm');
   if (ecEl && emailEl) {
     if (!ecEl.value.trim() || ecEl.value.trim() !== emailEl.value.trim()) {
-      ecEl.classList.add('error');
-      ecErr.classList.add('show');
-      valid = false;
+      ecEl.classList.add('error'); ecErr.classList.add('show'); valid = false;
     } else {
-      ecEl.classList.remove('error');
-      ecErr.classList.remove('show');
+      ecEl.classList.remove('error'); ecErr.classList.remove('show');
     }
   }
 
-  // Genre
   const genreSelected = document.querySelector('input[name="Genre"]:checked');
   const genreErr = document.getElementById('err-genre');
-  if (!genreSelected) {
-    genreErr.classList.add('show');
-    valid = false;
-  } else {
-    genreErr.classList.remove('show');
-  }
+  if (!genreSelected) { genreErr.classList.add('show'); valid = false; }
+  else { genreErr.classList.remove('show'); }
 
-  // At least one streaming link
   const links = ['spotify_link', 'audiomack_link', 'boomplay_link'];
-  const hasLink = links.some(id => {
-    const el = document.getElementById(id);
-    return el && el.value.trim().length > 0;
-  });
+  const hasLink = links.some(id => { const el = document.getElementById(id); return el && el.value.trim().length > 0; });
   const oldErr = document.getElementById('stream-err');
   if (oldErr) oldErr.remove();
   if (!hasLink) {
@@ -1254,14 +1298,10 @@ document.getElementById('promo-form').addEventListener('submit', async function(
     return;
   }
 
-  // Submit
   const btn = document.getElementById('submit-btn');
   const originalHTML = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = `
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-    Sending…
-  `;
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Sending...`;
 
   try {
     const formData = new FormData(this);
@@ -1270,14 +1310,11 @@ document.getElementById('promo-form').addEventListener('submit', async function(
       headers: { 'Accept': 'application/json' },
       body: formData
     });
-
     if (response.ok) {
       this.reset();
       document.querySelectorAll('.pill-opt').forEach(p => p.classList.remove('selected'));
       showModal();
-    } else {
-      throw new Error('Server error');
-    }
+    } else { throw new Error('Server error'); }
   } catch (err) {
     alert('There was an error sending your submission. Please try again or email us directly at 444musicdistro@gmail.com');
   } finally {
@@ -1285,10 +1322,6 @@ document.getElementById('promo-form').addEventListener('submit', async function(
     btn.innerHTML = originalHTML;
   }
 });
-
-const style = document.createElement('style');
-style.textContent = '@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
-document.head.appendChild(style);
 </script>
 </body>
 </html>
