@@ -6,11 +6,9 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Admin — 444Music Blog</title>
 
-  <!-- Firebase v9 Compat -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -81,9 +79,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
    NAVBAR
    ============================================================ */
 #navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: sticky; top: 0; z-index: 100;
   height: var(--nav-h);
   background: rgba(249,248,245,.92);
   backdrop-filter: blur(16px);
@@ -92,108 +88,48 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   box-shadow: 0 1px 0 var(--clr-border);
 }
 .nav-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  max-width: 1160px; margin: 0 auto; padding: 0 24px;
+  height: 100%; display: flex; align-items: center; justify-content: space-between;
 }
 .nav-logo { display: flex; align-items: center; gap: 2px; }
-.logo-mark {
-  font-family: var(--ff-display);
-  font-weight: 900;
-  font-size: 1.25rem;
-  color: var(--clr-accent);
-  letter-spacing: -.03em;
-}
-.logo-word {
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--clr-text);
-  margin-left: 1px;
-}
-.logo-pill {
-  font-size: .65rem;
-  font-weight: 600;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  background: var(--clr-accent);
-  color: #fff;
-  padding: 2px 8px;
-  border-radius: 20px;
-  margin-left: 8px;
-}
+.logo-mark { font-family: var(--ff-display); font-weight: 900; font-size: 1.25rem; color: var(--clr-accent); letter-spacing: -.03em; }
+.logo-word { font-family: var(--ff-display); font-weight: 700; font-size: 1.2rem; color: var(--clr-text); margin-left: 1px; }
+.logo-pill { font-size: .65rem; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; background: var(--clr-accent); color: #fff; padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
 
 .btn-ghost-sm {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border: 1.5px solid var(--clr-border-md);
-  border-radius: 50px;
-  font-size: .8rem;
-  font-weight: 600;
-  color: var(--clr-muted);
-  background: var(--clr-surface);
-  transition: all var(--transition);
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border: 1.5px solid var(--clr-border-md); border-radius: 50px;
+  font-size: .8rem; font-weight: 600; color: var(--clr-muted);
+  background: var(--clr-surface); transition: all var(--transition);
 }
-.btn-ghost-sm:hover {
-  border-color: var(--clr-text);
-  color: var(--clr-text);
-  background: var(--clr-surface);
-}
+.btn-ghost-sm:hover { border-color: var(--clr-text); color: var(--clr-text); }
 
 /* ============================================================
    ADMIN MAIN
    ============================================================ */
 .admin-main { padding: 40px 0 80px; }
-.admin-container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.admin-container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 
 /* ============================================================
    AUTH GATE
    ============================================================ */
 .auth-gate {
   min-height: calc(100vh - var(--nav-h));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
+  display: flex; align-items: center; justify-content: center; padding: 40px 24px;
 }
 .auth-card {
-  background: var(--clr-surface);
-  border: 1px solid var(--clr-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  padding: 48px 40px;
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
-  animation: fadeUp .5s ease;
+  background: var(--clr-surface); border: 1px solid var(--clr-border);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-lg);
+  padding: 48px 40px; width: 100%; max-width: 420px;
+  text-align: center; display: flex; flex-direction: column;
+  gap: 16px; align-items: center; animation: fadeUp .5s ease;
 }
 .auth-icon {
-  width: 60px;
-  height: 60px;
-  background: var(--clr-accent-lt);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--clr-accent);
-  margin-bottom: 4px;
+  width: 60px; height: 60px; background: var(--clr-accent-lt);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: var(--clr-accent); margin-bottom: 4px;
 }
-.auth-card h2 {
-  font-family: var(--ff-display);
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: -.02em;
-}
+.auth-card h2 { font-family: var(--ff-display); font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; }
 .auth-card p { font-size: .88rem; color: var(--clr-muted); }
 .auth-field { width: 100%; }
 
@@ -201,17 +137,11 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
    FORM ELEMENTS
    ============================================================ */
 .form-input {
-  width: 100%;
-  padding: 11px 14px;
-  background: var(--clr-surface);
-  border: 1.5px solid var(--clr-border-md);
-  border-radius: var(--radius-md);
-  font-family: var(--ff-body);
-  font-size: .88rem;
-  color: var(--clr-text);
-  transition: border-color var(--transition), box-shadow var(--transition);
-  outline: none;
-  margin-top: 6px;
+  width: 100%; padding: 11px 14px;
+  background: var(--clr-surface); border: 1.5px solid var(--clr-border-md);
+  border-radius: var(--radius-md); font-family: var(--ff-body); font-size: .88rem;
+  color: var(--clr-text); transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none; margin-top: 6px;
 }
 .form-input:focus {
   border-color: var(--clr-accent);
@@ -219,135 +149,187 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .form-input::placeholder { color: var(--clr-subtle); }
 .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b6b6b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 36px; }
-.form-textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background: var(--clr-accent);
-  color: #fff;
-  border-radius: 50px;
-  font-size: .9rem;
-  font-weight: 600;
-  border: none;
-  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
-  letter-spacing: .01em;
+/* ============================================================
+   RICH BLOG TEXTAREA
+   ============================================================ */
+.blog-editor-wrap {
+  margin-top: 8px;
+  border: 1.5px solid var(--clr-border-md);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  background: var(--clr-surface);
 }
-.btn-primary:hover:not(:disabled) {
-  background: var(--clr-accent-dk);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(26,92,56,.28);
-}
-.btn-primary:disabled { opacity: .55; cursor: not-allowed; }
-.btn-primary.full-width { width: 100%; }
-
-/* Edit mode publish btn */
-.btn-primary.edit-mode {
-  background: var(--clr-edit);
-}
-.btn-primary.edit-mode:hover:not(:disabled) {
-  background: #0f3268;
-  box-shadow: 0 6px 20px rgba(26,74,138,.28);
+.blog-editor-wrap:focus-within {
+  border-color: var(--clr-accent);
+  box-shadow: 0 0 0 3px rgba(26,92,56,.12);
 }
 
-.field-error {
-  font-size: .78rem;
-  color: var(--clr-danger);
-  margin-top: 5px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+/* Toolbar */
+.editor-toolbar {
+  display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
+  padding: 8px 10px; background: var(--clr-surface-2);
+  border-bottom: 1px solid var(--clr-border);
 }
+.toolbar-btn {
+  width: 30px; height: 30px; border-radius: 6px; border: none;
+  background: transparent; color: var(--clr-muted);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .18s; font-size: .82rem; font-weight: 700;
+  font-family: var(--ff-body);
+}
+.toolbar-btn:hover { background: var(--clr-border-md); color: var(--clr-text); }
+.toolbar-btn.active { background: var(--clr-accent); color: #fff; }
+.toolbar-sep { width: 1px; height: 20px; background: var(--clr-border-md); margin: 0 4px; flex-shrink: 0; }
+.toolbar-hint {
+  margin-left: auto; font-size: .68rem; color: var(--clr-subtle);
+  font-weight: 500; white-space: nowrap; padding-right: 4px;
+}
+
+/* The actual editable area */
+.blog-textarea {
+  width: 100%;
+  min-height: 340px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding: 18px 20px;
+  font-family: var(--ff-body); font-size: .92rem; color: var(--clr-text);
+  line-height: 1.85; outline: none;
+  resize: none; border: none; background: transparent;
+  scrollbar-width: thin; scrollbar-color: var(--clr-border-md) transparent;
+}
+.blog-textarea:empty::before {
+  content: attr(data-placeholder);
+  color: var(--clr-subtle); pointer-events: none;
+}
+/* Styling inside the editable div */
+.blog-textarea b, .blog-textarea strong { font-weight: 700; }
+.blog-textarea i, .blog-textarea em { font-style: italic; }
+.blog-textarea u { text-decoration: underline; }
+.blog-textarea h3 { font-family: var(--ff-display); font-size: 1.1rem; font-weight: 700; margin: 1.2em 0 .4em; letter-spacing: -.01em; }
+.blog-textarea blockquote {
+  border-left: 3px solid var(--clr-accent); padding-left: 14px;
+  margin: 1em 0; color: var(--clr-muted); font-style: italic;
+}
+.blog-textarea p { margin-bottom: .8em; }
+.blog-textarea ul { padding-left: 20px; margin-bottom: .8em; }
+.blog-textarea li { margin-bottom: .3em; }
+.blog-textarea::-webkit-scrollbar { width: 4px; }
+.blog-textarea::-webkit-scrollbar-thumb { background: var(--clr-border-md); border-radius: 4px; }
+
+/* Word count row */
+.editor-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 14px; background: var(--clr-surface-2);
+  border-top: 1px solid var(--clr-border);
+}
+.word-count { font-size: .72rem; color: var(--clr-subtle); font-weight: 500; }
+.word-count span { color: var(--clr-accent); font-weight: 700; }
+.editor-hint { font-size: .68rem; color: var(--clr-subtle); }
+
+/* ============================================================
+   WRITING TEMPLATES
+   ============================================================ */
+.template-row {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+}
+.template-label {
+  font-size: .72rem; font-weight: 600; color: var(--clr-subtle);
+  letter-spacing: .05em; text-transform: uppercase;
+  margin-bottom: 6px; display: block;
+}
+.template-btn {
+  padding: 5px 12px; border-radius: 20px;
+  border: 1.5px solid var(--clr-border-md); background: var(--clr-surface);
+  font-size: .74rem; font-weight: 600; color: var(--clr-muted);
+  cursor: pointer; transition: all var(--transition);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.template-btn:hover { border-color: var(--clr-accent); color: var(--clr-accent); background: var(--clr-accent-lt); }
 
 /* ============================================================
    EDIT MODE BANNER
    ============================================================ */
 .edit-banner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--clr-edit-lt);
-  border: 1.5px solid rgba(26,74,138,.18);
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  font-size: .85rem;
-  font-weight: 500;
-  color: var(--clr-edit);
+  display: flex; align-items: center; gap: 10px;
+  background: var(--clr-edit-lt); border: 1.5px solid rgba(26,74,138,.18);
+  border-radius: var(--radius-md); padding: 12px 16px;
+  margin-bottom: 20px; font-size: .85rem; font-weight: 500; color: var(--clr-edit);
 }
 .edit-banner svg { flex-shrink: 0; }
 .edit-banner-text { flex: 1; }
 .btn-cancel-edit {
-  font-size: .78rem;
-  font-weight: 600;
-  color: var(--clr-edit);
-  border: 1.5px solid rgba(26,74,138,.3);
-  border-radius: 50px;
-  padding: 4px 12px;
-  background: #fff;
-  cursor: pointer;
-  transition: all var(--transition);
+  font-size: .78rem; font-weight: 600; color: var(--clr-edit);
+  border: 1.5px solid rgba(26,74,138,.3); border-radius: 50px;
+  padding: 4px 12px; background: #fff; cursor: pointer; transition: all var(--transition);
 }
 .btn-cancel-edit:hover { background: var(--clr-edit); color: #fff; }
 
 /* ============================================================
-   ADMIN DASHBOARD
+   BUTTON & FEEDBACK
    ============================================================ */
-.admin-stats {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 28px;
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px; background: var(--clr-accent); color: #fff;
+  border-radius: 50px; font-size: .9rem; font-weight: 600; border: none;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  letter-spacing: .01em;
 }
+.btn-primary:hover:not(:disabled) {
+  background: var(--clr-accent-dk); transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(26,92,56,.28);
+}
+.btn-primary:disabled { opacity: .55; cursor: not-allowed; }
+.btn-primary.full-width { width: 100%; }
+.btn-primary.edit-mode { background: var(--clr-edit); }
+.btn-primary.edit-mode:hover:not(:disabled) { background: #0f3268; box-shadow: 0 6px 20px rgba(26,74,138,.28); }
+
+.field-error {
+  font-size: .78rem; color: var(--clr-danger); margin-top: 5px;
+  display: flex; align-items: center; gap: 4px;
+}
+
+.form-feedback {
+  margin-top: 14px; padding: 13px 16px; border-radius: var(--radius-md);
+  font-size: .85rem; font-weight: 500; display: flex; align-items: center; gap: 8px;
+}
+.form-feedback.success { background: var(--clr-success-lt); color: var(--clr-success); border: 1px solid rgba(26,92,56,.18); }
+.form-feedback.error   { background: var(--clr-danger-lt);  color: var(--clr-danger);  border: 1px solid rgba(209,41,61,.18); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-spinner svg { animation: spin .7s linear infinite; }
+
+/* ============================================================
+   ADMIN STATS + LAYOUT
+   ============================================================ */
+.admin-stats { display: flex; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
 .stat-chip {
-  display: flex;
-  flex-direction: column;
-  padding: 14px 20px;
-  background: var(--clr-surface);
-  border: 1px solid var(--clr-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  min-width: 110px;
+  display: flex; flex-direction: column;
+  padding: 14px 20px; background: var(--clr-surface);
+  border: 1px solid var(--clr-border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); min-width: 110px;
 }
-.stat-num {
-  font-family: var(--ff-display);
-  font-size: 1.7rem;
-  font-weight: 700;
-  letter-spacing: -.03em;
-  color: var(--clr-accent);
-  line-height: 1;
-}
+.stat-num { font-family: var(--ff-display); font-size: 1.7rem; font-weight: 700; letter-spacing: -.03em; color: var(--clr-accent); line-height: 1; }
 .stat-label { font-size: .75rem; color: var(--clr-muted); margin-top: 4px; font-weight: 500; }
 
 .admin-layout {
   display: grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: 1fr 360px;
   gap: 24px;
   align-items: start;
 }
 
 .admin-card {
-  background: var(--clr-surface);
-  border: 1px solid var(--clr-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  padding: 28px;
+  background: var(--clr-surface); border: 1px solid var(--clr-border);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); padding: 28px;
 }
 
 .admin-section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--ff-display);
-  font-size: 1.18rem;
-  font-weight: 700;
-  letter-spacing: -.01em;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--clr-border);
-  color: var(--clr-text);
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--ff-display); font-size: 1.18rem; font-weight: 700;
+  letter-spacing: -.01em; margin-bottom: 24px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--clr-border); color: var(--clr-text);
 }
 .admin-section-title svg { color: var(--clr-accent); flex-shrink: 0; }
 
@@ -359,164 +341,57 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .required { color: var(--clr-danger); margin-left: 2px; }
 
 .image-dropzone {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  max-height: 280px;
-  border: 2px dashed var(--clr-border-md);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  overflow: hidden;
+  position: relative; width: 100%; aspect-ratio: 1/1; max-height: 280px;
+  border: 2px dashed var(--clr-border-md); border-radius: var(--radius-lg);
+  cursor: pointer; overflow: hidden;
   transition: border-color var(--transition), background var(--transition);
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-top: 6px; display: flex; align-items: center; justify-content: center;
   background: var(--clr-surface-2);
 }
-.image-dropzone:hover, .image-dropzone.drag-over {
-  border-color: var(--clr-accent);
-  background: var(--clr-accent-lt);
-}
-.dropzone-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-  padding: 24px;
-  pointer-events: none;
-}
+.image-dropzone:hover, .image-dropzone.drag-over { border-color: var(--clr-accent); background: var(--clr-accent-lt); }
+.dropzone-content { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 24px; pointer-events: none; }
 .dropzone-icon { color: var(--clr-subtle); margin-bottom: 4px; }
 .dropzone-text { font-size: .85rem; color: var(--clr-muted); font-weight: 500; }
 .dropzone-text span { color: var(--clr-accent); font-weight: 600; }
 .dropzone-hint { font-size: .75rem; color: var(--clr-subtle); }
-
-.image-preview-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  inset: 0;
-}
+.image-preview-img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
 .dropzone-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  position: absolute; top: 0; left: 0; right: 0; padding: 10px;
+  display: flex; justify-content: space-between; align-items: flex-start;
   background: linear-gradient(180deg, rgba(0,0,0,.35) 0%, transparent 100%);
 }
 .btn-remove-img {
-  width: 30px;
-  height: 30px;
-  background: rgba(0,0,0,.5);
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 30px; height: 30px; background: rgba(0,0,0,.5); color: #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
   transition: background var(--transition);
 }
 .btn-remove-img:hover { background: rgba(209,41,61,.85); }
 .img-compression-badge {
-  background: rgba(0,0,0,.6);
-  color: #fff;
-  font-size: .68rem;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 20px;
+  background: rgba(0,0,0,.6); color: #fff;
+  font-size: .68rem; font-weight: 600; padding: 3px 8px; border-radius: 20px;
 }
 
 /* ============================================================
    FFM LINK INPUT
    ============================================================ */
-.ffm-input-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin-top: 6px;
-}
+.ffm-input-wrap { display: flex; align-items: center; gap: 0; margin-top: 6px; }
 .ffm-icon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #0e0e0e;
-  border: 1.5px solid #0e0e0e;
-  border-right: none;
-  border-radius: var(--radius-md) 0 0 var(--radius-md);
-  flex-shrink: 0;
+  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+  background: #0e0e0e; border: 1.5px solid #0e0e0e; border-right: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md); flex-shrink: 0;
 }
 .ffm-icon svg { color: #fff; }
-.ffm-field {
-  border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
-  margin-top: 0 !important;
-  border-left: none !important;
-}
-.ffm-hint {
-  font-size: .75rem;
-  color: var(--clr-subtle);
-  margin-top: 5px;
-}
-
-/* ============================================================
-   CHAR COUNTER
-   ============================================================ */
-.char-counter {
-  font-size: .73rem;
-  color: var(--clr-subtle);
-  text-align: right;
-  margin-top: 4px;
-}
-.char-counter.warn { color: #f5a623; }
-.char-counter.danger { color: var(--clr-danger); }
+.ffm-field { border-radius: 0 var(--radius-md) var(--radius-md) 0 !important; margin-top: 0 !important; border-left: none !important; }
+.ffm-hint { font-size: .75rem; color: var(--clr-subtle); margin-top: 5px; }
 
 /* ============================================================
    FORM ACTIONS
    ============================================================ */
 .form-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 8px;
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 12px; margin-top: 8px; flex-wrap: wrap;
 }
-.publish-btn { min-width: 150px; }
-
-/* ============================================================
-   FORM FEEDBACK
-   ============================================================ */
-.form-feedback {
-  margin-top: 14px;
-  padding: 13px 16px;
-  border-radius: var(--radius-md);
-  font-size: .85rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.form-feedback.success {
-  background: var(--clr-success-lt);
-  color: var(--clr-success);
-  border: 1px solid rgba(26,92,56,.18);
-}
-.form-feedback.error {
-  background: var(--clr-danger-lt);
-  color: var(--clr-danger);
-  border: 1px solid rgba(209,41,61,.18);
-}
-
-/* ============================================================
-   SPINNER
-   ============================================================ */
-@keyframes spin { to { transform: rotate(360deg); } }
-.btn-spinner svg { animation: spin .7s linear infinite; }
+.publish-btn { min-width: 160px; }
 
 /* ============================================================
    RECENT POSTS PANEL
@@ -528,135 +403,68 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .admin-posts-list::-webkit-scrollbar-thumb { background: var(--clr-border-md); border-radius: 4px; }
 
 .admin-post-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  border: 1px solid var(--clr-border);
-  border-radius: var(--radius-md);
-  background: var(--clr-surface-2);
-  transition: border-color var(--transition), background var(--transition);
+  display: flex; align-items: center; gap: 12px; padding: 10px;
+  border: 1px solid var(--clr-border); border-radius: var(--radius-md);
+  background: var(--clr-surface-2); transition: border-color var(--transition), background var(--transition);
 }
 .admin-post-item:hover { border-color: var(--clr-border-md); background: #fff; }
-.admin-post-item.editing {
-  border-color: rgba(26,74,138,.4);
-  background: var(--clr-edit-lt);
-}
+.admin-post-item.editing { border-color: rgba(26,74,138,.4); background: var(--clr-edit-lt); }
+
 .admin-post-thumb {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-sm);
-  object-fit: cover;
-  flex-shrink: 0;
-  background: var(--clr-skeleton);
+  width: 48px; height: 48px; border-radius: var(--radius-sm);
+  object-fit: cover; flex-shrink: 0; background: var(--clr-skeleton);
 }
 .admin-post-info { flex: 1; min-width: 0; }
 .admin-post-artist { font-size: .7rem; font-weight: 600; color: var(--clr-accent); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .admin-post-title { font-size: .82rem; font-weight: 600; color: var(--clr-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
 .admin-post-date { font-size: .7rem; color: var(--clr-subtle); margin-top: 2px; }
 
-/* Post action buttons row */
-.admin-post-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-shrink: 0;
-}
+.admin-post-actions { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
 .btn-edit-post, .btn-delete-post {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
   transition: background var(--transition), color var(--transition);
 }
-.btn-edit-post {
-  color: var(--clr-subtle);
-}
+.btn-edit-post { color: var(--clr-subtle); }
 .btn-edit-post:hover { background: var(--clr-edit-lt); color: var(--clr-edit); }
-.btn-delete-post {
-  color: var(--clr-subtle);
-}
+.btn-delete-post { color: var(--clr-subtle); }
 .btn-delete-post:hover { background: var(--clr-danger-lt); color: var(--clr-danger); }
 
 .admin-list-loading { display: flex; flex-direction: column; gap: 10px; }
 .mini-skeleton {
   background: linear-gradient(90deg, #ebebeb 0%, #f5f5f5 50%, #ebebeb 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
-  border-radius: var(--radius-md);
+  background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius-md);
 }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
 .admin-list-empty { text-align: center; padding: 32px 16px; color: var(--clr-subtle); font-size: .85rem; }
 
 /* ============================================================
    DELETE MODAL
    ============================================================ */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  padding: 24px;
-  animation: fadeIn .2s ease;
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+  z-index: 200; padding: 24px; animation: fadeIn .2s ease;
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
 .modal-card {
-  background: var(--clr-surface);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  padding: 36px 32px;
-  max-width: 380px;
-  width: 100%;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  background: var(--clr-surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg);
+  padding: 36px 32px; max-width: 380px; width: 100%; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
   animation: slideUp .25s cubic-bezier(.4,0,.2,1);
 }
 @keyframes slideUp { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
 .modal-icon.danger {
-  width: 56px;
-  height: 56px;
-  background: var(--clr-danger-lt);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--clr-danger);
-  margin-bottom: 4px;
+  width: 56px; height: 56px; background: var(--clr-danger-lt);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: var(--clr-danger); margin-bottom: 4px;
 }
-.modal-card h3 {
-  font-family: var(--ff-display);
-  font-size: 1.3rem;
-  font-weight: 700;
-}
+.modal-card h3 { font-family: var(--ff-display); font-size: 1.3rem; font-weight: 700; }
 .modal-card p { font-size: .85rem; color: var(--clr-muted); line-height: 1.6; }
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 8px;
-  width: 100%;
-  justify-content: center;
-}
+.modal-actions { display: flex; gap: 10px; margin-top: 8px; width: 100%; justify-content: center; }
 .btn-danger {
-  padding: 10px 24px;
-  background: var(--clr-danger);
-  color: #fff;
-  border-radius: 50px;
-  font-size: .85rem;
-  font-weight: 600;
-  border: none;
+  padding: 10px 24px; background: var(--clr-danger); color: #fff;
+  border-radius: 50px; font-size: .85rem; font-weight: 600; border: none;
   transition: background var(--transition), transform var(--transition);
 }
 .btn-danger:hover { background: #b01e30; transform: translateY(-1px); }
@@ -672,7 +480,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 /* ============================================================
    RESPONSIVE
    ============================================================ */
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .admin-layout { grid-template-columns: 1fr; }
   .posts-panel { position: static; max-height: none; }
 }
@@ -681,6 +489,9 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   .auth-card  { padding: 32px 20px; }
   .form-actions { flex-direction: column; }
   .btn-ghost-sm, .publish-btn { width: 100%; justify-content: center; }
+  .editor-toolbar { gap: 1px; }
+  .toolbar-hint { display: none; }
+  .blog-textarea { min-height: 260px; padding: 14px 14px; }
 }
 </style>
 </head>
@@ -738,6 +549,10 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
           <span class="stat-num" id="stat-today">—</span>
           <span class="stat-label">Today</span>
         </div>
+        <div class="stat-chip">
+          <span class="stat-num" id="stat-words">—</span>
+          <span class="stat-label">Avg. Word Count</span>
+        </div>
       </div>
 
       <div class="admin-layout">
@@ -771,7 +586,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
                     </svg>
                   </div>
                   <p class="dropzone-text">Drop image here or <span>click to browse</span></p>
-                  <p class="dropzone-hint">JPG, PNG, WebP &mdash; auto-compressed</p>
+                  <p class="dropzone-hint">JPG, PNG, WebP &mdash; auto-compressed to square</p>
                 </div>
                 <img id="image-preview" class="image-preview-img" alt="Preview" style="display:none">
                 <div class="dropzone-overlay" id="dropzone-overlay" style="display:none">
@@ -788,14 +603,14 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
             <!-- Artist -->
             <div class="form-group">
               <label class="form-label" for="artist-input">Artist Name <span class="required">*</span></label>
-              <input type="text" id="artist-input" class="form-input" placeholder="e.g. Stonebwoy" maxlength="80" autocomplete="off">
+              <input type="text" id="artist-input" class="form-input" placeholder="e.g. Stonebwoy" maxlength="120" autocomplete="off">
               <p class="field-error" id="artist-error" style="display:none">Artist name is required.</p>
             </div>
 
             <!-- Title -->
             <div class="form-group">
-              <label class="form-label" for="title-input">Song Title <span class="required">*</span></label>
-              <input type="text" id="title-input" class="form-input" placeholder="e.g. Activate" maxlength="120" autocomplete="off">
+              <label class="form-label" for="title-input">Song / Project Title <span class="required">*</span></label>
+              <input type="text" id="title-input" class="form-input" placeholder="e.g. Activate (feat. Kidi)" maxlength="180" autocomplete="off">
               <p class="field-error" id="title-error" style="display:none">Song title is required.</p>
             </div>
 
@@ -804,30 +619,103 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
               <label class="form-label" for="genre-input">Genre</label>
               <select id="genre-input" class="form-input form-select">
                 <option value="">Select genre (optional)</option>
-                <option value="afrobeats">Afrobeats</option>
-                <option value="gospel">Gospel</option>
-                <option value="hiphop">Hip-Hop</option>
-                <option value="highlife">Highlife</option>
-                <option value="amapiano">Amapiano</option>
-                <option value="rnb">R&amp;B</option>
-                <option value="afropop">Afropop</option>
+                <option value="Afrobeats">Afrobeats</option>
+                <option value="Gospel">Gospel</option>
+                <option value="Hiphop">Hip-Hop</option>
+                <option value="Highlife">Highlife</option>
+                <option value="Amapiano">Amapiano</option>
+                <option value="R&B">R&amp;B</option>
+                <option value="Afropop">Afropop</option>
+                <option value="Reggae">Reggae</option>
+                <option value="Dancehall">Dancehall</option>
+                <option value="Drill">Drill</option>
               </select>
             </div>
 
-            <!-- Caption -->
+            <!-- Blog-style Caption / Article Body -->
             <div class="form-group">
-              <label class="form-label" for="caption-input">Caption <span class="required">*</span></label>
-              <textarea id="caption-input" class="form-input form-textarea" placeholder="Write a compelling promo caption for this release…" maxlength="600" rows="4"></textarea>
-              <div class="char-counter"><span id="char-count">0</span> / 600</div>
-              <p class="field-error" id="caption-error" style="display:none">Caption is required.</p>
+              <label class="form-label">
+                Article / Caption <span class="required">*</span>
+                <span style="font-weight:400;color:var(--clr-subtle);margin-left:6px;">— write as much as you like, blog style</span>
+              </label>
+
+              <!-- Template shortcuts -->
+              <span class="template-label" style="margin-top:8px">Quick templates:</span>
+              <div class="template-row">
+                <button type="button" class="template-btn" data-template="afrobeats">
+                  🎵 Afrobeats Drop
+                </button>
+                <button type="button" class="template-btn" data-template="gospel">
+                  🙏 Gospel Release
+                </button>
+                <button type="button" class="template-btn" data-template="highlife">
+                  🎷 Highlife Feature
+                </button>
+                <button type="button" class="template-btn" data-template="hiphop">
+                  🎤 Hip-Hop Promo
+                </button>
+                <button type="button" class="template-btn" data-template="new_artist">
+                  ⭐ New Artist Intro
+                </button>
+                <button type="button" class="template-btn" data-template="album">
+                  💿 Album / EP Launch
+                </button>
+              </div>
+
+              <!-- Rich text editor -->
+              <div class="blog-editor-wrap" style="margin-top:10px;">
+                <!-- Toolbar -->
+                <div class="editor-toolbar" role="toolbar" aria-label="Text formatting">
+                  <button type="button" class="toolbar-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+                  <button type="button" class="toolbar-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+                  <button type="button" class="toolbar-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+                  <div class="toolbar-sep"></div>
+                  <button type="button" class="toolbar-btn" data-cmd="h3" title="Heading">H3</button>
+                  <button type="button" class="toolbar-btn" data-cmd="blockquote" title="Quote">❝</button>
+                  <button type="button" class="toolbar-btn" data-cmd="insertUnorderedList" title="Bullet list">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13">
+                      <circle cx="2" cy="4" r="1" fill="currentColor"/><line x1="5" y1="4" x2="14" y2="4"/>
+                      <circle cx="2" cy="8" r="1" fill="currentColor"/><line x1="5" y1="8" x2="14" y2="8"/>
+                      <circle cx="2" cy="12" r="1" fill="currentColor"/><line x1="5" y1="12" x2="14" y2="12"/>
+                    </svg>
+                  </button>
+                  <div class="toolbar-sep"></div>
+                  <button type="button" class="toolbar-btn" data-cmd="removeFormat" title="Clear formatting">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13">
+                      <path d="M3 3l10 10M7 3h6l-4 5h4"/></svg>
+                  </button>
+                  <span class="toolbar-hint">Ctrl+B · Ctrl+I · Ctrl+U</span>
+                </div>
+
+                <!-- Editable content area -->
+                <div
+                  id="caption-editor"
+                  class="blog-textarea"
+                  contenteditable="true"
+                  role="textbox"
+                  aria-multiline="true"
+                  aria-label="Article body"
+                  data-placeholder="Write your full article or promo caption here... Tell the world about the artist, the sound, the story behind the release. No limit — the longer and richer, the more your readers will trust and engage with it."
+                  spellcheck="true"
+                ></div>
+
+                <!-- Footer -->
+                <div class="editor-footer">
+                  <div class="word-count"><span id="word-count">0</span> words · <span id="char-count-display">0</span> characters</div>
+                  <div class="editor-hint">No character limit · paste freely · rich text saved</div>
+                </div>
+              </div>
+
+              <!-- Hidden textarea for form submission (populated by JS) -->
+              <textarea id="caption-input" class="sr-only" aria-hidden="true"></textarea>
+              <p class="field-error" id="caption-error" style="display:none">Please write at least a short article or caption.</p>
             </div>
 
-            <!-- FFM Link (single link) -->
+            <!-- FFM Link -->
             <div class="form-group">
-              <label class="form-label" for="ffm-input">Streaming Link (FFM)</label>
+              <label class="form-label" for="ffm-input">Streaming Link (FFM / Smart Link)</label>
               <div class="ffm-input-wrap">
                 <div class="ffm-icon">
-                  <!-- music link / chain icon -->
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
@@ -835,7 +723,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
                 </div>
                 <input type="url" id="ffm-input" class="form-input ffm-field" placeholder="https://ffm.to/your-link">
               </div>
-              <p class="ffm-hint">Paste your FFM (Feature.fm) smart link — fans can pick their platform from there.</p>
+              <p class="ffm-hint">Paste your FFM (Feature.fm) or any smart link — fans pick their platform from there.</p>
             </div>
 
             <!-- Actions -->
@@ -869,7 +757,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
         </aside>
 
       </div>
-    </div><!-- /admin-dashboard -->
+    </div>
 
   </div>
 </main>
@@ -904,8 +792,7 @@ const firebaseConfig = {
   projectId: "music-7a35b",
   storageBucket: "music-7a35b.appspot.com",
   messagingSenderId: "26882716946",
-  appId: "1:26882716946:web:5cc1c9e980bc6597442fcb",
-  measurementId: "G-2C0JM7V615"
+  appId: "1:26882716946:web:5cc1c9e980bc6597442fcb"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -920,7 +807,7 @@ const ADMIN_PASSWORD = "444music2024";
    ============================================================ */
 let compressedImageB64 = null;
 let pendingDeleteId    = null;
-let editingPostId      = null;   // null = create mode, string = edit mode
+let editingPostId      = null;
 
 /* ============================================================
    DOM REFS
@@ -941,9 +828,10 @@ const btnRemoveImg     = document.getElementById("btn-remove-img");
 const artistInput      = document.getElementById("artist-input");
 const titleInput       = document.getElementById("title-input");
 const genreInput       = document.getElementById("genre-input");
+const captionEditor    = document.getElementById("caption-editor");
 const captionInput     = document.getElementById("caption-input");
-const charCount        = document.getElementById("char-count");
-const charCounter      = charCount.closest(".char-counter");
+const wordCountEl      = document.getElementById("word-count");
+const charCountDisplay = document.getElementById("char-count-display");
 const ffmInput         = document.getElementById("ffm-input");
 const publishBtn       = document.getElementById("publish-btn");
 const btnReset         = document.getElementById("btn-reset");
@@ -951,6 +839,7 @@ const formFeedback     = document.getElementById("form-feedback");
 const adminPostsList   = document.getElementById("admin-posts-list");
 const statTotal        = document.getElementById("stat-total");
 const statToday        = document.getElementById("stat-today");
+const statWords        = document.getElementById("stat-words");
 const deleteModal      = document.getElementById("delete-modal");
 const modalCancel      = document.getElementById("modal-cancel");
 const modalConfirm     = document.getElementById("modal-confirm");
@@ -972,12 +861,8 @@ function handleAuth() {
     loadAdminPosts();
   } else {
     authError.style.display = "flex";
-    authPassInput.classList.add("error");
     authPassInput.focus();
-    setTimeout(() => {
-      authError.style.display = "none";
-      authPassInput.classList.remove("error");
-    }, 3000);
+    setTimeout(() => { authError.style.display = "none"; }, 3000);
   }
 }
 
@@ -997,10 +882,7 @@ imageInput.addEventListener("change", () => {
   const file = imageInput.files?.[0];
   if (file) processImage(file);
 });
-btnRemoveImg.addEventListener("click", e => {
-  e.stopPropagation();
-  clearImage();
-});
+btnRemoveImg.addEventListener("click", e => { e.stopPropagation(); clearImage(); });
 
 function processImage(file) {
   const originalKb = (file.size / 1024).toFixed(0);
@@ -1012,23 +894,19 @@ function processImage(file) {
       const MAX = 800;
       let w = img.width, h = img.height;
       const side = Math.min(w, h);
-      const sx = (w - side) / 2;
-      const sy = (h - side) / 2;
+      const sx = (w - side) / 2, sy = (h - side) / 2;
       canvas.width  = Math.min(side, MAX);
       canvas.height = Math.min(side, MAX);
       const ctx = canvas.getContext("2d");
       ctx.drawImage(img, sx, sy, side, side, 0, 0, canvas.width, canvas.height);
       const b64 = canvas.toDataURL("image/jpeg", 0.80);
       compressedImageB64 = b64;
-
       imagePreview.src = b64;
       imagePreview.style.display = "block";
       dropzoneContent.style.display = "none";
       dropzoneOverlay.style.display = "flex";
-
       const newKb = Math.round(b64.length * 0.75 / 1024);
       compressionBadge.textContent = `${originalKb}KB → ${newKb}KB`;
-
       document.getElementById("img-error").style.display = "none";
     };
     img.src = evt.target.result;
@@ -1056,12 +934,119 @@ function clearImage() {
 }
 
 /* ============================================================
-   CHAR COUNTER
+   RICH TEXT EDITOR
    ============================================================ */
-captionInput.addEventListener("input", () => {
-  const n = captionInput.value.length;
-  charCount.textContent = n;
-  charCounter.className = "char-counter" + (n > 540 ? " danger" : n > 450 ? " warn" : "");
+captionEditor.addEventListener("input", updateWordCount);
+captionEditor.addEventListener("keyup", updateWordCount);
+
+function updateWordCount() {
+  const text = captionEditor.innerText || "";
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const chars = text.length;
+  wordCountEl.textContent   = words.toLocaleString();
+  charCountDisplay.textContent = chars.toLocaleString();
+}
+
+// Toolbar formatting
+document.querySelectorAll(".toolbar-btn[data-cmd]").forEach(btn => {
+  btn.addEventListener("mousedown", e => {
+    e.preventDefault(); // don't blur editor
+    captionEditor.focus();
+    const cmd = btn.dataset.cmd;
+    if (cmd === "h3") {
+      document.execCommand("formatBlock", false, "h3");
+    } else if (cmd === "blockquote") {
+      document.execCommand("formatBlock", false, "blockquote");
+    } else {
+      document.execCommand(cmd, false, null);
+    }
+    // Toggle active state for format buttons
+    if (["bold","italic","underline"].includes(cmd)) {
+      btn.classList.toggle("active", document.queryCommandState(cmd));
+    }
+  });
+});
+
+// Update toolbar state on selection change
+document.addEventListener("selectionchange", () => {
+  if (!document.activeElement || !captionEditor.contains(document.activeElement) && document.activeElement !== captionEditor) return;
+  ["bold","italic","underline"].forEach(cmd => {
+    const btn = document.querySelector(`.toolbar-btn[data-cmd="${cmd}"]`);
+    if (btn) btn.classList.toggle("active", document.queryCommandState(cmd));
+  });
+});
+
+/* ============================================================
+   WRITING TEMPLATES
+   ============================================================ */
+const templates = {
+  afrobeats: (artist, title) => `<h3>🎵 New Release: ${artist || "The Artist"} – "${title || "New Track"}"</h3>
+<p>The Afrobeats scene just got hotter. <strong>${artist || "This talented artist"}</strong> has officially dropped <strong>"${title || "this banger"}"</strong> and it is everything we hoped for — and more.</p>
+<p>From the opening drum pattern to the infectious hook, this track is engineered for the dance floor, the car ride, and the late-night playlist. The groove is undeniable, the production is crisp, and the vocal delivery carries that unmistakable energy that has made Ghanaian Afrobeats a global force.</p>
+<blockquote>This is not just a song — it is a moment. And moments like these remind us why African music is taking over the world.</blockquote>
+<h3>What Makes This Track Special</h3>
+<p>The production is layered with warm percussion, punchy bass, and just the right amount of melodic texture to keep you hooked from the first listen. Every element feels intentional, every decision deliberate.</p>
+<p>Stream it now on all major platforms and add it to your playlist today. Support the movement. Support authentic African sound.</p>`,
+
+  gospel: (artist, title) => `<h3>🙏 Gospel Release: ${artist || "The Artist"} Drops Powerful New Single "${title || "New Praise"}"</h3>
+<p>Faith moves mountains — and music moves hearts. <strong>${artist || "This anointed minister"}</strong> is proving both with the release of <strong>"${title || "this worship anthem"}"</strong>, a song that carries the presence of God in every note.</p>
+<p>Ghana's gospel scene has always been a source of spiritual power and cultural pride. From the great choirs of old to the contemporary worshippers of today, the tradition is alive — and tracks like this one prove that the best is still ahead.</p>
+<blockquote>When the music starts, the atmosphere shifts. That is what true worship sounds like.</blockquote>
+<h3>A Song for Every Season</h3>
+<p>Whether you are in a season of celebration or a season of pressing through, this track speaks to the soul directly. The arrangement is both modern and deeply rooted, the vocals are soaring, and the lyrics are a genuine outpouring of faith.</p>
+<p>Play it loud. Share it with your church, your family, your community. This is music that heals, uplifts, and reminds us of who we are.</p>`,
+
+  highlife: (artist, title) => `<h3>🎷 Highlife Feature: ${artist || "The Artist"} Revives the Golden Sound in "${title || "New Highlife Track"}"</h3>
+<p>Ghana's musical soul speaks again. <strong>${artist || "This gifted artist"}</strong> has gifted us with <strong>"${title || "a beautiful new Highlife track"}"</strong> — a release that honours the giants who came before while sounding completely alive for 2025.</p>
+<p>Highlife is not just a genre. It is a national heritage, a living archive of Ghanaian joy, longing, philosophy, and celebration. When it is done with love and craft, nothing sounds quite like it — and this track is the proof.</p>
+<blockquote>The guitar sings, the rhythm breathes, and somewhere in the arrangement you can feel the entire history of Ghana's music smiling.</blockquote>
+<h3>Why This Release Matters</h3>
+<p>At a time when sounds and trends move at breathtaking speed, it takes courage and conviction to plant a flag for Highlife. This artist does so with confidence and grace, delivering a track that will resonate for years to come.</p>
+<p>Stream it, share it, celebrate it. Ghana's golden sound is alive and well.</p>`,
+
+  hiphop: (artist, title) => `<h3>🎤 Hip-Hop Promo: ${artist || "The Artist"} Goes All Out on "${title || "New Banger"}"</h3>
+<p>The bars are hitting. The beat is knocking. And <strong>${artist || "this rapper"}</strong> is making sure nobody sleeps on <strong>"${title || "this one"}"</strong> — a track that showcases everything that makes Ghanaian hip-hop a force to be reckoned with.</p>
+<p>Ghana's rap scene is at an all-time high. Artists are crafting music with the technical precision of the world's best while keeping it rooted in stories and references that are unmistakably local. This release sits right at that intersection — globally competitive, authentically Ghanaian.</p>
+<blockquote>The flow is immaculate. The wordplay is elite. Add this to your cypher playlist immediately.</blockquote>
+<h3>Breaking It Down</h3>
+<p>The production gives the perfect canvas — dark, textured, alive with detail. The vocal performance across the track is confident and varied, showing range without losing identity. This is the work of someone who has put in time and is ready to show for it.</p>
+<p>Stream this now. Tell your people. The Ghana rap wave is not slowing down.</p>`,
+
+  new_artist: (artist, title) => `<h3>⭐ Introducing ${artist || "A Promising New Voice"} — "${title || "Debut Release"}"</h3>
+<p>Every once in a while, a new voice comes along that makes you stop and pay attention. <strong>${artist || "This emerging artist"}</strong> is that voice — and <strong>"${title || "this debut release"}"</strong> is the introduction the world has been waiting for.</p>
+<p>New talent in the Ghanaian music space continues to emerge with remarkable consistency, and the quality bar keeps rising. This artist brings something fresh to the table — a distinct sound, a compelling story, and the kind of natural charisma that cannot be manufactured.</p>
+<blockquote>First impressions this strong are rare. Remember this name — you will be hearing it a lot more.</blockquote>
+<h3>Watch This Space</h3>
+<p>The production on this debut is punchy and polished — no rough edges, just a clear vision executed with confidence. The vocal performance suggests an artist who knows exactly who they are and where they are going.</p>
+<p>Stream and support now. Be the one who discovered them early. Share this post and help a talented Ghanaian artist reach the audience they deserve.</p>`,
+
+  album: (artist, title) => `<h3>💿 Album / EP Launch: ${artist || "The Artist"} Drops "${title || "New Project"}" — A Body of Work Worth Your Full Attention</h3>
+<p>This is bigger than a single. <strong>${artist || "This artist"}</strong> has arrived with <strong>"${title || "a full project"}"</strong> — a complete body of work that tells a story from track one to the last note, demanding to be heard start to finish.</p>
+<p>In an era of singles and streaming algorithms, a well-crafted album or EP is a bold artistic statement. It says: I have something to say, and I have given it the space and depth it deserves. That is exactly what this project does.</p>
+<blockquote>This is not a playlist filler. This is art with intention, and it rewards every minute of your listening time.</blockquote>
+<h3>Project Highlights</h3>
+<p>Across the tracklist, you will find range — moments of celebration, reflection, vulnerability, and triumph. The production is cohesive without being monotonous, and the performances are consistent from start to finish. This is a thoughtfully assembled project that respects its audience.</p>
+<h3>The Verdict from 444Music</h3>
+<p>We back this project fully. It is the kind of release that reminds us why we do what we do — championing authentic Ghanaian artistry and connecting it with the listeners it deserves. Stream the full project now. Share it. Celebrate it.</p>`
+};
+
+document.querySelectorAll(".template-btn[data-template]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const key = btn.dataset.template;
+    const artist = artistInput.value.trim();
+    const title  = titleInput.value.trim();
+    const html   = templates[key] ? templates[key](artist, title) : "";
+    if (!html) return;
+    // If editor already has content, confirm replacement
+    if (captionEditor.innerText.trim().length > 30) {
+      if (!confirm("Replace current content with this template?")) return;
+    }
+    captionEditor.innerHTML = html;
+    updateWordCount();
+    captionEditor.focus();
+    // Scroll editor into view
+    captionEditor.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
 });
 
 /* ============================================================
@@ -1069,34 +1054,37 @@ captionInput.addEventListener("input", () => {
    ============================================================ */
 function enterEditMode(post) {
   editingPostId = post.id;
-
-  // Update UI to edit mode
   formTitleText.textContent = "Edit Post";
   editBanner.style.display  = "flex";
   publishBtn.querySelector(".btn-label").textContent = "Save Changes";
   publishBtn.classList.add("edit-mode");
 
-  // Populate fields
   artistInput.value  = post.artist  || "";
   titleInput.value   = post.title   || "";
   genreInput.value   = post.genre   || "";
-  captionInput.value = post.caption || "";
   ffmInput.value     = post.links?.ffm || post.links?.spotify || "";
 
-  // Update char counter
-  const n = captionInput.value.length;
-  charCount.textContent = n;
-  charCounter.className = "char-counter" + (n > 540 ? " danger" : n > 450 ? " warn" : "");
+  // Caption: stored as HTML or plain text
+  const captionVal = post.caption || "";
+  // If it looks like HTML, use innerHTML; otherwise use textContent
+  if (captionVal.includes("<") && captionVal.includes(">")) {
+    captionEditor.innerHTML = captionVal;
+  } else {
+    // Convert plain text (with newlines) to paragraphs
+    captionEditor.innerHTML = captionVal
+      .split("\n\n")
+      .filter(p => p.trim())
+      .map(p => `<p>${escHtml(p.trim())}</p>`)
+      .join("") || captionVal;
+  }
+  updateWordCount();
 
-  // Image
   if (post.image) setImagePreview(post.image);
 
-  // Highlight the item being edited in the list
   document.querySelectorAll(".admin-post-item").forEach(el => {
     el.classList.toggle("editing", el.dataset.postId === post.id);
   });
 
-  // Scroll form into view
   document.querySelector(".upload-card").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -1114,40 +1102,38 @@ function exitEditMode() {
 btnCancelEdit.addEventListener("click", exitEditMode);
 
 /* ============================================================
-   FORM SUBMIT  (create OR update)
+   FORM SUBMIT
    ============================================================ */
 uploadForm.addEventListener("submit", async e => {
   e.preventDefault();
-  if (!validateForm()) return;
 
+  // Sync hidden textarea from editor
+  captionInput.value = captionEditor.innerHTML.trim();
+
+  if (!validateForm()) return;
   setPublishing(true);
   hideFeedback();
 
   const post = {
-    artist:    artistInput.value.trim(),
-    title:     titleInput.value.trim(),
-    genre:     genreInput.value || null,
-    caption:   captionInput.value.trim(),
-    image:     compressedImageB64,
-    links: {
-      ffm: ffmInput.value.trim() || null,
-    }
+    artist:  artistInput.value.trim(),
+    title:   titleInput.value.trim(),
+    genre:   genreInput.value || null,
+    caption: captionEditor.innerHTML.trim(),   // save as HTML
+    image:   compressedImageB64,
+    links: { ffm: ffmInput.value.trim() || null }
   };
 
   try {
     if (editingPostId) {
-      // UPDATE existing post
       await db.collection("posts").doc(editingPostId).update({
-        ...post,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        ...post, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      showFeedback("success", "Post updated successfully.");
+      showFeedback("success", "✓ Post updated successfully.");
       exitEditMode();
     } else {
-      // CREATE new post
       post.createdAt = firebase.firestore.FieldValue.serverTimestamp();
       await db.collection("posts").add(post);
-      showFeedback("success", "Post published successfully.");
+      showFeedback("success", "✓ Post published successfully.");
       resetForm();
     }
     loadAdminPosts();
@@ -1161,32 +1147,27 @@ uploadForm.addEventListener("submit", async e => {
 
 function validateForm() {
   let valid = true;
-  const show = (id, msg) => {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.style.display = "flex";
-    valid = false;
-  };
+  const show = (id, msg) => { const el = document.getElementById(id); el.textContent = msg; el.style.display = "flex"; valid = false; };
   const hide = id => { document.getElementById(id).style.display = "none"; };
 
-  if (!compressedImageB64) show("img-error", "Please upload a promo image."); else hide("img-error");
-  if (!artistInput.value.trim()) show("artist-error", "Artist name is required."); else hide("artist-error");
-  if (!titleInput.value.trim()) show("title-error", "Song title is required."); else hide("title-error");
-  if (!captionInput.value.trim()) show("caption-error", "Caption is required."); else hide("caption-error");
+  if (!compressedImageB64)                     show("img-error",     "Please upload a promo image."); else hide("img-error");
+  if (!artistInput.value.trim())               show("artist-error",  "Artist name is required."); else hide("artist-error");
+  if (!titleInput.value.trim())                show("title-error",   "Song title is required."); else hide("title-error");
+  if (!captionEditor.innerText.trim())         show("caption-error", "Please write at least a short article or caption."); else hide("caption-error");
   return valid;
 }
 
 function setPublishing(state) {
   publishBtn.disabled = state;
-  publishBtn.querySelector(".btn-label").style.display = state ? "none" : "inline";
+  publishBtn.querySelector(".btn-label").style.display  = state ? "none"        : "inline";
   publishBtn.querySelector(".btn-spinner").style.display = state ? "inline-flex" : "none";
 }
 
 function resetForm() {
   uploadForm.reset();
+  captionEditor.innerHTML = "";
+  updateWordCount();
   clearImage();
-  charCount.textContent = "0";
-  charCounter.className = "char-counter";
   ["img-error","artist-error","title-error","caption-error"].forEach(id => {
     document.getElementById(id).style.display = "none";
   });
@@ -1199,13 +1180,10 @@ function showFeedback(type, msg) {
   formFeedback.className = "form-feedback " + type;
   formFeedback.textContent = msg;
   formFeedback.style.display = "flex";
-  setTimeout(hideFeedback, 6000);
+  setTimeout(hideFeedback, 7000);
 }
 function hideFeedback() { formFeedback.style.display = "none"; }
 
-/* ============================================================
-   RESET BUTTON
-   ============================================================ */
 btnReset.addEventListener("click", () => {
   if (editingPostId) exitEditMode();
   else { resetForm(); hideFeedback(); }
@@ -1216,22 +1194,29 @@ btnReset.addEventListener("click", () => {
    ============================================================ */
 async function loadAdminPosts() {
   try {
-    const snapshot = await db.collection("posts")
-      .orderBy("createdAt", "desc")
-      .limit(20)
-      .get();
-
+    const snap = await db.collection("posts").orderBy("createdAt","desc").limit(30).get();
     const posts = [];
-    snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
+    snap.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
 
     statTotal.textContent = posts.length;
+
     const today = new Date();
     const todayCount = posts.filter(p => {
       if (!p.createdAt?.toDate) return false;
-      const d = p.createdAt.toDate();
-      return d.toDateString() === today.toDateString();
+      return p.createdAt.toDate().toDateString() === today.toDateString();
     }).length;
     statToday.textContent = todayCount;
+
+    // Avg word count across posts
+    if (posts.length) {
+      const avgWords = Math.round(
+        posts.reduce((sum, p) => {
+          const text = p.caption ? p.caption.replace(/<[^>]*>/g, " ") : "";
+          return sum + (text.trim() ? text.trim().split(/\s+/).length : 0);
+        }, 0) / posts.length
+      );
+      statWords.textContent = avgWords > 0 ? avgWords : "—";
+    }
 
     renderAdminList(posts);
   } catch (err) {
@@ -1250,15 +1235,16 @@ function renderAdminList(posts) {
     const item = document.createElement("div");
     item.className = "admin-post-item";
     item.dataset.postId = post.id;
-    const date = post.createdAt?.toDate
-      ? formatDate(post.createdAt.toDate())
-      : "Just now";
+    const date = post.createdAt?.toDate ? formatDate(post.createdAt.toDate()) : "Just now";
+    // Word count from this post
+    const captionText = (post.caption || "").replace(/<[^>]*>/g, " ");
+    const wc = captionText.trim() ? captionText.trim().split(/\s+/).length : 0;
     item.innerHTML = `
       <img class="admin-post-thumb" src="${post.image || ''}" alt="${escHtml(post.artist)}" loading="lazy">
       <div class="admin-post-info">
         <div class="admin-post-artist">${escHtml(post.artist)}</div>
         <div class="admin-post-title">${escHtml(post.title)}</div>
-        <div class="admin-post-date">${date}</div>
+        <div class="admin-post-date">${date} · ${wc} words</div>
       </div>
       <div class="admin-post-actions">
         <button class="btn-edit-post" data-id="${post.id}" aria-label="Edit post" title="Edit post">
@@ -1279,15 +1265,11 @@ function renderAdminList(posts) {
     adminPostsList.appendChild(item);
   });
 
-  // Edit buttons
   adminPostsList.querySelectorAll(".btn-edit-post").forEach(btn => {
     btn.addEventListener("click", async () => {
-      const id = btn.dataset.id;
       try {
-        const doc = await db.collection("posts").doc(id).get();
-        if (doc.exists) {
-          enterEditMode({ id: doc.id, ...doc.data() });
-        }
+        const doc = await db.collection("posts").doc(btn.dataset.id).get();
+        if (doc.exists) enterEditMode({ id: doc.id, ...doc.data() });
       } catch (err) {
         console.error(err);
         showFeedback("error", "Could not load post for editing.");
@@ -1295,7 +1277,6 @@ function renderAdminList(posts) {
     });
   });
 
-  // Delete buttons
   adminPostsList.querySelectorAll(".btn-delete-post").forEach(btn => {
     btn.addEventListener("click", () => {
       pendingDeleteId = btn.dataset.id;
@@ -1313,17 +1294,14 @@ modalConfirm.addEventListener("click", async () => {
   try {
     await db.collection("posts").doc(pendingDeleteId).delete();
     deleteModal.style.display = "none";
-    // If we were editing the deleted post, exit edit mode
     if (editingPostId === pendingDeleteId) exitEditMode();
     pendingDeleteId = null;
     loadAdminPosts();
   } catch (err) {
-    console.error(err);
-    deleteModal.style.display = "none";
     showFeedback("error", "Delete failed: " + err.message);
+    deleteModal.style.display = "none";
   }
 });
-
 deleteModal.addEventListener("click", e => {
   if (e.target === deleteModal) { deleteModal.style.display = "none"; pendingDeleteId = null; }
 });
