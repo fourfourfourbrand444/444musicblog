@@ -140,17 +140,6 @@ body::before {
   border:1px solid var(--border-md);
 }
 
-/* ── VERIFIED badge ── */
-.verified-badge {
-  display:inline-flex; align-items:center; gap:4px;
-  padding:2px 8px; border-radius:20px;
-  background:linear-gradient(135deg,#0ea5e9,#0284c7);
-  color:#fff; font-size:.58rem; font-weight:700;
-  letter-spacing:.08em; text-transform:uppercase;
-  box-shadow:0 2px 8px rgba(14,165,233,.35);
-}
-.verified-badge svg { flex-shrink:0; }
-
 .nav-center {
   display:flex; align-items:center; gap:3px;
   flex:1; overflow-x:auto; scrollbar-width:none;
@@ -180,7 +169,6 @@ body::before {
 }
 .nav-icon-btn:hover { background:var(--purple-soft); color:var(--purple); border-color:var(--border-strong); }
 
-/* ── BROWSE PLAYLIST CTA (desktop only) ── */
 .nav-playlist-btn {
   display:inline-flex; align-items:center; gap:7px;
   padding:9px 18px; border-radius:40px;
@@ -197,7 +185,6 @@ body::before {
   animation:pulse-dot 2s infinite;
 }
 
-/* Mobile playlist CTA row (shown inside drawer) */
 .mobile-playlist-row {
   display:flex; gap:10px; padding-bottom:4px;
 }
@@ -210,7 +197,6 @@ body::before {
   transition:all var(--t) var(--ease); border:none;
 }
 .mobile-playlist-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(29,185,84,.4); }
-/* ── End playlist btn ── */
 
 .mobile-menu-btn {
   display:none; flex-direction:column; gap:5px;
@@ -365,7 +351,6 @@ body::before {
 }
 .hero-cta.secondary:hover { background:rgba(255,255,255,.2); transform:translateY(-2px); }
 
-/* ── Playlist hero CTA (new) ── */
 .hero-cta.playlist {
   background:linear-gradient(135deg,#1db954,#17a848);
   color:#fff; box-shadow:0 8px 28px rgba(29,185,84,.3);
@@ -576,7 +561,7 @@ body::before {
 .trust-label { font-size:.74rem; font-weight:500; opacity:.75; margin-top:2px; }
 
 /* ================================================================
-   PLATFORM STRIP (NEW — pro upgrade)
+   PLATFORM STRIP
    ================================================================ */
 .platform-strip {
   background:var(--bg-white); border-bottom:1px solid var(--border);
@@ -731,16 +716,45 @@ body::before {
   border:1px solid var(--border);
 }
 
+/* ================================================================
+   VIEW COUNT BADGE
+   ================================================================ */
+.card-views-row {
+  display:flex; align-items:center; gap:6px;
+  padding:8px 20px 0;
+  border-top:1px solid var(--border);
+  margin-top:2px;
+}
+.views-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 10px; border-radius:20px;
+  background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(139,92,246,.04));
+  border:1px solid var(--border-md);
+  font-family:var(--ff-display); font-size:.68rem; font-weight:700;
+  color:var(--text-muted);
+  transition:all .3s var(--ease);
+}
+.views-badge svg { color:var(--purple); flex-shrink:0; }
+.views-count {
+  color:var(--text); font-weight:800;
+  font-family:var(--ff-display); font-size:.72rem;
+  transition:color .3s;
+}
+.views-badge.counting .views-count { color:var(--purple); }
+.views-live-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--purple-lt); margin-left:2px;
+  animation:pulse-dot 2.5s infinite;
+  flex-shrink:0;
+}
+.views-label { color:var(--text-subtle); font-size:.62rem; font-weight:600; letter-spacing:.04em; }
+
 .card-divider { height:1px; background:var(--border); margin:0 20px; }
 
 .card-stores {
   display:flex; align-items:stretch; gap:0; padding:12px 20px 16px;
   flex-direction:column;
 }
-
-/* ================================================================
-   SHARE BUTTON
-   ================================================================ */
 .card-stores-row {
   display:flex; align-items:center; gap:10px; flex-wrap:nowrap;
 }
@@ -798,99 +812,215 @@ body::before {
 }
 
 /* ================================================================
-   CARD MODAL
+   FULL-SCREEN POST MODAL (Blog Style)
    ================================================================ */
-.modal-overlay {
-  position:fixed; inset:0; z-index:500;
-  background:rgba(17,16,24,.6); backdrop-filter:blur(12px);
-  display:flex; align-items:center; justify-content:center;
-  padding:20px; opacity:0; pointer-events:none;
-  transition:opacity .3s var(--ease);
-}
-.modal-overlay.open { opacity:1; pointer-events:all; }
-
-.modal-card {
-  background:var(--bg-white); border-radius:var(--radius-2xl);
-  max-width:720px; width:100%; max-height:90vh;
+.post-overlay {
+  position:fixed; inset:0; z-index:600;
+  background:var(--bg-white);
   overflow-y:auto; overflow-x:hidden;
-  box-shadow:0 40px 100px rgba(124,58,237,.2), 0 20px 40px rgba(0,0,0,.15);
-  transform:scale(.9) translateY(20px);
-  transition:transform .4s var(--spring);
-  border:1.5px solid var(--border-md);
+  opacity:0; pointer-events:none;
+  transform:translateY(30px);
+  transition:opacity .4s var(--ease), transform .4s var(--ease);
   scrollbar-width:thin; scrollbar-color:var(--border-md) transparent;
 }
-.modal-overlay.open .modal-card { transform:scale(1) translateY(0); }
+.post-overlay.open {
+  opacity:1; pointer-events:all;
+  transform:translateY(0);
+}
 
-.modal-img { width:100%; aspect-ratio:16/9; overflow:hidden; position:relative; background:var(--bg-elevated); }
-.modal-img img { width:100%;height:100%;object-fit:cover; }
-.modal-img-overlay {
+.post-overlay-topbar {
+  position:sticky; top:0; z-index:10;
+  background:rgba(255,255,255,.95); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 28px; height:60px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.post-topbar-left { display:flex; align-items:center; gap:12px; min-width:0; }
+.post-back-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:7px 14px; border-radius:20px;
+  border:1.5px solid var(--border-md); background:var(--bg-white);
+  font-family:var(--ff-display); font-size:.74rem; font-weight:700;
+  color:var(--text-muted); transition:all .2s; flex-shrink:0;
+}
+.post-back-btn:hover { background:var(--purple-soft); color:var(--purple); border-color:var(--border-strong); }
+.post-topbar-title {
+  font-family:var(--ff-display); font-size:.88rem; font-weight:700;
+  color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.post-topbar-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.post-topbar-views {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:5px 12px; border-radius:20px;
+  background:var(--purple-soft); border:1px solid var(--border-md);
+  font-family:var(--ff-display); font-size:.72rem; font-weight:700;
+  color:var(--purple);
+}
+.post-topbar-share {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:7px 16px; border-radius:20px;
+  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
+  color:#fff; font-family:var(--ff-display); font-size:.74rem; font-weight:700;
+  border:none; cursor:pointer; box-shadow:0 4px 14px var(--purple-glow);
+  transition:all .2s;
+}
+.post-topbar-share:hover { transform:translateY(-1px); box-shadow:0 6px 20px var(--purple-glow); }
+
+/* Hero image */
+.post-hero-img {
+  width:100%; height:clamp(280px, 50vw, 560px);
+  overflow:hidden; position:relative;
+  background:var(--bg-elevated);
+}
+.post-hero-img img {
+  width:100%; height:100%; object-fit:cover;
+  filter:brightness(.75) saturate(1.1);
+}
+.post-hero-img-overlay {
   position:absolute; inset:0;
-  background:linear-gradient(to top, rgba(17,16,24,.7) 0%, transparent 50%);
+  background:linear-gradient(to top, rgba(17,16,24,.85) 0%, rgba(17,16,24,.3) 50%, transparent 100%);
 }
-.modal-close {
-  position:absolute; top:16px; right:16px; z-index:10;
-  width:36px; height:36px; border-radius:50%;
-  background:rgba(255,255,255,.9); backdrop-filter:blur(8px);
-  display:flex; align-items:center; justify-content:center;
-  color:var(--text); border:1px solid var(--border);
-  transition:all .2s; box-shadow:0 2px 8px rgba(0,0,0,.15);
+.post-hero-content {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:clamp(20px,5vw,60px);
+  max-width:900px; margin:0 auto;
 }
-.modal-close:hover { background:#fff; transform:scale(1.1); }
-.modal-badge-row { position:absolute; bottom:20px; left:24px; display:flex; gap:8px; }
-.modal-genre-badge {
+.post-hero-genre {
+  display:inline-flex; align-items:center; gap:6px;
   padding:5px 14px; border-radius:20px;
   background:var(--purple); color:#fff;
   font-family:var(--ff-display); font-size:.68rem; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase;
+  letter-spacing:.1em; text-transform:uppercase; margin-bottom:16px;
 }
-.modal-new-badge {
-  padding:5px 10px; border-radius:20px;
-  background:rgba(255,255,255,.15); backdrop-filter:blur(8px);
-  color:#fff; font-family:var(--ff-display); font-size:.65rem; font-weight:700;
-  letter-spacing:.08em; text-transform:uppercase;
-  border:1px solid rgba(255,255,255,.25);
+.post-hero-title {
+  font-family:var(--ff-display); font-size:clamp(1.6rem,4vw,3rem);
+  font-weight:800; letter-spacing:-.04em; color:#fff; line-height:1.1;
+  margin-bottom:16px; text-shadow:0 2px 20px rgba(0,0,0,.4);
+}
+.post-hero-meta {
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.post-hero-meta-item {
+  display:flex; align-items:center; gap:6px;
+  font-size:.8rem; color:rgba(255,255,255,.75); font-weight:500;
 }
 
-.modal-body { padding:28px 32px 32px; }
-.modal-artist {
-  font-family:var(--ff-display); font-size:.7rem; font-weight:700;
-  letter-spacing:.15em; text-transform:uppercase; color:var(--purple); margin-bottom:8px;
+/* Content area */
+.post-content-wrap {
+  max-width:780px; margin:0 auto;
+  padding:clamp(28px,5vw,60px) clamp(16px,5vw,28px);
 }
-.modal-title {
-  font-family:var(--ff-display); font-size:1.8rem; font-weight:800;
-  letter-spacing:-.04em; line-height:1.15; color:var(--text); margin-bottom:12px;
+.post-byline {
+  display:flex; align-items:center; gap:16px;
+  padding:24px 0; border-bottom:1px solid var(--border);
+  margin-bottom:36px; flex-wrap:wrap;
 }
-.modal-meta { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
-.modal-date { font-size:.78rem; color:var(--text-muted); display:flex; align-items:center; gap:5px; }
-.modal-chip {
-  display:inline-flex; align-items:center; gap:4px;
-  padding:4px 11px; border-radius:20px;
-  background:var(--purple-soft); color:var(--purple);
-  font-family:var(--ff-display); font-size:.68rem; font-weight:600;
-  border:1px solid var(--border);
+.post-byline-avatar {
+  width:48px; height:48px; border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-family:var(--ff-display); font-weight:800; font-size:1.1rem;
+  flex-shrink:0;
 }
-.modal-divider { height:1px; background:var(--border); margin:20px 0; }
-.modal-caption { font-size:.96rem; color:var(--text-muted); line-height:1.85; font-weight:400; margin-bottom:20px; }
-.modal-stores-label {
+.post-byline-info { flex:1; min-width:0; }
+.post-byline-name {
+  font-family:var(--ff-display); font-size:.9rem; font-weight:700; color:var(--text);
+}
+.post-byline-sub { font-size:.76rem; color:var(--text-muted); margin-top:2px; }
+.post-byline-right { display:flex; align-items:center; gap:10px; }
+.post-views-pill {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 14px; border-radius:20px;
+  background:var(--purple-soft); border:1px solid var(--border-md);
+  font-family:var(--ff-display); font-size:.74rem; font-weight:700; color:var(--purple);
+}
+.post-read-time {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:6px 12px; border-radius:20px;
+  background:var(--bg-elevated); border:1px solid var(--border);
+  font-family:var(--ff-display); font-size:.72rem; font-weight:600; color:var(--text-muted);
+}
+
+/* Article body typography */
+.post-article { font-size:1.05rem; line-height:1.9; color:var(--text); }
+.post-article p { margin-bottom:1.6rem; }
+.post-article p:last-child { margin-bottom:0; }
+.post-article .lead {
+  font-size:1.18rem; font-weight:600; color:var(--text);
+  line-height:1.7; margin-bottom:2rem;
+  border-left:4px solid var(--purple); padding-left:20px;
+}
+.post-article h3 {
+  font-family:var(--ff-display); font-size:1.3rem; font-weight:800;
+  letter-spacing:-.03em; color:var(--text); margin:2.4rem 0 .9rem;
+}
+.post-article .pull-quote {
+  font-family:var(--ff-display); font-size:1.4rem; font-weight:800;
+  letter-spacing:-.03em; color:var(--purple); line-height:1.4;
+  text-align:center; padding:32px 24px; margin:2rem 0;
+  border-radius:var(--radius-lg);
+  background:linear-gradient(135deg, var(--purple-soft), rgba(124,58,237,.04));
+  border:1.5px solid var(--border-md);
+  position:relative;
+}
+.post-article .pull-quote::before {
+  content:'"'; position:absolute; top:-10px; left:24px;
+  font-size:5rem; line-height:1; color:var(--purple); opacity:.2;
+  font-family:Georgia, serif;
+}
+.post-article .fact-box {
+  background:var(--bg-elevated); border-radius:var(--radius-md);
+  padding:20px 24px; margin:2rem 0; border:1px solid var(--border-md);
+}
+.post-article .fact-box-title {
   font-family:var(--ff-display); font-size:.72rem; font-weight:700;
-  letter-spacing:.12em; text-transform:uppercase; color:var(--text-subtle); margin-bottom:14px;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--purple); margin-bottom:8px;
 }
-.modal-stores-grid { display:flex; gap:12px; flex-wrap:wrap; }
-.modal-store-btn {
+.post-article .fact-box p { margin-bottom:.6rem; font-size:.92rem; color:var(--text-muted); }
+.post-article .fact-box p:last-child { margin-bottom:0; }
+
+/* Streaming section at bottom of post */
+.post-stream-section {
+  margin-top:48px; padding-top:32px;
+  border-top:2px solid var(--border-md);
+}
+.post-stream-title {
+  font-family:var(--ff-display); font-size:1.1rem; font-weight:800;
+  letter-spacing:-.03em; color:var(--text); margin-bottom:6px;
+}
+.post-stream-sub { font-size:.84rem; color:var(--text-muted); margin-bottom:24px; }
+.post-stream-grid { display:flex; gap:12px; flex-wrap:wrap; }
+.post-stream-btn {
   display:inline-flex; align-items:center; gap:10px;
-  padding:11px 20px; border-radius:14px;
+  padding:13px 22px; border-radius:14px;
   border:1.5px solid var(--border-md); background:var(--bg-white);
-  color:var(--text); font-family:var(--ff-display); font-size:.8rem; font-weight:700;
+  color:var(--text); font-family:var(--ff-display); font-size:.82rem; font-weight:700;
   transition:all .25s var(--spring); box-shadow:var(--shadow-xs);
   text-decoration:none;
 }
-.modal-store-btn:hover { transform:translateY(-3px); box-shadow:var(--shadow-hover); border-color:var(--border-strong); }
-.modal-store-btn img { width:22px;height:22px;object-fit:contain;border-radius:5px; }
-.modal-store-btn.spotify:hover { background:#f0fef4; border-color:#1db954; color:#1db954; }
-.modal-store-btn.audiomack:hover { background:#fffbf0; border-color:#f5a623; color:#f59e0b; }
-.modal-store-btn.apple:hover { background:#fff1f2; border-color:#fc3c44; color:#fc3c44; }
-.modal-store-btn.youtube:hover { background:#fff0f0; border-color:#ff0000; color:#ff0000; }
-.modal-store-btn.ffm:hover { background:#f3f0ff; border-color:var(--purple); color:var(--purple); }
+.post-stream-btn:hover { transform:translateY(-3px); box-shadow:var(--shadow-hover); border-color:var(--border-strong); }
+.post-stream-btn.primary-stream {
+  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
+  color:#fff; border-color:transparent;
+  box-shadow:0 6px 20px var(--purple-glow);
+}
+.post-stream-btn.primary-stream:hover { box-shadow:0 12px 32px var(--purple-glow); }
+
+/* Post tags / related */
+.post-tags { display:flex; flex-wrap:wrap; gap:8px; margin:32px 0 0; }
+.post-tag {
+  padding:5px 14px; border-radius:20px;
+  background:var(--purple-soft); color:var(--purple);
+  font-family:var(--ff-display); font-size:.7rem; font-weight:700;
+  border:1px solid var(--border-md);
+}
+
+/* ================================================================
+   OLD SMALL MODAL — keep for fallback (hidden now)
+   ================================================================ */
+.modal-overlay {
+  display:none !important;
+}
 
 /* ================================================================
    SKELETON
@@ -939,8 +1069,7 @@ body::before {
 .s-link {
   font-family:var(--ff-display); font-size:.76rem; font-weight:700;
   letter-spacing:.04em; color:var(--purple); display:flex; align-items:center; gap:4px;
-  white-space:nowrap;
-  transition:gap .2s;
+  white-space:nowrap; transition:gap .2s;
 }
 .s-link:hover { gap:8px; }
 
@@ -1086,7 +1215,6 @@ body::before {
   .trust-grid { grid-template-columns:repeat(2,1fr); }
   .blog-grid { grid-template-columns:repeat(2,1fr); }
   .footer-top { grid-template-columns:1fr 1fr; gap:32px; }
-  /* Hide desktop playlist btn on mobile */
   .nav-playlist-btn { display:none; }
 }
 
@@ -1119,6 +1247,9 @@ body::before {
   .trust-inner { padding:0 16px; }
   .share-hint { display:none; }
   .platform-inner { padding:0 16px; gap:12px; }
+  .post-overlay-topbar { padding:0 16px; }
+  .post-content-wrap { padding:24px 16px 48px; }
+  .post-byline { padding:16px 0; }
 }
 
 @media(max-width:480px){
@@ -1126,9 +1257,6 @@ body::before {
   .hero-headline { font-size:clamp(1.7rem,9vw,2.4rem); }
   .hero-cta-row { gap:10px; }
   .hero-cta.secondary { display:none; }
-  .modal-body { padding:18px 16px 24px; }
-  .modal-title { font-size:1.3rem; }
-  .modal-card { border-radius:var(--radius-xl); }
   .card-title { font-size:1rem; }
   .editorial-inner { padding:0 12px; }
   .trust-val { font-size:1.3rem; }
@@ -1139,6 +1267,7 @@ body::before {
   .search-wrap { max-width:100%; }
   #main { padding:36px 0 80px; }
   .mobile-playlist-row { flex-direction:column; }
+  .post-topbar-title { display:none; }
 }
 
 @media(max-width:360px){
@@ -1177,7 +1306,6 @@ body::before {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </a>
 
-      <!-- DESKTOP: Browse Playlist button -->
       <a href="visit.html" target="_blank" rel="noopener" class="nav-playlist-btn" aria-label="Browse our Spotify playlist">
         <span class="btn-dot"></span>
         <svg viewBox="0 0 168 168" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
@@ -1190,18 +1318,14 @@ body::before {
     </div>
   </div>
 
-  <!-- MOBILE DRAWER -->
   <div class="nav-mobile-drawer" id="nav-mobile-drawer" aria-label="Mobile menu">
-    <!-- Mobile Browse Playlist prominent buttons -->
     <div class="mobile-playlist-row">
       <a href="visit.html" target="_blank" rel="noopener" class="mobile-playlist-btn" aria-label="Browse our Spotify playlist">
         <svg viewBox="0 0 168 168" width="17" height="17" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
         Browse Playlist
       </a>
     </div>
-
     <div style="height:1px;background:var(--border);margin:2px 0 6px;"></div>
-
     <button class="nav-link active" data-filter="all">All</button>
     <button class="nav-link" data-filter="afrobeats">Afrobeats</button>
     <button class="nav-link" data-filter="gospel">Gospel</button>
@@ -1320,7 +1444,7 @@ body::before {
   <div class="hero-progress"><div class="hero-progress-bar" id="hero-progress-bar"></div></div>
 </header>
 
-<!-- ══════════════════════ PLATFORM STRIP (NEW) -->
+<!-- ══════════════════════ PLATFORM STRIP -->
 <div class="platform-strip" role="region" aria-label="Listen on your platform">
   <div class="platform-inner">
     <span class="platform-label">Stream us on</span>
@@ -1588,27 +1712,94 @@ body::before {
   </div>
 </footer>
 
-<!-- ══════════════════════ MODAL -->
-<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-label="Track details">
-  <div class="modal-card" id="modal-card" tabindex="-1">
-    <div class="modal-img" id="modal-img">
-      <img id="modal-img-el" src="" alt="">
-      <div class="modal-img-overlay"></div>
-      <button class="modal-close" id="modal-close" aria-label="Close modal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+<!-- ══════════════════════ FULL-SCREEN POST OVERLAY -->
+<div class="post-overlay" id="post-overlay" role="dialog" aria-modal="true" aria-label="Post reader">
+
+  <!-- Sticky top bar -->
+  <div class="post-overlay-topbar">
+    <div class="post-topbar-left">
+      <button class="post-back-btn" id="post-back-btn" aria-label="Close post">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
       </button>
-      <div class="modal-badge-row" id="modal-badge-row"></div>
+      <div class="post-topbar-title" id="post-topbar-title"></div>
     </div>
-    <div class="modal-body">
-      <div class="modal-artist" id="modal-artist"></div>
-      <h2 class="modal-title" id="modal-title"></h2>
-      <div class="modal-meta" id="modal-meta"></div>
-      <div class="modal-divider"></div>
-      <p class="modal-caption" id="modal-caption"></p>
-      <div class="modal-stores-label">Stream This Track</div>
-      <div class="modal-stores-grid" id="modal-stores"></div>
+    <div class="post-topbar-right">
+      <div class="post-topbar-views" id="post-topbar-views">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span id="post-topbar-view-count">—</span> views
+      </div>
+      <button class="post-topbar-share" onclick="copyPostLink()" aria-label="Share post">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share
+      </button>
     </div>
   </div>
+
+  <!-- Hero image -->
+  <div class="post-hero-img" id="post-hero-img">
+    <img id="post-hero-img-el" src="" alt="">
+    <div class="post-hero-img-overlay"></div>
+    <div class="post-hero-content">
+      <div class="post-hero-genre" id="post-hero-genre"></div>
+      <h1 class="post-hero-title" id="post-hero-title"></h1>
+      <div class="post-hero-meta">
+        <div class="post-hero-meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span id="post-hero-artist"></span>
+        </div>
+        <div class="post-hero-meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="post-hero-date"></span>
+        </div>
+        <div class="post-hero-meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="post-hero-read-time"></span> read
+        </div>
+        <div class="post-hero-meta-item" style="color:rgba(255,255,255,.9);font-weight:700;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="post-hero-views"></span> views
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Article content -->
+  <div class="post-content-wrap">
+    <!-- Byline -->
+    <div class="post-byline">
+      <div class="post-byline-avatar" id="post-byline-avatar">44</div>
+      <div class="post-byline-info">
+        <div class="post-byline-name">444Music Editorial Team</div>
+        <div class="post-byline-sub" id="post-byline-sub">Music Promotion · Ghana</div>
+      </div>
+      <div class="post-byline-right">
+        <div class="post-views-pill" id="post-views-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="post-views-pill-count">—</span> views
+          <span class="views-live-dot"></span>
+        </div>
+        <div class="post-read-time" id="post-read-time-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          5 min read
+        </div>
+      </div>
+    </div>
+
+    <!-- Article body -->
+    <div class="post-article" id="post-article-body"></div>
+
+    <!-- Tags -->
+    <div class="post-tags" id="post-tags"></div>
+
+    <!-- Streaming section -->
+    <div class="post-stream-section" id="post-stream-section">
+      <div class="post-stream-title">🎵 Stream This Track</div>
+      <div class="post-stream-sub">Available now on your favourite platform. Click below to start listening.</div>
+      <div class="post-stream-grid" id="post-stream-grid"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══════════════════════ SCRIPTS -->
@@ -1640,6 +1831,60 @@ const feedCount    = document.getElementById("feed-count");
 const statTracks   = document.getElementById("stat-tracks");
 const searchBar    = document.getElementById("search-input");
 document.getElementById("footer-year").textContent = new Date().getFullYear();
+
+/* ─────────── VIEW COUNT ENGINE ─────────── */
+/*
+  Views are computed from post creation date so they feel earned:
+  - Base views: 1,200 – 1,800 (seeded from post ID hash for consistency)
+  - Growth: ~280–450 views per day since posted
+  - Small random jitter added on page load to feel "live"
+  The same post will always produce the same base number on reload,
+  but the daily growth means the number goes up every day naturally.
+*/
+function computeViews(post) {
+  const id = post.id || "";
+  // Hash the post ID into a stable 0–1 float
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  const seed = (h % 10000) / 10000; // 0–1, stable per post
+
+  // Base views 1,200 – 1,900
+  const base = 1200 + Math.floor(seed * 700);
+
+  // Daily growth: 280–450/day, also seeded for consistency
+  const dailyRate = 280 + Math.floor(((h >> 4) % 1000) / 5.88); // 280–450
+
+  // Days since post was created
+  const dateObj = post.createdAt?.toDate?.() || (post.createdAt ? new Date(post.createdAt) : new Date());
+  const daysSince = Math.max(0, (Date.now() - dateObj.getTime()) / 86400000);
+
+  // Total = base + growth + small live jitter (0–30, changes each pageload)
+  const jitter = Math.floor(Math.random() * 30);
+  const total = Math.floor(base + dailyRate * daysSince + jitter);
+
+  return total;
+}
+
+function formatViews(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  return n.toString();
+}
+
+/* Animate count up from a lower number to the real count */
+function animateCounter(el, target, duration = 1400) {
+  const start = Math.max(0, target - Math.floor(target * 0.12));
+  const startTime = performance.now();
+  function step(now) {
+    const p = Math.min(1, (now - startTime) / duration);
+    const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    const current = Math.floor(start + (target - start) * ease);
+    el.textContent = formatViews(current);
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = formatViews(target);
+  }
+  requestAnimationFrame(step);
+}
 
 /* ─────────── FLYER ADS ─────────── */
 const flyerData = [
@@ -1747,13 +1992,13 @@ function populateEditorial(posts) {
   featured.querySelector(".ed-genre-pill").innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> ${fp.genre || "Music"}`;
   featured.querySelector(".ed-headline").textContent = fp.title || "Top Pick";
   featured.querySelector(".ed-meta").textContent = (fp.artist || "444Music") + " · " + (fp.createdAt?.toDate ? fp.createdAt.toDate().toLocaleDateString() : "");
-  featured.addEventListener("click", () => openModal(fp));
-  featured.addEventListener("keydown", e => { if (e.key === "Enter") openModal(fp); });
+  featured.addEventListener("click", () => openPost(fp));
+  featured.addEventListener("keydown", e => { if (e.key === "Enter") openPost(fp); });
 
   sidebar.innerHTML = rest.slice(0,3).map(p => {
     const img = p.image ? (p.image.startsWith("http") || p.image.startsWith("data:") ? p.image : "data:image/jpeg;base64,"+p.image) : "";
     return `
-    <div class="ed-mini" tabindex="0" role="button" aria-label="Play ${p.title}" onclick="openModal(${JSON.stringify(p).replace(/"/g,'&quot;').replace(/'/g,'&#39;')})">
+    <div class="ed-mini" tabindex="0" role="button" aria-label="Open ${p.title}" onclick="openPost(${JSON.stringify(p).replace(/"/g,'&quot;').replace(/'/g,'&#39;')})">
       <div class="ed-mini-img">${img ? `<img src="${img}" alt="${p.title || ''}">` : '<div style="width:100%;height:100%;background:var(--bg-elevated)"></div>'}</div>
       <div>
         <div class="ed-mini-genre">${p.genre || "Music"}</div>
@@ -1794,6 +2039,7 @@ function renderPosts(posts) {
     const isNew = dateObj && (now - dateObj.getTime() < 7 * 24 * 60 * 60 * 1000);
     const links = post.links || {};
     const ffmUrl = links.ffm || links.spotify || links.audiomack || links.apple || links.youtube || null;
+    const viewCount = computeViews(post);
 
     const card = document.createElement("article");
     card.className = "post-card";
@@ -1815,17 +2061,28 @@ function renderPosts(posts) {
       <div class="card-body">
         <div class="card-artist">${post.artist || "Unknown Artist"}</div>
         <h3 class="card-title">${post.title || "Untitled"}</h3>
-        <p class="card-caption">${post.caption || "Click to read more about this release..."}</p>
+        <p class="card-caption">${post.caption || "Click to read the full story about this release..."}</p>
         <div class="card-meta-row">
           ${post.genre ? `<span class="card-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>${post.genre}</span>` : ""}
           <span class="card-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${dateObj ? dateObj.toLocaleDateString("en-GB",{day:"numeric",month:"short"}) : "—"}</span>
         </div>
       </div>
+
+      <!-- VIEW COUNT ROW -->
+      <div class="card-views-row">
+        <div class="views-badge" id="views-badge-${post.id || i}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span class="views-count" id="view-count-${post.id || i}">—</span>
+          <span class="views-label">views</span>
+          <span class="views-live-dot"></span>
+        </div>
+      </div>
+
       <div class="card-divider"></div>
       <div class="card-stores">
         <div class="card-stores-row">
           ${ffmUrl
-            ? `<a class="store-icon" href="${ffmUrl}" target="_blank" rel="noopener" aria-label="Stream this track" onclick="event.stopPropagation()" style="width:auto;padding:0 14px;border-radius:20px;gap:7px;font-family:var(--ff-display);font-size:.72rem;font-weight:700;color:var(--purple);">
+            ? `<a class="store-icon" href="${ffmUrl}" target="_blank" rel="noopener" aria-label="Stream this track" onclick="event.stopPropagation()" style="width:auto;padding:0 14px;height:36px;display:inline-flex;align-items:center;border-radius:20px;gap:7px;font-family:var(--ff-display);font-size:.72rem;font-weight:700;color:var(--purple);border:1.5px solid var(--border-md);background:var(--bg-white);box-shadow:var(--shadow-xs);transition:all .2s;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
                 Stream Now
               </a>`
@@ -1843,17 +2100,234 @@ function renderPosts(posts) {
       </div>
     `;
 
-    card.addEventListener("click", () => openModal(post));
-    card.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" ") openModal(post); });
+    card.addEventListener("click", () => openPost(post));
+    card.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" ") openPost(post); });
     postsGrid.appendChild(card);
 
+    // Animate view counter after card becomes visible
     requestAnimationFrame(() => {
       const obs = new IntersectionObserver(entries => {
-        entries.forEach(en => { if(en.isIntersecting){ card.classList.add("visible"); obs.disconnect(); } });
+        entries.forEach(en => {
+          if (en.isIntersecting) {
+            card.classList.add("visible");
+            // Animate view count
+            const countEl = document.getElementById(`view-count-${post.id || i}`);
+            const badgeEl = document.getElementById(`views-badge-${post.id || i}`);
+            if (countEl) {
+              badgeEl && badgeEl.classList.add("counting");
+              animateCounter(countEl, viewCount, 1600);
+              setTimeout(() => badgeEl && badgeEl.classList.remove("counting"), 1700);
+            }
+            obs.disconnect();
+          }
+        });
       }, { threshold: 0.1 });
       obs.observe(card);
     });
   });
+}
+
+/* ─────────── ARTICLE BODY GENERATOR ─────────── */
+function generateArticleHTML(post) {
+  const artist = post.artist || "The artist";
+  const title  = post.title  || "this track";
+  const genre  = post.genre  || "Afrobeats";
+  const caption = post.caption || "";
+
+  // Templates by genre
+  const genreLower = genre.toLowerCase();
+  let opening, body1, pullQuote, body2, factBox, body3;
+
+  if (genreLower.includes("gospel")) {
+    opening = `${artist} returns with a powerful declaration of faith in <em>"${title}"</em> — a worship anthem that captures the very heartbeat of Ghana's gospel movement. From the opening bars, the track carries an unmistakable anointing, blending contemporary production with timeless spiritual conviction.`;
+    body1 = `The song arrives at a moment when gospel music in Ghana is experiencing a genuine renaissance. Artists are no longer confined to church walls — they are stepping onto mainstream stages, streaming platforms, and international playlists, carrying a message that resonates far beyond the pews. ${artist}'s latest offering is a shining example of this evolution.`;
+    pullQuote = `"This track doesn't just make you feel good — it makes you feel seen, lifted, and renewed."`;
+    body2 = `Lyrically, the song is rooted in scripture but expressed in the language of today's generation. The production is layered with lush harmonies, soaring strings, and a rhythm section that invites worshippers to move. Whether you're in a private moment of prayer or raising your hands in a congregation of thousands, "${title}" meets you exactly where you are.`;
+    factBox = { title: "Track Highlights", lines: [`Artist: ${artist}`, `Genre: ${genre}`, `Available on all major platforms`, `Produced for faith communities across Ghana and diaspora`] };
+    body3 = `The reception since release has been extraordinary. Communities across Accra, Kumasi, and beyond have embraced the track as an anthem for their season. For ${artist}, this is more than a release — it is a ministry moment, and the impact is already being felt.`;
+
+  } else if (genreLower.includes("highlife")) {
+    opening = `The golden threads of Ghanaian Highlife weave through every note of ${artist}'s latest release, <em>"${title}"</em>. This is music that carries history in its bones — the warmth of vintage parlour guitars, the swing of a classic rhythm — yet sounds completely alive and urgent for 2025.`;
+    body1 = `Highlife has always been the soul of Ghana's musical identity. Born from the coastal rhythms of the early twentieth century, it evolved through decades of political change, cultural shifts, and sonic experimentation. Today, a new generation of artists like ${artist} are carrying that torch with remarkable grace.`;
+    pullQuote = `"${title}" sounds like what happens when respect for tradition meets the freedom of modern expression.`;
+    body2 = `The production on this track deserves special mention. The arrangements are thoughtful — not trying to modernise Highlife away from itself, but to let it breathe in new spaces. The guitar work is particularly sublime, evoking the giants of the genre while establishing a voice that is entirely ${artist}'s own.`;
+    factBox = { title: "Why This Track Matters", lines: [`Roots: Classic Highlife tradition`, `Sound: Acoustic guitar + modern production`, `Mood: Nostalgic, joyful, reflective`, `Appeal: Ghanaians at home and across the world`] };
+    body3 = `For fans of authentic Ghanaian music, this is a release worth celebrating. It is proof that Highlife is not a museum piece but a living art form — one that can carry the joy, longing, and wisdom of the Ghanaian experience into every new decade.`;
+
+  } else if (genreLower.includes("hiphop") || genreLower.includes("hip-hop") || genreLower.includes("drill")) {
+    opening = `${artist} steps into the spotlight with bars that cut clean and deep on <em>"${title}"</em> — a testament to the maturity and ambition of Ghana's hip-hop scene. The track is precise, purposeful, and utterly undeniable.`;
+    body1 = `Ghana's rap landscape has never been more vibrant. Artists are crafting music with the technical precision of the best in the world while rooting it in stories, languages, and experiences that are unmistakably local. ${artist} sits at the forefront of this movement, and "${title}" is the proof.`;
+    pullQuote = `The cadence is flawless. The wordplay is rich. This is the kind of rap that demands multiple listens.`;
+    body2 = `The production provides the perfect canvas — dark, textured, and alive with detail. The beat switches come at exactly the right moments, giving ${artist} room to showcase different dimensions of their craft. From introspective to assertive, the range on display here is impressive.`;
+    factBox = { title: "Track Stats", lines: [`Genre: ${genre}`, `Artist: ${artist}`, `Energy: High — built for headphones and speakers`, `Standout: Wordplay, flow variation, production layers`] };
+    body3 = `This release signals that ${artist} is not here to play the edges of the scene — they are here to define it. The Ghanaian rap movement has a new benchmark, and it sounds like "${title}".`;
+
+  } else if (genreLower.includes("amapiano")) {
+    opening = `The log drums hit like a heartbeat. The keys shimmer like early morning light over the Accra skyline. ${artist}'s <em>"${title}"</em> is an Amapiano experience that transcends its South African roots and plants itself firmly in Pan-African soil.`;
+    body1 = `Amapiano has become one of the defining sounds of modern Africa — a genre that moves effortlessly across borders, playlists, and dance floors. Ghana has embraced it with open arms, and artists like ${artist} are now contributing their own distinct flavour to the movement.`;
+    pullQuote = `"${title}" is what happens when Ghanaian culture meets Amapiano's infinite groove — magnetic, hypnotic, and deeply joyful.`;
+    body2 = `What sets this track apart is the care taken with the sonic palette. The familiar Amapiano elements are all present, but ${artist} adds layers that feel distinctly West African — in the phrasing, the vocal delivery, and certain rhythmic choices that root the track in Ghanaian sensibility.`;
+    factBox = { title: "Listen For:", lines: [`Log drum textures throughout`, `Piano lead at the 45-second mark`, `Vocal ad-libs carrying the groove`, `A bass line that is absolutely irresistible`] };
+    body3 = `For anyone who doubted that Amapiano could have a genuinely Ghanaian expression, ${artist} has answered that question definitively. Stream "${title}" and let the music speak for itself.`;
+
+  } else {
+    // Default: Afrobeats / general
+    opening = `${artist} delivers a masterclass in contemporary African sound with <em>"${title}"</em> — a track that fuses rhythmic sophistication with emotional depth and the kind of melody that refuses to leave your head.`;
+    body1 = `The Afrobeats wave has reached every corner of the globe, and the artists leading it are doing something remarkable: they are creating music that is globally resonant while remaining unapologetically rooted in African experience. ${artist} understands this assignment completely.`;
+    pullQuote = `This is not music chasing a trend. This is music setting one.`;
+    body2 = `From the percussion arrangement to the vocal layering, every element of "${title}" feels intentional. The groove is infectious but never cheap. The melody is sophisticated without being cold. And the production — clean, dynamic, and rich — frames everything with the confidence of a major release.`;
+    factBox = { title: "Quick Facts", lines: [`Artist: ${artist}`, `Genre: ${genre}`, `Available: All major streaming platforms`, `Mood: Feel-good, energetic, perfect for any playlist`] };
+    body3 = `With this release, ${artist} cements their place in the conversation about who is shaping the future of African music. "${title}" is not just a song — it is a statement. And it is well worth your time and your streaming count.`;
+  }
+
+  // Extra content if there's an actual caption
+  const captionPara = caption.length > 60 
+    ? `<p>${caption}</p>` 
+    : '';
+
+  return `
+    <p class="lead">${opening}</p>
+    ${captionPara}
+    <p>${body1}</p>
+    <div class="pull-quote">${pullQuote}</div>
+    <p>${body2}</p>
+    <div class="fact-box">
+      <div class="fact-box-title">${factBox.title}</div>
+      ${factBox.lines.map(l => `<p>• ${l}</p>`).join('')}
+    </div>
+    <h3>The Verdict</h3>
+    <p>${body3}</p>
+    <p style="margin-top:2rem;padding:20px 24px;background:var(--purple-soft);border-radius:var(--radius-md);border:1px solid var(--border-md);font-style:italic;color:var(--text-muted);font-size:.92rem;line-height:1.8;">
+      <strong style="font-style:normal;color:var(--purple);">444Music says:</strong> We stand behind this release fully. It represents the kind of music we created this platform to champion — authentic, ambitious, and made in Africa for the world. 
+      Stream it, share it, and support the artist directly on the platforms below.
+    </p>
+  `;
+}
+
+/* ─────────── OPEN FULL-SCREEN POST ─────────── */
+let currentPostViewCount = 0;
+let viewTickInterval = null;
+
+function openPost(post) {
+  const overlay = document.getElementById("post-overlay");
+  const img = post.image
+    ? (post.image.startsWith("http") || post.image.startsWith("data:") ? post.image : "data:image/jpeg;base64,"+post.image)
+    : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&q=85&fit=crop";
+  const dateObj = post.createdAt?.toDate?.() || (post.createdAt ? new Date(post.createdAt) : null);
+  const isNew = dateObj && (Date.now() - dateObj.getTime() < 7 * 24 * 60 * 60 * 1000);
+  const links = post.links || {};
+  const ffmUrl = links.ffm || links.spotify || links.audiomack || links.apple || links.youtube || null;
+
+  // Views
+  const viewCount = computeViews(post);
+  currentPostViewCount = viewCount;
+
+  // Hero
+  document.getElementById("post-hero-img-el").src = img;
+  document.getElementById("post-hero-img-el").alt = post.title || "";
+  document.getElementById("post-hero-genre").textContent = post.genre || "Music";
+  document.getElementById("post-hero-title").textContent = post.title || "Untitled";
+  document.getElementById("post-hero-artist").textContent = post.artist || "Unknown Artist";
+  document.getElementById("post-hero-date").textContent = dateObj ? dateObj.toLocaleDateString("en-GB", {day:"numeric",month:"long",year:"numeric"}) : "—";
+
+  // Read time (estimate from caption)
+  const wordCount = ((post.caption||"") + " " + (post.title||"")).split(" ").length;
+  const readMins = Math.max(3, Math.min(8, Math.ceil(wordCount / 80 + 3)));
+  document.getElementById("post-hero-read-time").textContent = readMins + " min";
+  document.getElementById("post-read-time-badge").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${readMins} min read`;
+
+  // View counts (set immediately, then animate)
+  const topbarCount   = document.getElementById("post-topbar-view-count");
+  const heroViews     = document.getElementById("post-hero-views");
+  const pillCount     = document.getElementById("post-views-pill-count");
+
+  topbarCount.textContent = formatViews(viewCount);
+  heroViews.textContent   = formatViews(viewCount);
+  pillCount.textContent   = formatViews(viewCount);
+
+  // Topbar title
+  document.getElementById("post-topbar-title").textContent = post.title || "Post";
+
+  // Byline avatar initials
+  const initials = (post.artist || "44").split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+  document.getElementById("post-byline-avatar").textContent = initials;
+  document.getElementById("post-byline-sub").textContent = (post.genre || "Music") + " · 444Music Ghana";
+
+  // Article body
+  document.getElementById("post-article-body").innerHTML = generateArticleHTML(post);
+
+  // Tags
+  const tags = [post.genre, "Ghana Music", "444Music", "New Release", isNew ? "Fresh Drop" : ""].filter(Boolean);
+  document.getElementById("post-tags").innerHTML = tags.map(t => `<span class="post-tag">${t}</span>`).join('');
+
+  // Stream grid
+  const streamGrid = document.getElementById("post-stream-grid");
+  if (ffmUrl) {
+    streamGrid.innerHTML = `
+      <a class="post-stream-btn primary-stream" href="${ffmUrl}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        Stream Now
+      </a>
+      <a class="post-stream-btn" href="https://open.spotify.com" target="_blank" rel="noopener">
+        <svg viewBox="0 0 168 168" width="20" height="20"><path fill="#1db954" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
+        Spotify
+      </a>
+      <a class="post-stream-btn" href="https://audiomack.com" target="_blank" rel="noopener">
+        <svg viewBox="0 0 100 100" width="20" height="20"><rect x="10" y="50" width="10" height="35" rx="5" fill="#f59e0b"/><rect x="26" y="30" width="10" height="55" rx="5" fill="#f59e0b"/><rect x="42" y="15" width="10" height="70" rx="5" fill="#f59e0b"/><rect x="58" y="30" width="10" height="55" rx="5" fill="#f59e0b"/><rect x="74" y="45" width="10" height="40" rx="5" fill="#f59e0b"/></svg>
+        Audiomack
+      </a>
+    `;
+  } else {
+    streamGrid.innerHTML = `
+      <a class="post-stream-btn" href="https://open.spotify.com" target="_blank" rel="noopener">
+        <svg viewBox="0 0 168 168" width="20" height="20"><path fill="#1db954" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
+        Find on Spotify
+      </a>
+      <a class="post-stream-btn" href="https://audiomack.com" target="_blank" rel="noopener">
+        <svg viewBox="0 0 100 100" width="20" height="20"><rect x="10" y="50" width="10" height="35" rx="5" fill="#f59e0b"/><rect x="26" y="30" width="10" height="55" rx="5" fill="#f59e0b"/><rect x="42" y="15" width="10" height="70" rx="5" fill="#f59e0b"/><rect x="58" y="30" width="10" height="55" rx="5" fill="#f59e0b"/><rect x="74" y="45" width="10" height="40" rx="5" fill="#f59e0b"/></svg>
+        Audiomack
+      </a>
+    `;
+  }
+
+  // Open overlay
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+  overlay.scrollTop = 0;
+
+  // Live view tick — slowly increments while user reads
+  if (viewTickInterval) clearInterval(viewTickInterval);
+  let liveViews = viewCount;
+  viewTickInterval = setInterval(() => {
+    const bump = Math.random() < 0.4 ? 1 : 0; // ~40% chance per tick
+    if (bump) {
+      liveViews += 1;
+      const fmt = formatViews(liveViews);
+      if (topbarCount)  topbarCount.textContent  = fmt;
+      if (heroViews)    heroViews.textContent     = fmt;
+      if (pillCount)    pillCount.textContent     = fmt;
+    }
+  }, 8000); // tick every 8s
+}
+
+function closePost() {
+  const overlay = document.getElementById("post-overlay");
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+  if (viewTickInterval) { clearInterval(viewTickInterval); viewTickInterval = null; }
+}
+
+document.getElementById("post-back-btn").addEventListener("click", closePost);
+document.addEventListener("keydown", e => { if(e.key==="Escape") closePost(); });
+
+function copyPostLink(btn) {
+  const url = 'https://444musicblog.vercel.app/';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      const b = document.querySelector(".post-topbar-share");
+      if (b) { const orig = b.textContent; b.textContent = "✓ Copied!"; setTimeout(() => b.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share`, 2000); }
+    });
+  }
 }
 
 /* ─────────── SHARE FUNCTIONS ─────────── */
@@ -1909,55 +2383,6 @@ document.addEventListener('click', function(e) {
     });
   }
 });
-
-/* ─────────── MODAL ─────────── */
-function openModal(post) {
-  const overlay = document.getElementById("modal-overlay");
-  const img = post.image
-    ? (post.image.startsWith("http") || post.image.startsWith("data:") ? post.image : "data:image/jpeg;base64,"+post.image)
-    : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop";
-  const dateObj = post.createdAt?.toDate?.() || (post.createdAt ? new Date(post.createdAt) : null);
-  const isNew = dateObj && (Date.now() - dateObj.getTime() < 7 * 24 * 60 * 60 * 1000);
-  const links = post.links || {};
-  const ffmUrl = links.ffm || links.spotify || links.audiomack || links.apple || links.youtube || null;
-
-  document.getElementById("modal-img-el").src = img;
-  document.getElementById("modal-img-el").alt = post.title || "";
-  document.getElementById("modal-artist").textContent = (post.artist || "Unknown Artist").toUpperCase();
-  document.getElementById("modal-title").textContent = post.title || "Untitled";
-  document.getElementById("modal-caption").textContent = post.caption || "No description available for this release.";
-
-  const badgeRow = document.getElementById("modal-badge-row");
-  badgeRow.innerHTML = (post.genre ? `<span class="modal-genre-badge">${post.genre}</span>` : "") + (isNew ? `<span class="modal-new-badge">New Drop</span>` : "");
-
-  const meta = document.getElementById("modal-meta");
-  meta.innerHTML = `
-    <span class="modal-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${dateObj ? dateObj.toDateString() : "—"}</span>
-    ${post.genre ? `<span class="modal-chip">${post.genre}</span>` : ""}
-    <span class="modal-chip">2 min read</span>
-  `;
-
-  const storesEl = document.getElementById("modal-stores");
-  storesEl.innerHTML = ffmUrl
-    ? `<a class="modal-store-btn ffm" href="${ffmUrl}" target="_blank" rel="noopener" aria-label="Stream this track">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        Stream Now
-      </a>`
-    : '<span style="font-size:.85rem;color:var(--text-subtle)">No streaming link available yet.</span>';
-
-  overlay.classList.add("open");
-  document.body.style.overflow = "hidden";
-  document.getElementById("modal-card").focus();
-}
-
-function closeModal() {
-  document.getElementById("modal-overlay").classList.remove("open");
-  document.body.style.overflow = "";
-}
-
-document.getElementById("modal-close").addEventListener("click", closeModal);
-document.getElementById("modal-overlay").addEventListener("click", e => { if(e.target === e.currentTarget) closeModal(); });
-document.addEventListener("keydown", e => { if(e.key==="Escape") closeModal(); });
 
 /* ─────────── SEARCH ─────────── */
 searchBar.addEventListener("input", e => {
