@@ -1,2424 +1,792 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="444Music — Ghana's freshest Afrobeats, Highlife, Gospel & more, promoted right.">
-  <title>444Music Blog</title>
-
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music – Welcome</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ================================================================
-   DESIGN TOKENS
-   ================================================================ */
-:root {
-  --bg:           #f8f7fc;
-  --bg-white:     #ffffff;
-  --bg-card:      #ffffff;
-  --bg-elevated:  #f2f0f9;
-  --bg-hover:     #ede9f8;
-  --border:       rgba(120,80,200,.1);
-  --border-md:    rgba(120,80,200,.18);
-  --border-strong:rgba(120,80,200,.3);
-
-  --text:         #111018;
-  --text-muted:   #6b6580;
-  --text-subtle:  #a9a2c0;
-
-  --purple:       #7c3aed;
-  --purple-lt:    #8b5cf6;
-  --purple-dk:    #5b21b6;
-  --purple-soft:  #ede9f8;
-  --purple-glow:  rgba(124,58,237,.15);
-  --purple-btn:   rgba(124,58,237,.08);
-
-  --gold:         #f59e0b;
-  --rose:         #f43f5e;
-  --teal:         #0ea5e9;
-
-  --spotify-c:    #1db954;
-  --audiomack-c:  #f5a623;
-  --apple-c:      #fc3c44;
-  --youtube-c:    #ff0000;
-
-  --ff-display:   'Sora', sans-serif;
-  --ff-body:      'Nunito', sans-serif;
-
-  --radius-sm:    8px;
-  --radius-md:    14px;
-  --radius-lg:    20px;
-  --radius-xl:    28px;
-  --radius-2xl:   36px;
-
-  --shadow-xs:    0 1px 3px rgba(124,58,237,.06), 0 1px 2px rgba(0,0,0,.04);
-  --shadow-card:  0 4px 24px rgba(124,58,237,.08), 0 1px 4px rgba(0,0,0,.04);
-  --shadow-hover: 0 20px 60px rgba(124,58,237,.15), 0 4px 20px rgba(0,0,0,.08);
-  --shadow-glow:  0 0 40px rgba(124,58,237,.25);
-
-  --nav-h:        70px;
-  --ease:         cubic-bezier(.4,0,.2,1);
-  --spring:       cubic-bezier(.34,1.56,.64,1);
-  --t:            0.22s;
-}
-
-/* ================================================================
-   RESET
-   ================================================================ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--ff-body);
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.65;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-img { display: block; max-width: 100%; }
-a { text-decoration: none; color: inherit; }
-button { cursor: pointer; font-family: inherit; border: none; background: none; }
-ul { list-style: none; }
-.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0; }
-
-body::before {
-  content:'';
-  position:fixed; inset:0;
-  background-image: radial-gradient(circle, rgba(124,58,237,.06) 1px, transparent 1px);
-  background-size: 28px 28px;
-  pointer-events:none; z-index:0;
-}
-
-/* ================================================================
-   LAYOUT
-   ================================================================ */
-.container { max-width:1240px; margin:0 auto; padding:0 28px; position:relative; z-index:1; }
-
-/* ================================================================
-   NAVBAR
-   ================================================================ */
-#navbar {
-  position:sticky; top:0; z-index:200;
-  height:var(--nav-h);
-  background:rgba(248,247,252,.92);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
-  border-bottom:1px solid var(--border);
-  transition:box-shadow var(--t) var(--ease);
-}
-#navbar.scrolled { box-shadow:0 4px 32px rgba(124,58,237,.1); }
-
-.nav-inner {
-  max-width:1240px; margin:0 auto; padding:0 20px;
-  height:100%; display:flex; align-items:center; gap:16px;
-}
-
-.nav-logo { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-.logo-pill {
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  border-radius:10px; padding:5px 10px;
-  font-family:var(--ff-display); font-weight:800;
-  font-size:1.1rem; color:#fff; letter-spacing:-.04em;
-  box-shadow:0 4px 14px var(--purple-glow);
-}
-.logo-text {
-  font-family:var(--ff-display); font-weight:800;
-  font-size:1.15rem; color:var(--text); letter-spacing:-.04em;
-}
-.logo-text .dot { color:var(--purple); }
-.live-badge {
-  padding:2px 7px; border-radius:20px;
-  background:var(--purple-soft); color:var(--purple);
-  font-size:.6rem; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase;
-  border:1px solid var(--border-md);
-}
-
-.nav-center {
-  display:flex; align-items:center; gap:3px;
-  flex:1; overflow-x:auto; scrollbar-width:none;
-}
-.nav-center::-webkit-scrollbar { display:none; }
-.nav-link {
-  padding:7px 14px; border-radius:40px;
-  font-family:var(--ff-display); font-size:.75rem; font-weight:700;
-  letter-spacing:.04em; text-transform:uppercase;
-  color:var(--text-muted); white-space:nowrap;
-  transition:all var(--t) var(--ease);
-  border:1.5px solid transparent;
-}
-.nav-link:hover { background:var(--purple-soft); color:var(--purple); }
-.nav-link.active {
-  background:var(--purple); color:#fff;
-  border-color:var(--purple);
-  box-shadow:0 4px 16px var(--purple-glow);
-}
-
-.nav-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-.nav-icon-btn {
-  display:flex; align-items:center; justify-content:center;
-  width:38px; height:38px; border-radius:12px;
-  color:var(--text-muted); border:1.5px solid var(--border-md);
-  transition:all var(--t) var(--ease); background:var(--bg-white);
-}
-.nav-icon-btn:hover { background:var(--purple-soft); color:var(--purple); border-color:var(--border-strong); }
-
-.nav-playlist-btn {
-  display:inline-flex; align-items:center; gap:7px;
-  padding:9px 18px; border-radius:40px;
-  background:linear-gradient(135deg,#1db954,#17a848);
-  color:#fff; font-family:var(--ff-display); font-size:.78rem; font-weight:700;
-  letter-spacing:.03em; box-shadow:0 4px 16px rgba(29,185,84,.28);
-  transition:all var(--t) var(--ease); border:none;
-  white-space:nowrap;
-}
-.nav-playlist-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(29,185,84,.38); }
-.nav-playlist-btn .btn-dot {
-  width:7px; height:7px; border-radius:50%;
-  background:rgba(255,255,255,.7);
-  animation:pulse-dot 2s infinite;
-}
-
-.mobile-playlist-row {
-  display:flex; gap:10px; padding-bottom:4px;
-}
-.mobile-playlist-btn {
-  flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  padding:13px 16px; border-radius:14px;
-  background:linear-gradient(135deg,#1db954,#17a848);
-  color:#fff; font-family:var(--ff-display); font-size:.85rem; font-weight:700;
-  letter-spacing:.02em; box-shadow:0 6px 20px rgba(29,185,84,.3);
-  transition:all var(--t) var(--ease); border:none;
-}
-.mobile-playlist-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(29,185,84,.4); }
-
-.mobile-menu-btn {
-  display:none; flex-direction:column; gap:5px;
-  width:38px; height:38px; align-items:center; justify-content:center;
-  border-radius:10px; border:1.5px solid var(--border-md);
-  background:var(--bg-white);
-}
-.mobile-menu-btn span {
-  display:block; width:18px; height:1.5px;
-  background:var(--text); border-radius:2px;
-  transition:transform var(--t), opacity var(--t);
-}
-.mobile-menu-btn.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
-.mobile-menu-btn.open span:nth-child(2) { opacity:0; }
-.mobile-menu-btn.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
-
-.nav-mobile-drawer {
-  display:none; flex-direction:column; gap:4px;
-  padding:12px 20px 16px; border-top:1px solid var(--border);
-  background:rgba(248,247,252,.98);
-}
-.nav-mobile-drawer.open { display:flex; }
-
-/* ================================================================
-   HERO
-   ================================================================ */
-#hero {
-  position:relative; overflow:hidden;
-  min-height:580px; display:flex; flex-direction:column; justify-content:flex-end;
-}
-
-.hero-slides {
-  position:absolute; inset:0; z-index:0;
-}
-.hero-slide {
-  position:absolute; inset:0; opacity:0;
-  transition:opacity 1.4s var(--ease), transform 8s linear;
-  transform:scale(1.04);
-}
-.hero-slide.active { opacity:1; transform:scale(1); }
-.hero-slide img {
-  width:100%; height:100%; object-fit:cover;
-  filter:brightness(.55) saturate(1.15);
-}
-
-.hero-slides::after {
-  content:'';
-  position:absolute; inset:0;
-  background:
-    linear-gradient(to top,
-      rgba(17,10,36,.88) 0%,
-      rgba(17,10,36,.55) 30%,
-      rgba(17,10,36,.15) 65%,
-      transparent 100%),
-    linear-gradient(to right, rgba(90,30,170,.18) 0%, transparent 60%);
-  z-index:1;
-}
-
-.hero-orb {
-  position:absolute; border-radius:50%; filter:blur(60px); pointer-events:none;
-}
-.hero-orb-1 {
-  width:500px; height:500px;
-  background:radial-gradient(circle, rgba(124,58,237,.18) 0%, transparent 70%);
-  top:-100px; left:-50px; z-index:1;
-  animation:orb-float1 14s ease-in-out infinite alternate;
-}
-.hero-orb-2 {
-  width:400px; height:400px;
-  background:radial-gradient(circle, rgba(168,85,247,.12) 0%, transparent 70%);
-  top:50px; right:10%; z-index:1;
-  animation:orb-float2 11s ease-in-out infinite alternate;
-}
-@keyframes orb-float1 { 0%{transform:translate(0,0)} 100%{transform:translate(60px,80px)} }
-@keyframes orb-float2 { 0%{transform:translate(0,0)} 100%{transform:translate(-50px,40px)} }
-
-.hero-progress {
-  position:absolute; bottom:0; left:0; right:0; height:3px;
-  background:rgba(124,58,237,.15); z-index:5;
-}
-.hero-progress-bar {
-  height:100%; background:linear-gradient(90deg,var(--purple),var(--purple-lt));
-  width:0%; transition:width 0.1s linear;
-  border-radius:0 2px 2px 0;
-  box-shadow:0 0 8px var(--purple-glow);
-}
-
-.hero-dots {
-  position:absolute; bottom:56px; right:44px;
-  display:flex; gap:8px; z-index:4;
-}
-.hero-dot {
-  width:7px; height:7px; border-radius:50%;
-  background:rgba(255,255,255,.3); border:1.5px solid rgba(255,255,255,.5);
-  cursor:pointer; transition:all .35s var(--ease);
-}
-.hero-dot.active { width:26px; border-radius:4px; background:#fff; border-color:#fff; }
-
-.hero-inner {
-  position:relative; z-index:3;
-  max-width:1240px; margin:0 auto;
-  padding:0 28px 72px;
-}
-.hero-eyebrow {
-  display:inline-flex; align-items:center; gap:8px;
-  padding:5px 14px; border-radius:40px;
-  background:rgba(124,58,237,.2); border:1px solid rgba(124,58,237,.4);
-  font-family:var(--ff-display); font-size:.72rem; font-weight:700;
-  letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.9);
-  margin-bottom:20px;
-  opacity:0; animation:fadeUp .6s .1s forwards;
-}
-.hero-eyebrow .pulse { width:7px;height:7px;border-radius:50%;background:var(--purple-lt);animation:pulse-dot 2s infinite; }
-@keyframes pulse-dot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:.5} }
-
-.hero-headline {
-  font-family:var(--ff-display); font-size:clamp(2.4rem,6vw,5rem);
-  font-weight:800; line-height:1.04; letter-spacing:-.04em; color:#fff;
-  margin-bottom:20px;
-  opacity:0; animation:fadeUp .65s .2s forwards;
-}
-.hero-headline .hl-purple {
-  background:linear-gradient(90deg, #c084fc, #a855f7);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-
-.hero-sub {
-  font-size:1rem; color:rgba(255,255,255,.75); font-weight:400;
-  max-width:440px; margin-bottom:32px; line-height:1.75;
-  opacity:0; animation:fadeUp .65s .3s forwards;
-}
-
-.hero-cta-row {
-  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
-  opacity:0; animation:fadeUp .65s .4s forwards;
-}
-.hero-cta {
-  display:inline-flex; align-items:center; gap:8px;
-  padding:13px 26px; border-radius:40px;
-  font-family:var(--ff-display); font-weight:700;
-  font-size:.88rem; letter-spacing:.02em; transition:all var(--t) var(--ease);
-}
-.hero-cta.primary {
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  color:#fff; box-shadow:0 8px 28px var(--purple-glow);
-}
-.hero-cta.primary:hover { transform:translateY(-3px); box-shadow:0 16px 40px var(--purple-glow); }
-.hero-cta.secondary {
-  background:rgba(255,255,255,.12); color:#fff;
-  border:1.5px solid rgba(255,255,255,.3); backdrop-filter:blur(10px);
-}
-.hero-cta.secondary:hover { background:rgba(255,255,255,.2); transform:translateY(-2px); }
-
-.hero-cta.playlist {
-  background:linear-gradient(135deg,#1db954,#17a848);
-  color:#fff; box-shadow:0 8px 28px rgba(29,185,84,.3);
-}
-.hero-cta.playlist:hover { transform:translateY(-3px); box-shadow:0 16px 40px rgba(29,185,84,.45); }
-
-.hero-chips {
-  position:absolute; top:32px; right:44px; z-index:4;
-  display:flex; flex-direction:column; gap:10px;
-  opacity:0; animation:fadeRight .8s .6s forwards;
-}
-@keyframes fadeRight { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
-.hero-chip {
-  display:flex; align-items:center; gap:10px;
-  padding:10px 16px; border-radius:14px;
-  background:rgba(0,0,0,.3); backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,.12); color:#fff;
-}
-.chip-icon { width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center; flex-shrink:0; }
-.chip-label { font-size:.65rem; color:rgba(255,255,255,.55); font-weight:500; }
-.chip-val { font-family:var(--ff-display); font-size:.88rem; font-weight:800; }
-
-.hero-ticker-wrap {
-  position:relative; z-index:3; overflow:hidden;
-  padding:12px 0; background:rgba(0,0,0,.35); backdrop-filter:blur(8px);
-  border-top:1px solid rgba(255,255,255,.08);
-}
-.hero-ticker { display:flex; width:max-content; animation:ticker 30s linear infinite; }
-.hero-ticker-item {
-  display:inline-flex; align-items:center; gap:10px;
-  padding:0 28px; font-family:var(--ff-display); font-size:.7rem;
-  font-weight:700; letter-spacing:.1em; text-transform:uppercase;
-  color:rgba(255,255,255,.65); white-space:nowrap; border-right:1px solid rgba(255,255,255,.1);
-}
-.ticker-dot { width:4px;height:4px;background:var(--purple-lt);border-radius:50%; }
-@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-
-/* ================================================================
-   FLYER AD SECTION
-   ================================================================ */
-.ad-strip {
-  padding:32px 0; background:var(--bg-white);
-  border-bottom:1px solid var(--border);
-  overflow:hidden;
-}
-.ad-inner { max-width:1240px; margin:0 auto; padding:0 28px; }
-.ad-label {
-  font-family:var(--ff-display); font-size:.65rem; font-weight:700;
-  letter-spacing:.14em; text-transform:uppercase;
-  color:var(--text-subtle); margin-bottom:16px;
-  display:flex; align-items:center; gap:8px;
-}
-.ad-label::before, .ad-label::after {
-  content:''; flex:1; height:1px; background:var(--border);
-}
-.flyers-track { display:flex; gap:16px; overflow:hidden; position:relative; }
-.flyers-scroll {
-  display:flex; gap:16px;
-  animation:flyer-scroll 32s linear infinite;
-  width:max-content;
-}
-.flyers-scroll:hover { animation-play-state:paused; }
-@keyframes flyer-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-.flyer-card {
-  width:200px; height:120px; border-radius:var(--radius-md);
-  overflow:hidden; flex-shrink:0; position:relative;
-  cursor:pointer; transition:transform .35s var(--spring), box-shadow .35s;
-  border:1.5px solid var(--border);
-}
-.flyer-card:hover { transform:translateY(-6px) scale(1.03); box-shadow:var(--shadow-hover); }
-.flyer-card img { width:100%; height:100%; object-fit:cover; filter:brightness(.75) saturate(1.2); }
-.flyer-card-overlay {
-  position:absolute; inset:0;
-  background:linear-gradient(135deg, rgba(124,58,237,.7) 0%, rgba(0,0,0,.3) 100%);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:10px;
-}
-.flyer-genre {
-  font-family:var(--ff-display); font-size:.6rem; font-weight:700;
-  letter-spacing:.12em; text-transform:uppercase;
-  color:rgba(255,255,255,.7); margin-bottom:4px;
-}
-.flyer-title {
-  font-family:var(--ff-display); font-size:.9rem; font-weight:800;
-  color:#fff; text-align:center; line-height:1.2;
-}
-.flyer-tag {
-  position:absolute; top:8px; right:8px;
-  padding:2px 7px; border-radius:20px;
-  background:var(--purple); color:#fff;
-  font-family:var(--ff-display); font-size:.55rem; font-weight:700;
-  letter-spacing:.08em; text-transform:uppercase;
-}
-
-/* ================================================================
-   STATS BAR
-   ================================================================ */
-.stats-bar { background:var(--bg-white); border-bottom:1px solid var(--border); }
-.stats-inner {
-  max-width:1240px; margin:0 auto; padding:0 20px;
-  display:grid; grid-template-columns:repeat(4,1fr);
-}
-.stat-item {
-  display:flex; align-items:center; gap:14px;
-  padding:20px 16px; border-right:1px solid var(--border);
-  transition:background var(--t);
-}
-.stat-item:hover { background:var(--purple-soft); }
-.stat-item:last-child { border-right:none; }
-.stat-icon {
-  width:42px; height:42px; border-radius:12px;
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0;
-}
-.stat-num {
-  font-family:var(--ff-display); font-weight:800;
-  font-size:1.1rem; color:var(--text); letter-spacing:-.03em; line-height:1;
-}
-.stat-label { font-size:.7rem; color:var(--text-muted); font-weight:500; margin-top:3px; }
-
-/* ================================================================
-   EDITORIAL
-   ================================================================ */
-.editorial-strip {
-  padding:48px 0; background:var(--bg-white);
-  border-bottom:1px solid var(--border);
-}
-.editorial-inner { max-width:1240px; margin:0 auto; padding:0 28px; }
-.editorial-grid { display:grid; grid-template-columns:1.8fr 1fr; gap:28px; }
-.editorial-featured {
-  position:relative; border-radius:var(--radius-xl); overflow:hidden;
-  aspect-ratio:16/9; cursor:pointer;
-  box-shadow:var(--shadow-card);
-}
-.editorial-featured img {
-  width:100%; height:100%; object-fit:cover;
-  filter:brightness(.5) saturate(1.2);
-  transition:transform .7s var(--ease), filter .5s;
-}
-.editorial-featured:hover img { transform:scale(1.05); filter:brightness(.4) saturate(1.3); }
-.editorial-featured-overlay {
-  position:absolute; inset:0;
-  background:linear-gradient(to top, rgba(17,16,24,.9) 0%, rgba(17,16,24,.4) 50%, transparent 100%);
-  padding:28px; display:flex; flex-direction:column; justify-content:flex-end;
-}
-.ed-genre-pill {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:4px 12px; border-radius:20px;
-  background:var(--purple); color:#fff;
-  font-family:var(--ff-display); font-size:.64rem; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; align-self:flex-start;
-}
-.ed-headline {
-  font-family:var(--ff-display); font-size:1.6rem; font-weight:800;
-  letter-spacing:-.03em; color:#fff; line-height:1.2; margin-bottom:8px;
-}
-.ed-meta { font-size:.78rem; color:rgba(255,255,255,.65); font-weight:400; }
-.ed-play-btn {
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(.8);
-  width:54px; height:54px; border-radius:50%;
-  background:rgba(124,58,237,.9); backdrop-filter:blur(8px);
-  display:flex; align-items:center; justify-content:center;
-  opacity:0; transition:all .3s var(--spring);
-  box-shadow:0 0 30px rgba(124,58,237,.5);
-}
-.editorial-featured:hover .ed-play-btn { opacity:1; transform:translate(-50%,-50%) scale(1); }
-
-.ed-sidebar { display:flex; flex-direction:column; gap:14px; }
-.ed-mini {
-  display:flex; gap:12px; align-items:center;
-  padding:12px; border-radius:var(--radius-md);
-  border:1px solid var(--border); background:var(--bg-card);
-  cursor:pointer; transition:all var(--t) var(--ease);
-  box-shadow:var(--shadow-xs);
-}
-.ed-mini:hover { border-color:var(--border-strong); background:var(--purple-soft); transform:translateX(4px); }
-.ed-mini-img { width:68px; height:68px; border-radius:var(--radius-sm); overflow:hidden; flex-shrink:0; }
-.ed-mini-img img { width:100%;height:100%;object-fit:cover; }
-.ed-mini-genre {
-  font-family:var(--ff-display); font-size:.6rem; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase; color:var(--purple); margin-bottom:3px;
-}
-.ed-mini-title { font-family:var(--ff-display); font-size:.9rem; font-weight:700; line-height:1.3; color:var(--text); }
-.ed-mini-meta { font-size:.72rem; color:var(--text-muted); margin-top:4px; }
-
-/* ================================================================
-   TRUST BAR
-   ================================================================ */
-.trust-bar {
-  background:linear-gradient(135deg, var(--purple-dk) 0%, var(--purple) 50%, #a855f7 100%);
-  padding:32px 0; overflow:hidden; position:relative;
-}
-.trust-bar::before {
-  content:''; position:absolute; inset:0;
-  background-image:radial-gradient(circle, rgba(255,255,255,.05) 1px, transparent 1px);
-  background-size:20px 20px;
-}
-.trust-inner { max-width:1240px; margin:0 auto; padding:0 28px; position:relative; }
-.trust-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
-.trust-item { text-align:center; color:#fff; }
-.trust-icon {
-  width:48px; height:48px; border-radius:14px;
-  background:rgba(255,255,255,.15); backdrop-filter:blur(8px);
-  display:flex; align-items:center; justify-content:center;
-  margin:0 auto 10px;
-}
-.trust-val { font-family:var(--ff-display); font-size:1.6rem; font-weight:800; letter-spacing:-.04em; }
-.trust-label { font-size:.74rem; font-weight:500; opacity:.75; margin-top:2px; }
-
-/* ================================================================
-   PLATFORM STRIP
-   ================================================================ */
-.platform-strip {
-  background:var(--bg-white); border-bottom:1px solid var(--border);
-  padding:20px 0;
-}
-.platform-inner {
-  max-width:1240px; margin:0 auto; padding:0 28px;
-  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
-}
-.platform-label {
-  font-family:var(--ff-display); font-size:.68rem; font-weight:700;
-  letter-spacing:.12em; text-transform:uppercase; color:var(--text-subtle);
-  flex-shrink:0;
-}
-.platform-pills { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-.platform-pill {
-  display:inline-flex; align-items:center; gap:7px;
-  padding:7px 16px; border-radius:40px;
-  border:1.5px solid var(--border-md); background:var(--bg-white);
-  font-family:var(--ff-display); font-size:.72rem; font-weight:700;
-  color:var(--text-muted); box-shadow:var(--shadow-xs);
-  transition:all var(--t) var(--ease); text-decoration:none;
-}
-.platform-pill:hover { transform:translateY(-2px); box-shadow:var(--shadow-hover); }
-.platform-pill.spotify:hover { border-color:#1db954; color:#1db954; background:#f0fef4; }
-.platform-pill.audiomack:hover { border-color:#f59e0b; color:#f59e0b; background:#fffbf0; }
-.platform-pill.boomplay:hover { border-color:#e6002d; color:#e6002d; background:#fff0f2; }
-.platform-pill-dot { width:8px;height:8px;border-radius:50%; }
-
-/* ================================================================
-   MAIN FEED
-   ================================================================ */
-#main { padding:52px 0 120px; }
-
-.feed-header-area { margin-bottom:40px; }
-.feed-toolbar {
-  display:flex; align-items:center; gap:12px;
-  margin-bottom:24px; flex-wrap:wrap;
-}
-.section-title {
-  font-family:var(--ff-display); font-size:1.7rem;
-  font-weight:800; letter-spacing:-.04em; color:var(--text);
-  margin-right:auto;
-}
-.section-title span { color:var(--purple); }
-.feed-count {
-  padding:5px 14px; border-radius:20px;
-  background:var(--purple-soft); color:var(--purple);
-  font-family:var(--ff-display); font-size:.74rem; font-weight:700;
-  border:1px solid var(--border-md);
-}
-
-.search-wrap { position:relative; width:100%; max-width:380px; }
-.search-wrap input {
-  width:100%; padding:11px 44px 11px 18px; border-radius:40px;
-  border:1.5px solid var(--border-md); background:var(--bg-white);
-  color:var(--text); font-family:var(--ff-body); font-size:.88rem;
-  outline:none; transition:all var(--t);
-  box-shadow:var(--shadow-xs);
-}
-.search-wrap input:focus { border-color:var(--purple); box-shadow:0 0 0 4px var(--purple-glow); }
-.search-wrap svg { position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-subtle);pointer-events:none; }
-
-.posts-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(300px,1fr));
-  gap:24px;
-}
-
-/* ================================================================
-   POST CARD
-   ================================================================ */
-.post-card {
-  background:var(--bg-card);
-  border-radius:var(--radius-xl);
-  border:1.5px solid var(--border);
-  box-shadow:var(--shadow-card);
-  overflow:hidden; display:flex; flex-direction:column;
-  opacity:0; transform:translateY(28px);
-  transition:box-shadow var(--t), transform var(--t), border-color var(--t), opacity .55s;
-  cursor:pointer;
-}
-.post-card.visible { opacity:1; transform:translateY(0); }
-.post-card:hover {
-  box-shadow:var(--shadow-hover);
-  border-color:var(--border-strong);
-  transform:translateY(-5px);
-}
-
-.card-img-wrap {
-  position:relative; width:100%; aspect-ratio:1/1;
-  overflow:hidden; background:var(--bg-elevated);
-}
-.card-img-wrap img { width:100%; height:100%; object-fit:cover; transition:transform .7s var(--ease); }
-.post-card:hover .card-img-wrap img { transform:scale(1.07); }
-
-.card-play-overlay {
-  position:absolute; inset:0; background:rgba(0,0,0,0);
-  display:flex; align-items:center; justify-content:center;
-  transition:background var(--t);
-}
-.post-card:hover .card-play-overlay { background:rgba(17,16,24,.45); }
-.card-play-btn {
-  width:60px; height:60px; border-radius:50%;
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  display:flex; align-items:center; justify-content:center;
-  opacity:0; transform:scale(.6);
-  transition:opacity var(--t), transform .3s var(--spring);
-  box-shadow:0 8px 32px rgba(124,58,237,.5);
-}
-.post-card:hover .card-play-btn { opacity:1; transform:scale(1); }
-.card-play-btn svg { margin-left:3px; }
-
-.card-new-badge {
-  position:absolute; top:12px; left:12px;
-  padding:3px 9px; border-radius:20px;
-  font-family:var(--ff-display); font-size:.58rem; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase;
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  color:#fff; box-shadow:0 4px 12px var(--purple-glow);
-  animation:pulse-badge 2s ease-in-out infinite;
-}
-@keyframes pulse-badge {
-  0%,100%{box-shadow:0 4px 12px rgba(124,58,237,.4)}
-  50%{box-shadow:0 4px 20px rgba(124,58,237,.7)}
-}
-
-.card-body {
-  padding:20px 20px 14px; flex:1;
-  display:flex; flex-direction:column; gap:7px;
-}
-.card-artist {
-  font-family:var(--ff-display); font-size:.65rem; font-weight:700;
-  letter-spacing:.12em; text-transform:uppercase; color:var(--purple);
-}
-.card-title {
-  font-family:var(--ff-display); font-size:1.1rem;
-  font-weight:800; letter-spacing:-.025em; line-height:1.25; color:var(--text);
-}
-.card-caption {
-  font-size:.84rem; color:var(--text-muted);
-  line-height:1.75; font-weight:400;
-  display:-webkit-box; -webkit-line-clamp:2;
-  -webkit-box-orient:vertical; overflow:hidden; flex:1;
-}
-.card-meta-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-.card-chip {
-  display:inline-flex; align-items:center; gap:4px;
-  padding:3px 9px; border-radius:20px;
-  background:var(--purple-soft); color:var(--purple);
-  font-family:var(--ff-display); font-size:.62rem; font-weight:600;
-  border:1px solid var(--border);
-}
-
-/* ================================================================
-   VIEW COUNT BADGE
-   ================================================================ */
-.card-views-row {
-  display:flex; align-items:center; gap:6px;
-  padding:8px 20px 0;
-  border-top:1px solid var(--border);
-  margin-top:2px;
-}
-.views-badge {
-  display:inline-flex; align-items:center; gap:5px;
-  padding:4px 10px; border-radius:20px;
-  background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(139,92,246,.04));
-  border:1px solid var(--border-md);
-  font-family:var(--ff-display); font-size:.68rem; font-weight:700;
-  color:var(--text-muted);
-  transition:all .3s var(--ease);
-}
-.views-badge svg { color:var(--purple); flex-shrink:0; }
-.views-count {
-  color:var(--text); font-weight:800;
-  font-family:var(--ff-display); font-size:.72rem;
-  transition:color .3s;
-}
-.views-badge.counting .views-count { color:var(--purple); }
-.views-live-dot {
-  width:5px; height:5px; border-radius:50%;
-  background:var(--purple-lt); margin-left:2px;
-  animation:pulse-dot 2.5s infinite;
-  flex-shrink:0;
-}
-.views-label { color:var(--text-subtle); font-size:.62rem; font-weight:600; letter-spacing:.04em; }
-
-.card-divider { height:1px; background:var(--border); margin:0 20px; }
-
-.card-stores {
-  display:flex; align-items:stretch; gap:0; padding:12px 20px 16px;
-  flex-direction:column;
-}
-.card-stores-row {
-  display:flex; align-items:center; gap:10px; flex-wrap:nowrap;
-}
-.share-btn {
-  display:inline-flex; align-items:center; gap:5px;
-  padding:0 13px; height:36px; border-radius:20px;
-  border:1.5px solid var(--border-md); background:var(--bg-white);
-  color:var(--text-muted); font-family:var(--ff-display);
-  font-size:.72rem; font-weight:700; cursor:pointer;
-  transition:all .22s var(--ease); flex-shrink:0;
-  box-shadow:var(--shadow-xs);
-}
-.share-btn:hover { background:var(--purple-soft); color:var(--purple); border-color:var(--border-strong); }
-.share-btn.active {
-  background:var(--purple-soft); color:var(--purple);
-  border-color:var(--border-strong);
-}
-.share-expand {
-  display:none; align-items:center; gap:8px;
-  padding:9px 10px; border-radius:12px;
-  background:var(--bg-elevated); border:1.5px solid var(--border-md);
-  margin-top:8px; width:100%;
-  animation:fadeShareIn .2s var(--ease) both;
-}
-@keyframes fadeShareIn {
-  from { opacity:0; transform:translateY(-6px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.share-expand.open { display:flex; }
-.share-hint {
-  font-size:.62rem; color:var(--text-subtle); font-family:var(--ff-display);
-  font-weight:700; letter-spacing:.04em; white-space:nowrap; flex-shrink:0;
-}
-.share-url {
-  flex:1; font-size:.68rem; color:var(--text-muted);
-  font-family:var(--ff-body); background:var(--bg-white);
-  border:1px solid var(--border); border-radius:8px;
-  padding:5px 9px; outline:none; cursor:text;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  user-select:all; min-width:0;
-  transition:border-color .2s;
-}
-.share-url:focus { border-color:var(--purple); }
-.share-copy-btn {
-  padding:6px 14px; border-radius:20px; white-space:nowrap;
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  color:#fff; font-family:var(--ff-display); font-size:.66rem; font-weight:700;
-  border:none; cursor:pointer; flex-shrink:0;
-  transition:all .2s var(--spring); box-shadow:0 2px 10px var(--purple-glow);
-}
-.share-copy-btn:hover { transform:scale(1.06); box-shadow:0 4px 16px var(--purple-glow); }
-.share-copy-btn.copied {
-  background:linear-gradient(135deg,#059669,#10b981);
-  box-shadow:0 2px 10px rgba(5,150,105,.3);
-}
-
-/* ================================================================
-   FULL-SCREEN POST MODAL (Blog Style)
-   ================================================================ */
-.post-overlay {
-  position:fixed; inset:0; z-index:600;
-  background:var(--bg-white);
-  overflow-y:auto; overflow-x:hidden;
-  opacity:0; pointer-events:none;
-  transform:translateY(30px);
-  transition:opacity .4s var(--ease), transform .4s var(--ease);
-  scrollbar-width:thin; scrollbar-color:var(--border-md) transparent;
-}
-.post-overlay.open {
-  opacity:1; pointer-events:all;
-  transform:translateY(0);
-}
-
-.post-overlay-topbar {
-  position:sticky; top:0; z-index:10;
-  background:rgba(255,255,255,.95); backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  padding:0 28px; height:60px;
-  display:flex; align-items:center; justify-content:space-between; gap:16px;
-}
-.post-topbar-left { display:flex; align-items:center; gap:12px; min-width:0; }
-.post-back-btn {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:7px 14px; border-radius:20px;
-  border:1.5px solid var(--border-md); background:var(--bg-white);
-  font-family:var(--ff-display); font-size:.74rem; font-weight:700;
-  color:var(--text-muted); transition:all .2s; flex-shrink:0;
-}
-.post-back-btn:hover { background:var(--purple-soft); color:var(--purple); border-color:var(--border-strong); }
-.post-topbar-title {
-  font-family:var(--ff-display); font-size:.88rem; font-weight:700;
-  color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.post-topbar-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-.post-topbar-views {
-  display:inline-flex; align-items:center; gap:5px;
-  padding:5px 12px; border-radius:20px;
-  background:var(--purple-soft); border:1px solid var(--border-md);
-  font-family:var(--ff-display); font-size:.72rem; font-weight:700;
-  color:var(--purple);
-}
-.post-topbar-share {
-  display:inline-flex; align-items:center; gap:5px;
-  padding:7px 16px; border-radius:20px;
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  color:#fff; font-family:var(--ff-display); font-size:.74rem; font-weight:700;
-  border:none; cursor:pointer; box-shadow:0 4px 14px var(--purple-glow);
-  transition:all .2s;
-}
-.post-topbar-share:hover { transform:translateY(-1px); box-shadow:0 6px 20px var(--purple-glow); }
-
-/* Hero image */
-.post-hero-img {
-  width:100%; height:clamp(280px, 50vw, 560px);
-  overflow:hidden; position:relative;
-  background:var(--bg-elevated);
-}
-.post-hero-img img {
-  width:100%; height:100%; object-fit:cover;
-  filter:brightness(.75) saturate(1.1);
-}
-.post-hero-img-overlay {
-  position:absolute; inset:0;
-  background:linear-gradient(to top, rgba(17,16,24,.85) 0%, rgba(17,16,24,.3) 50%, transparent 100%);
-}
-.post-hero-content {
-  position:absolute; bottom:0; left:0; right:0;
-  padding:clamp(20px,5vw,60px);
-  max-width:900px; margin:0 auto;
-}
-.post-hero-genre {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:5px 14px; border-radius:20px;
-  background:var(--purple); color:#fff;
-  font-family:var(--ff-display); font-size:.68rem; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase; margin-bottom:16px;
-}
-.post-hero-title {
-  font-family:var(--ff-display); font-size:clamp(1.6rem,4vw,3rem);
-  font-weight:800; letter-spacing:-.04em; color:#fff; line-height:1.1;
-  margin-bottom:16px; text-shadow:0 2px 20px rgba(0,0,0,.4);
-}
-.post-hero-meta {
-  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-}
-.post-hero-meta-item {
-  display:flex; align-items:center; gap:6px;
-  font-size:.8rem; color:rgba(255,255,255,.75); font-weight:500;
-}
-
-/* Content area */
-.post-content-wrap {
-  max-width:780px; margin:0 auto;
-  padding:clamp(28px,5vw,60px) clamp(16px,5vw,28px);
-}
-.post-byline {
-  display:flex; align-items:center; gap:16px;
-  padding:24px 0; border-bottom:1px solid var(--border);
-  margin-bottom:36px; flex-wrap:wrap;
-}
-.post-byline-avatar {
-  width:48px; height:48px; border-radius:50%;
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  display:flex; align-items:center; justify-content:center;
-  color:#fff; font-family:var(--ff-display); font-weight:800; font-size:1.1rem;
-  flex-shrink:0;
-}
-.post-byline-info { flex:1; min-width:0; }
-.post-byline-name {
-  font-family:var(--ff-display); font-size:.9rem; font-weight:700; color:var(--text);
-}
-.post-byline-sub { font-size:.76rem; color:var(--text-muted); margin-top:2px; }
-.post-byline-right { display:flex; align-items:center; gap:10px; }
-.post-views-pill {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:6px 14px; border-radius:20px;
-  background:var(--purple-soft); border:1px solid var(--border-md);
-  font-family:var(--ff-display); font-size:.74rem; font-weight:700; color:var(--purple);
-}
-.post-read-time {
-  display:inline-flex; align-items:center; gap:5px;
-  padding:6px 12px; border-radius:20px;
-  background:var(--bg-elevated); border:1px solid var(--border);
-  font-family:var(--ff-display); font-size:.72rem; font-weight:600; color:var(--text-muted);
-}
-
-/* Article body typography */
-.post-article { font-size:1.05rem; line-height:1.9; color:var(--text); }
-.post-article p { margin-bottom:1.6rem; }
-.post-article p:last-child { margin-bottom:0; }
-.post-article .lead {
-  font-size:1.18rem; font-weight:600; color:var(--text);
-  line-height:1.7; margin-bottom:2rem;
-  border-left:4px solid var(--purple); padding-left:20px;
-}
-.post-article h3 {
-  font-family:var(--ff-display); font-size:1.3rem; font-weight:800;
-  letter-spacing:-.03em; color:var(--text); margin:2.4rem 0 .9rem;
-}
-.post-article .pull-quote {
-  font-family:var(--ff-display); font-size:1.4rem; font-weight:800;
-  letter-spacing:-.03em; color:var(--purple); line-height:1.4;
-  text-align:center; padding:32px 24px; margin:2rem 0;
-  border-radius:var(--radius-lg);
-  background:linear-gradient(135deg, var(--purple-soft), rgba(124,58,237,.04));
-  border:1.5px solid var(--border-md);
-  position:relative;
-}
-.post-article .pull-quote::before {
-  content:'"'; position:absolute; top:-10px; left:24px;
-  font-size:5rem; line-height:1; color:var(--purple); opacity:.2;
-  font-family:Georgia, serif;
-}
-.post-article .fact-box {
-  background:var(--bg-elevated); border-radius:var(--radius-md);
-  padding:20px 24px; margin:2rem 0; border:1px solid var(--border-md);
-}
-.post-article .fact-box-title {
-  font-family:var(--ff-display); font-size:.72rem; font-weight:700;
-  letter-spacing:.12em; text-transform:uppercase; color:var(--purple); margin-bottom:8px;
-}
-.post-article .fact-box p { margin-bottom:.6rem; font-size:.92rem; color:var(--text-muted); }
-.post-article .fact-box p:last-child { margin-bottom:0; }
-
-/* Streaming section at bottom of post */
-.post-stream-section {
-  margin-top:48px; padding-top:32px;
-  border-top:2px solid var(--border-md);
-}
-.post-stream-title {
-  font-family:var(--ff-display); font-size:1.1rem; font-weight:800;
-  letter-spacing:-.03em; color:var(--text); margin-bottom:6px;
-}
-.post-stream-sub { font-size:.84rem; color:var(--text-muted); margin-bottom:24px; }
-.post-stream-grid { display:flex; gap:12px; flex-wrap:wrap; }
-.post-stream-btn {
-  display:inline-flex; align-items:center; gap:10px;
-  padding:13px 22px; border-radius:14px;
-  border:1.5px solid var(--border-md); background:var(--bg-white);
-  color:var(--text); font-family:var(--ff-display); font-size:.82rem; font-weight:700;
-  transition:all .25s var(--spring); box-shadow:var(--shadow-xs);
-  text-decoration:none;
-}
-.post-stream-btn:hover { transform:translateY(-3px); box-shadow:var(--shadow-hover); border-color:var(--border-strong); }
-.post-stream-btn.primary-stream {
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  color:#fff; border-color:transparent;
-  box-shadow:0 6px 20px var(--purple-glow);
-}
-.post-stream-btn.primary-stream:hover { box-shadow:0 12px 32px var(--purple-glow); }
-
-/* Post tags / related */
-.post-tags { display:flex; flex-wrap:wrap; gap:8px; margin:32px 0 0; }
-.post-tag {
-  padding:5px 14px; border-radius:20px;
-  background:var(--purple-soft); color:var(--purple);
-  font-family:var(--ff-display); font-size:.7rem; font-weight:700;
-  border:1px solid var(--border-md);
-}
-
-/* ================================================================
-   OLD SMALL MODAL — keep for fallback (hidden now)
-   ================================================================ */
-.modal-overlay {
-  display:none !important;
-}
-
-/* ================================================================
-   SKELETON
-   ================================================================ */
-.skeleton-card {
-  background:var(--bg-white); border-radius:var(--radius-xl);
-  border:1.5px solid var(--border); overflow:hidden; box-shadow:var(--shadow-xs);
-}
-.skel-img { aspect-ratio:1/1; background:var(--bg-elevated); }
-.skel-body { padding:20px; display:flex; flex-direction:column; gap:10px; }
-.skel-line {
-  height:11px; border-radius:6px;
-  background:linear-gradient(90deg,var(--bg-elevated) 25%,#e8e5f5 50%,var(--bg-elevated) 75%);
-  background-size:200% 100%; animation:shimmer 1.6s infinite;
-}
-@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-/* ================================================================
-   BLOG SECTION
-   ================================================================ */
-.blog-strip { padding:40px 0; border-top:1px solid var(--border); background:var(--bg-white); }
-.blog-inner { max-width:1240px; margin:0 auto; padding:0 28px; }
-.blog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:28px; }
-.blog-card {
-  border-radius:var(--radius-lg); overflow:hidden;
-  border:1.5px solid var(--border); background:var(--bg-card);
-  box-shadow:var(--shadow-xs); transition:all var(--t) var(--ease); cursor:pointer;
-}
-.blog-card:hover { box-shadow:var(--shadow-hover); border-color:var(--border-strong); transform:translateY(-4px); }
-.blog-card-img { width:100%; aspect-ratio:16/9; overflow:hidden; }
-.blog-card-img img { width:100%;height:100%;object-fit:cover;filter:brightness(.8);transition:transform .6s var(--ease),filter .4s; }
-.blog-card:hover .blog-card-img img { transform:scale(1.06); filter:brightness(.7); }
-.blog-card-body { padding:18px 20px 22px; }
-.blog-cat {
-  font-family:var(--ff-display); font-size:.62rem; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase; color:var(--purple); margin-bottom:6px;
-}
-.blog-title { font-family:var(--ff-display); font-size:1rem; font-weight:800; letter-spacing:-.02em; color:var(--text); margin-bottom:8px; line-height:1.35; }
-.blog-excerpt { font-size:.8rem; color:var(--text-muted); line-height:1.7; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
-.blog-meta { font-size:.7rem; color:var(--text-subtle); margin-top:10px; display:flex;align-items:center;gap:6px; }
-.blog-meta-dot { width:3px;height:3px;border-radius:50%;background:var(--text-subtle); }
-
-.s-header { display:flex; align-items:baseline; justify-content:space-between; gap:16px; }
-.s-title { font-family:var(--ff-display); font-size:1.5rem; font-weight:800; letter-spacing:-.04em; color:var(--text); }
-.s-title span { color:var(--purple); }
-.s-link {
-  font-family:var(--ff-display); font-size:.76rem; font-weight:700;
-  letter-spacing:.04em; color:var(--purple); display:flex; align-items:center; gap:4px;
-  white-space:nowrap; transition:gap .2s;
-}
-.s-link:hover { gap:8px; }
-
-/* ================================================================
-   LOAD MORE
-   ================================================================ */
-.load-more-wrap { display:flex; justify-content:center; margin-top:60px; }
-.btn-load-more {
-  display:inline-flex; align-items:center; gap:10px;
-  padding:14px 38px; background:var(--bg-white);
-  color:var(--text); border:1.5px solid var(--border-md);
-  border-radius:40px; font-family:var(--ff-display);
-  font-size:.85rem; font-weight:700; letter-spacing:.03em;
-  transition:all var(--t) var(--ease); box-shadow:var(--shadow-xs);
-}
-.btn-load-more:hover {
-  background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  color:#fff; border-color:var(--purple);
-  box-shadow:0 8px 28px var(--purple-glow); transform:translateY(-3px);
-}
-
-/* ================================================================
-   EMPTY / ERROR
-   ================================================================ */
-.empty-state, .error-state {
-  grid-column:1/-1; display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  gap:14px; padding:80px 24px; text-align:center;
-}
-.empty-icon {
-  width:72px;height:72px;border-radius:20px;
-  background:var(--purple-soft); display:flex;align-items:center;justify-content:center;
-  color:var(--purple); margin-bottom:8px;
-}
-.empty-state h3, .error-state h3 { font-family:var(--ff-display); font-size:1.3rem; font-weight:800; color:var(--text); }
-.empty-state p, .error-state p { color:var(--text-muted); font-size:.88rem; }
-.btn-retry {
-  padding:11px 28px; background:linear-gradient(135deg,var(--purple),var(--purple-lt));
-  color:#fff; border-radius:40px; font-family:var(--ff-display);
-  font-size:.82rem; font-weight:700; border:none; box-shadow:0 4px 16px var(--purple-glow);
-  transition:all var(--t); cursor:pointer;
-}
-.btn-retry:hover { transform:translateY(-2px); box-shadow:0 8px 24px var(--purple-glow); }
-
-/* ================================================================
-   NEWSLETTER
-   ================================================================ */
-.newsletter {
-  padding:56px 28px;
-  background:linear-gradient(135deg,var(--purple-dk) 0%, var(--purple) 60%, #a855f7 100%);
-  position:relative; overflow:hidden;
-}
-.newsletter::before {
-  content:''; position:absolute; inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px, transparent 1px);
-  background-size:24px 24px;
-}
-.newsletter-inner { max-width:540px; margin:0 auto; text-align:center; position:relative; }
-.nl-eyebrow {
-  font-family:var(--ff-display); font-size:.7rem; font-weight:700;
-  letter-spacing:.16em; text-transform:uppercase;
-  color:rgba(255,255,255,.6); margin-bottom:14px;
-}
-.nl-title { font-family:var(--ff-display); font-size:2rem; font-weight:800; letter-spacing:-.04em; color:#fff; margin-bottom:12px; }
-.nl-sub { font-size:.9rem; color:rgba(255,255,255,.7); margin-bottom:28px; line-height:1.7; }
-.nl-form { display:flex; gap:10px; max-width:420px; margin:0 auto; }
-.nl-input {
-  flex:1; padding:13px 20px; border-radius:40px;
-  border:1.5px solid rgba(255,255,255,.2); background:rgba(255,255,255,.12);
-  color:#fff; font-family:var(--ff-body); font-size:.88rem; outline:none;
-  backdrop-filter:blur(8px); transition:border .2s;
-}
-.nl-input::placeholder { color:rgba(255,255,255,.5); }
-.nl-input:focus { border-color:rgba(255,255,255,.5); }
-.nl-btn {
-  padding:13px 24px; border-radius:40px; white-space:nowrap;
-  background:#fff; color:var(--purple);
-  font-family:var(--ff-display); font-size:.85rem; font-weight:800;
-  border:none; cursor:pointer; transition:all .2s; box-shadow:0 4px 16px rgba(0,0,0,.15);
-}
-.nl-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.2); }
-
-/* ================================================================
-   FOOTER
-   ================================================================ */
-#footer { background:var(--text); padding:60px 0 0; }
-.footer-top {
-  max-width:1240px; margin:0 auto; padding:0 28px 48px;
-  display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px;
-}
-.footer-brand .logo-pill { display:inline-block; margin-bottom:16px; }
-.footer-brand p { font-size:.85rem; color:rgba(255,255,255,.5); line-height:1.75; max-width:280px; }
-.footer-social { display:flex; gap:10px; margin-top:20px; }
-.footer-social-btn {
-  width:36px;height:36px;border-radius:10px;
-  background:rgba(255,255,255,.08); display:flex;align-items:center;justify-content:center;
-  color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.1);
-  transition:all .2s;
-}
-.footer-social-btn:hover { background:var(--purple); color:#fff; border-color:var(--purple); }
-.footer-col h4 {
-  font-family:var(--ff-display); font-size:.8rem; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:16px;
-}
-.footer-links-list { display:flex; flex-direction:column; gap:10px; }
-.footer-col-link { font-size:.85rem; color:rgba(255,255,255,.6); transition:color .2s; }
-.footer-col-link:hover { color:#fff; }
-.footer-bottom {
-  border-top:1px solid rgba(255,255,255,.08);
-  padding:20px 28px;
-  max-width:1240px; margin:0 auto;
-  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
-}
-.footer-copy { font-size:.78rem; color:rgba(255,255,255,.35); }
-.footer-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:5px 14px; border-radius:20px;
-  background:rgba(124,58,237,.2); border:1px solid rgba(124,58,237,.3);
-  font-size:.68rem; color:rgba(255,255,255,.6); font-weight:500;
-}
-.live-dot { width:6px;height:6px;border-radius:50%;background:var(--purple-lt);animation:pulse-dot 2s infinite; }
-
-/* ================================================================
-   ANIMATIONS
-   ================================================================ */
-@keyframes fadeUp {
-  from{opacity:0;transform:translateY(22px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-/* ================================================================
-   RESPONSIVE
-   ================================================================ */
-@media(max-width:1024px){
-  .nav-center { display:none; }
-  .mobile-menu-btn { display:flex; }
-  .hero-chips { display:none; }
-  .stats-inner { grid-template-columns:repeat(2,1fr); }
-  .stat-item:nth-child(2) { border-right:none; }
-  .editorial-grid { grid-template-columns:1fr; }
-  .ed-sidebar { flex-direction:row; overflow-x:auto; padding-bottom:4px; }
-  .ed-mini { min-width:240px; flex-shrink:0; }
-  .trust-grid { grid-template-columns:repeat(2,1fr); }
-  .blog-grid { grid-template-columns:repeat(2,1fr); }
-  .footer-top { grid-template-columns:1fr 1fr; gap:32px; }
-  .nav-playlist-btn { display:none; }
-}
-
-@media(max-width:768px){
-  :root { --nav-h: 60px; }
-  .nav-inner { padding:0 16px; gap:10px; }
-  .logo-text { display:none; }
-  .hero-inner { padding:0 20px 56px; }
-  #hero { min-height:460px; }
-  .hero-headline { font-size:clamp(2rem,8vw,3rem); }
-  .hero-sub { font-size:.9rem; }
-  .hero-cta { padding:11px 20px; font-size:.82rem; }
-  .hero-dots { display:none; }
-  .stats-inner { grid-template-columns:repeat(2,1fr); }
-  .stat-item { padding:16px 14px; gap:10px; }
-  .stat-icon { width:36px; height:36px; }
-  .stat-num { font-size:1rem; }
-  .editorial-inner { padding:0 16px; }
-  .blog-inner { padding:0 16px; }
-  .blog-grid { grid-template-columns:1fr; gap:16px; }
-  .container { padding:0 16px; }
-  .posts-grid { grid-template-columns:1fr 1fr; gap:16px; }
-  .section-title { font-size:1.4rem; }
-  .nl-form { flex-direction:column; gap:10px; }
-  .nl-btn { width:100%; }
-  .footer-top { grid-template-columns:1fr; gap:28px; padding:0 16px 40px; }
-  .footer-bottom { padding:16px; flex-direction:column; align-items:flex-start; gap:10px; }
-  .trust-grid { grid-template-columns:repeat(2,1fr); gap:16px; }
-  .ad-inner { padding:0 16px; }
-  .trust-inner { padding:0 16px; }
-  .share-hint { display:none; }
-  .platform-inner { padding:0 16px; gap:12px; }
-  .post-overlay-topbar { padding:0 16px; }
-  .post-content-wrap { padding:24px 16px 48px; }
-  .post-byline { padding:16px 0; }
-}
-
-@media(max-width:480px){
-  .posts-grid { grid-template-columns:1fr; gap:18px; }
-  .hero-headline { font-size:clamp(1.7rem,9vw,2.4rem); }
-  .hero-cta-row { gap:10px; }
-  .hero-cta.secondary { display:none; }
-  .card-title { font-size:1rem; }
-  .editorial-inner { padding:0 12px; }
-  .trust-val { font-size:1.3rem; }
-  .trust-grid { gap:12px; }
-  .blog-grid { margin-top:20px; }
-  .s-header { flex-direction:column; gap:6px; align-items:flex-start; }
-  .feed-toolbar { gap:8px; }
-  .search-wrap { max-width:100%; }
-  #main { padding:36px 0 80px; }
-  .mobile-playlist-row { flex-direction:column; }
-  .post-topbar-title { display:none; }
-}
-
-@media(max-width:360px){
-  .hero-headline { font-size:1.6rem; }
-  .logo-pill { font-size:.95rem; padding:4px 8px; }
-  .nav-icon-btn { width:34px; height:34px; }
-}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;width:100%;font-family:'DM Sans',sans-serif;overflow:hidden;background:#040405;}
+
+  .app-shell{position:relative;width:100%;height:100%;}
+
+  .screen{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .32s ease;
+  }
+  .screen.active{ opacity:1; visibility:visible; pointer-events:auto; }
+
+  /* ================= WELCOME SCREEN ================= */
+  .welcome-screen{ background:#040405; overflow:hidden; }
+
+  .orbs{ position:absolute; inset:0; z-index:0; }
+  .orb{
+    position:absolute; border-radius:50%;
+    overflow:hidden;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    animation: drift 6s ease-in-out infinite;
+  }
+  .orb img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .orb::after{
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.08), transparent 55%);
+  }
+  @keyframes drift{
+    0%,100%{ transform:translateY(0) translateX(0) scale(1); }
+    50%{ transform:translateY(-26px) translateX(12px) scale(1.06); }
+  }
+
+  .vignette{
+    position:absolute; inset:0; z-index:1;
+    background:
+      radial-gradient(circle at 50% 38%, rgba(4,4,5,0) 0%, rgba(4,4,5,0.55) 46%, rgba(4,4,5,0.94) 78%, #040405 100%);
+  }
+
+  .top-bar{
+    position:relative; z-index:3;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 18px 0;
+  }
+  .icon-btn{
+    width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.09);
+    color:#e9e9ef; cursor:pointer; transition:background .2s, transform .15s;
+  }
+  .icon-btn:hover{ background:rgba(255,255,255,0.14); }
+  .icon-btn:active{ transform:scale(0.94); }
+  .icon-btn svg{ width:16px; height:16px; }
+
+  .welcome-content{
+    position:relative; z-index:3;
+    flex:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:0 34px; gap:18px;
+  }
+  .logo-mark{
+    height:40px; width:auto; object-fit:contain;
+    filter:brightness(0) invert(1);
+    opacity:0.96;
+  }
+  .welcome-content h1{
+    font-size:26px; font-weight:700; color:#f4f4f8;
+    letter-spacing:-0.01em; line-height:1.25; max-width:280px;
+  }
+  .welcome-content p{
+    font-size:14px; font-weight:400; color:rgba(255,255,255,0.42);
+    line-height:1.5; max-width:270px;
+  }
+
+  .welcome-actions{
+    position:relative; z-index:3;
+    padding:0 26px 30px; display:flex; flex-direction:column; gap:12px;
+  }
+
+  .pill-btn{
+    width:100%; padding:15px; border-radius:50px; border:none;
+    font-family:'DM Sans',sans-serif; font-size:14.5px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    cursor:pointer; letter-spacing:0.01em;
+    transition:opacity .2s, transform .15s;
+  }
+  .pill-btn:active{ transform:scale(0.98); }
+  .pill-btn:disabled{ opacity:0.45; cursor:not-allowed; }
+  .pill-btn svg{ width:18px; height:18px; flex-shrink:0; }
+
+  .pill-light{ background:#ffffff; color:#0a0a0c; }
+  .pill-light:hover:not(:disabled){ opacity:0.9; }
+
+  .pill-outline{
+    background:transparent; color:#f0f0f4;
+    border:1px solid rgba(255,255,255,0.16);
+  }
+  .pill-outline:hover:not(:disabled){ background:rgba(255,255,255,0.06); }
+
+  .welcome-footer{
+    text-align:center; margin-top:6px;
+    font-size:12.5px; color:rgba(255,255,255,0.32);
+  }
+  .welcome-footer a{ color:#f4f4f8; font-weight:600; text-decoration:none; cursor:pointer; }
+  .welcome-footer a:hover{ color:#fff; }
+
+  .welcome-msg{
+    text-align:center; font-size:12.5px; min-height:16px; margin-top:2px;
+    font-weight:500;
+  }
+  .welcome-msg.error{ color:#f87171; }
+  .welcome-msg.success{ color:#4ade80; }
+
+  /* ================= AUTH SCREEN (white theme) ================= */
+  .auth-screen{ background:#ffffff; }
+
+  .auth-header{
+    display:flex; align-items:center; justify-content:center;
+    position:relative; padding:22px 18px 18px; flex-shrink:0;
+    border-bottom:1px solid #f0f0f2;
+  }
+  .auth-back{
+    position:absolute; left:16px; top:20px;
+    width:34px; height:34px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:#f5f5f7; border:1px solid #ececef; color:#111;
+    cursor:pointer;
+  }
+  .auth-back svg{ width:15px; height:15px; }
+  .auth-header img{ height:34px; object-fit:contain; }
+
+  .auth-body{
+    flex:1; overflow-y:auto; padding:30px 26px 34px;
+    display:flex; flex-direction:column;
+  }
+
+  .toggle-wrap{
+    display:flex; background:#f2f2f4; border-radius:50px; padding:4px;
+    margin-bottom:32px; position:relative; width:100%; flex-shrink:0;
+  }
+  .toggle-slider{
+    position:absolute; top:4px; left:4px;
+    width:calc(50% - 4px); height:calc(100% - 8px);
+    background:#0a0a0c; border-radius:50px;
+    transition:transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .toggle-slider.right{ transform:translateX(100%); }
+  .toggle-btn{
+    flex:1; padding:12px 0; background:none; border:none; border-radius:50px;
+    font-family:'DM Sans',sans-serif; font-size:13.5px; font-weight:600;
+    cursor:pointer; position:relative; z-index:1; transition:color .3s;
+  }
+  .toggle-btn.active{ color:#fff; }
+  .toggle-btn.inactive{ color:rgba(10,10,12,0.4); }
+
+  .panel{ display:none; flex-direction:column; flex:1; }
+  .panel.active{ display:flex; animation:fadeIn .28s ease both; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .field{ margin-bottom:22px; }
+  .field label{
+    display:block; font-size:10.5px; font-weight:700; letter-spacing:0.09em;
+    text-transform:uppercase; color:rgba(10,10,12,0.38); margin-bottom:9px;
+  }
+  .input-row{
+    position:relative; display:flex; align-items:center;
+    border-bottom:1.5px solid #e7e7ea; transition:border-color .2s;
+  }
+  .input-row.focused, .input-row:focus-within{ border-bottom-color:#0a0a0c; }
+  .input-row svg{ width:16px; height:16px; color:rgba(10,10,12,0.32); flex-shrink:0; margin-right:8px; }
+  .input-row input{
+    flex:1; background:transparent; border:none; color:#0a0a0c;
+    font-family:'DM Sans',sans-serif; font-size:15px; font-weight:400;
+    padding:9px 0; outline:none;
+  }
+  .input-row input::placeholder{ color:rgba(10,10,12,0.24); }
+
+  .eye-btn{
+    background:none; border:none; color:rgba(10,10,12,0.32); cursor:pointer;
+    padding:4px; display:flex; align-items:center; transition:color .2s;
+  }
+  .eye-btn:hover{ color:rgba(10,10,12,0.7); }
+  .eye-btn svg{ width:17px; height:17px; margin:0; }
+
+  .forgot-row{ text-align:right; margin:-8px 0 26px; }
+  .forgot-row a{ font-size:12px; color:rgba(10,10,12,0.4); text-decoration:none; }
+  .forgot-row a:hover{ color:#0a0a0c; }
+
+  .submit-btn{
+    width:100%; padding:16px; border:none; border-radius:50px;
+    background:#0a0a0c; color:#ffffff; font-family:'DM Sans',sans-serif;
+    font-size:14.5px; font-weight:700; cursor:pointer; letter-spacing:0.02em;
+    transition:opacity .2s, transform .15s; position:relative; margin-top:auto;
+  }
+  .submit-btn:hover:not(:disabled){ opacity:0.88; }
+  .submit-btn:active:not(:disabled){ transform:scale(0.99); }
+  .submit-btn:disabled{ opacity:0.25; cursor:not-allowed; }
+  .btn-text{ display:block; }
+  .spinner{
+    display:none; width:17px; height:17px;
+    border:2px solid rgba(255,255,255,0.25); border-top-color:#fff;
+    border-radius:50%; animation:spin .65s linear infinite; margin:0 auto;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .submit-btn.loading .btn-text{ display:none; }
+  .submit-btn.loading .spinner{ display:block; }
+
+  .msg{
+    font-size:12px; text-align:center; margin-top:14px; min-height:16px;
+    opacity:0; transition:opacity .3s; font-weight:500;
+  }
+  .msg.visible{ opacity:1; }
+  .msg.error{ color:#e0483e; }
+  .msg.success{ color:#1fa15c; }
+  .msg.warn{ color:#c47a12; }
+
+  .bottom-link{
+    text-align:center; margin-top:20px; font-size:13px; color:rgba(10,10,12,0.4);
+  }
+  .bottom-link a{ color:#0a0a0c; font-weight:600; text-decoration:none; }
+  .bottom-link a:hover{ opacity:0.7; }
+
+  .strength-wrap{ margin:-14px 0 20px; }
+  .strength-bars{ display:flex; gap:4px; margin-bottom:5px; }
+  .strength-bar{ flex:1; height:3px; background:#eeeef0; border-radius:2px; transition:background .35s; }
+  .strength-bar.s1{ background:#e0483e; }
+  .strength-bar.s2{ background:#d97f1c; }
+  .strength-bar.s3{ background:#c9a400; }
+  .strength-bar.s4{ background:#1fa15c; }
+  .strength-label{ font-size:10.5px; color:rgba(10,10,12,0.32); letter-spacing:0.03em; }
+  .strength-label.s1{ color:#e0483e; }
+  .strength-label.s2{ color:#d97f1c; }
+  .strength-label.s3{ color:#c9a400; }
+  .strength-label.s4{ color:#1fa15c; }
+
+  .match-hint{ font-size:11.5px; min-height:14px; margin:-14px 0 18px; }
+  .match-hint.ok{ color:#1fa15c; }
+  .match-hint.err{ color:#e0483e; }
+
+  .terms-row{ display:flex; align-items:flex-start; gap:10px; margin-bottom:24px; }
+  .terms-row input[type="checkbox"]{ width:15px; height:15px; accent-color:#0a0a0c; cursor:pointer; flex-shrink:0; margin-top:1px; }
+  .terms-row span{ font-size:12px; color:rgba(10,10,12,0.45); line-height:1.4; }
+  .terms-row a{ color:#0a0a0c; text-decoration:none; font-weight:600; }
+
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-5px); }
+    40%{ transform:translateX(5px); } 60%{ transform:translateX(-3px); } 80%{ transform:translateX(3px); }
+  }
+  .shake{ animation:shake .35s ease; }
+  .has-error .input-row{ border-bottom-color:#e0483e !important; }
+
+  .auth-body::-webkit-scrollbar{ width:3px; }
+  .auth-body::-webkit-scrollbar-thumb{ background:#eee; border-radius:3px; }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════ NAVBAR -->
-<nav id="navbar" role="navigation" aria-label="Main navigation">
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo" aria-label="444Music Blog home">
-      <span class="logo-pill">444</span>
-      <span class="logo-text">Music<span class="dot">.</span></span>
-      <span class="live-badge">Live</span>
-    </a>
+<div class="app-shell">
 
-    <div class="nav-center" id="nav-center" role="tablist" aria-label="Genre filters">
-      <button class="nav-link active" data-filter="all" role="tab" aria-selected="true">All</button>
-      <button class="nav-link" data-filter="afrobeats" role="tab">Afrobeats</button>
-      <button class="nav-link" data-filter="gospel" role="tab">Gospel</button>
-      <button class="nav-link" data-filter="hiphop" role="tab">Hip-Hop</button>
-      <button class="nav-link" data-filter="highlife" role="tab">Highlife</button>
-      <button class="nav-link" data-filter="amapiano" role="tab">Amapiano</button>
-      <button class="nav-link" data-filter="reggae" role="tab">Reggae</button>
-    </div>
+  <!-- ============ WELCOME SCREEN ============ -->
+  <div class="screen welcome-screen active" id="screenWelcome">
 
-    <div class="nav-right">
-      <button class="nav-icon-btn" aria-label="Search" onclick="document.getElementById('search-input').focus()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <div class="orbs" id="orbLayer"></div>
+    <div class="vignette"></div>
+
+    <div class="top-bar">
+      <button class="icon-btn" id="backBtn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <a href="admin.html" class="nav-icon-btn" aria-label="Admin panel">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      </a>
-
-      <a href="visit.html" target="_blank" rel="noopener" class="nav-playlist-btn" aria-label="Browse our Spotify playlist">
-        <span class="btn-dot"></span>
-        <svg viewBox="0 0 168 168" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
-        Browse Playlist
-      </a>
-
-      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span><span></span>
+      <button class="icon-btn" id="closeBtn" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
-  </div>
 
-  <div class="nav-mobile-drawer" id="nav-mobile-drawer" aria-label="Mobile menu">
-    <div class="mobile-playlist-row">
-      <a href="visit.html" target="_blank" rel="noopener" class="mobile-playlist-btn" aria-label="Browse our Spotify playlist">
-        <svg viewBox="0 0 168 168" width="17" height="17" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
-        Browse Playlist
-      </a>
+    <div class="welcome-content">
+      <img class="logo-mark" src="https://www.444musicdistro.com/black.png" alt="444Music"
+        onerror="this.style.display='none';document.getElementById('logoFallbackW').style.display='block'">
+      <span id="logoFallbackW" style="display:none;font-weight:800;font-size:22px;color:#f4f4f8;letter-spacing:-0.5px;">444Music</span>
+      <h1>Get your song playlisted</h1>
+      <p>Submit your music and get discovered by curators, playlists, and blogs worldwide.</p>
     </div>
-    <div style="height:1px;background:var(--border);margin:2px 0 6px;"></div>
-    <button class="nav-link active" data-filter="all">All</button>
-    <button class="nav-link" data-filter="afrobeats">Afrobeats</button>
-    <button class="nav-link" data-filter="gospel">Gospel</button>
-    <button class="nav-link" data-filter="hiphop">Hip-Hop</button>
-    <button class="nav-link" data-filter="highlife">Highlife</button>
-    <button class="nav-link" data-filter="amapiano">Amapiano</button>
-    <button class="nav-link" data-filter="reggae">Reggae</button>
-    <div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px;">
-      <a href="promote.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:40px;background:linear-gradient(135deg,var(--purple),var(--purple-lt));color:#fff;font-family:var(--ff-display);font-size:.82rem;font-weight:700;width:100%;justify-content:center;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Submit Your Music
-      </a>
-    </div>
-  </div>
-</nav>
 
-<!-- ══════════════════════ HERO -->
-<header id="hero" role="banner">
-  <div class="hero-slides" id="hero-slides" aria-hidden="true">
-    <div class="hero-slide active">
-      <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=85&fit=crop" alt="Concert stage" loading="eager">
-    </div>
-    <div class="hero-slide">
-      <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=1600&q=85&fit=crop" alt="Music studio" loading="lazy">
-    </div>
-    <div class="hero-slide">
-      <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=1600&q=85&fit=crop" alt="DJ performance" loading="lazy">
-    </div>
-    <div class="hero-slide">
-      <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1600&q=85&fit=crop" alt="Live music event" loading="lazy">
-    </div>
-  </div>
-
-  <div class="hero-orb hero-orb-1" aria-hidden="true"></div>
-  <div class="hero-orb hero-orb-2" aria-hidden="true"></div>
-
-  <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Slide navigation">
-    <div class="hero-dot active" data-index="0" role="tab" aria-label="Slide 1"></div>
-    <div class="hero-dot" data-index="1" role="tab" aria-label="Slide 2"></div>
-    <div class="hero-dot" data-index="2" role="tab" aria-label="Slide 3"></div>
-    <div class="hero-dot" data-index="3" role="tab" aria-label="Slide 4"></div>
-  </div>
-
-  <div class="hero-chips" aria-hidden="true">
-    <div class="hero-chip">
-      <div class="chip-icon" style="background:rgba(29,185,84,.2)">
-        <svg viewBox="0 0 24 24" fill="#1db954" width="16" height="16"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/></svg>
-      </div>
-      <div><div class="chip-val">Spotify</div><div class="chip-label">Streaming</div></div>
-    </div>
-    <div class="hero-chip">
-      <div class="chip-icon" style="background:rgba(255,0,0,.15)">
-        <svg viewBox="0 0 24 24" fill="#ff0000" width="16" height="16"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
-      </div>
-      <div><div class="chip-val">YouTube</div><div class="chip-label">Music Videos</div></div>
-    </div>
-    <div class="hero-chip">
-      <div class="chip-icon" style="background:rgba(245,158,11,.2)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      </div>
-      <div><div class="chip-val">Daily</div><div class="chip-label">New Drops</div></div>
-    </div>
-  </div>
-
-  <div class="hero-inner">
-    <div class="hero-eyebrow">
-      <span class="pulse"></span>
-      Fresh Out Now — Ghana Music
-    </div>
-    <h1 class="hero-headline">
-      Africa's Sound,<br>
-      <span class="hl-purple">Promoted Right.</span>
-    </h1>
-    <p class="hero-sub">Your daily destination for Afrobeats, Highlife, Gospel and more — curated from the heart of Ghana.</p>
-    <div class="hero-cta-row">
-      <a href="#main" class="hero-cta primary">
-        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M8 5v14l11-7z"/></svg>
-        Explore Releases
-      </a>
-      <a href="visit.html" target="_blank" rel="noopener" class="hero-cta playlist">
-        <svg viewBox="0 0 168 168" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
-        Browse Playlist
-      </a>
-      <a href="promote.html" class="hero-cta secondary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Submit Your Music
-      </a>
-    </div>
-  </div>
-
-  <div class="hero-ticker-wrap" aria-hidden="true">
-    <div class="hero-ticker">
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Afrobeats</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Highlife</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Gospel</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Hip-Hop</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Amapiano</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Afropop</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Reggae</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>R&amp;B</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Drill</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Dancehall</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Afrobeats</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Highlife</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Gospel</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Hip-Hop</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Amapiano</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Afropop</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Reggae</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>R&amp;B</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Drill</div>
-      <div class="hero-ticker-item"><span class="ticker-dot"></span>Dancehall</div>
-    </div>
-  </div>
-
-  <div class="hero-progress"><div class="hero-progress-bar" id="hero-progress-bar"></div></div>
-</header>
-
-<!-- ══════════════════════ PLATFORM STRIP -->
-<div class="platform-strip" role="region" aria-label="Listen on your platform">
-  <div class="platform-inner">
-    <span class="platform-label">Stream us on</span>
-    <div class="platform-pills">
-      <a href="https://open.spotify.com/user/31frfy7crckfepbtzdjtjclm7kxm?si=28821c9752d7430e" target="_blank" rel="noopener" class="platform-pill spotify" aria-label="Listen on Spotify">
-        <span class="platform-pill-dot" style="background:#1db954"></span>
-        <svg viewBox="0 0 168 168" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="#1db954" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
-        Spotify
-      </a>
-      <a href="https://audiomack.com/444music-playlist" target="_blank" rel="noopener" class="platform-pill audiomack" aria-label="Listen on Audiomack">
-        <span class="platform-pill-dot" style="background:#f59e0b"></span>
-        <svg viewBox="0 0 100 100" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="50" width="10" height="35" rx="5" fill="#f59e0b"/>
-          <rect x="26" y="30" width="10" height="55" rx="5" fill="#f59e0b"/>
-          <rect x="42" y="15" width="10" height="70" rx="5" fill="#f59e0b"/>
-          <rect x="58" y="30" width="10" height="55" rx="5" fill="#f59e0b"/>
-          <rect x="74" y="45" width="10" height="40" rx="5" fill="#f59e0b"/>
+    <div class="welcome-actions">
+      <button class="pill-btn pill-light" id="googleWelcomeBtn">
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
         </svg>
-        Audiomack
-      </a>
-      <a href="https://www.boomplay.com/share/shareUser/194267390?srModel=COPYLINK&srList=ANDROID" target="_blank" rel="noopener" class="platform-pill boomplay" aria-label="Listen on Boomplay">
-        <span class="platform-pill-dot" style="background:#e6002d"></span>
-        <svg viewBox="0 0 100 100" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="44" fill="none" stroke="#e6002d" stroke-width="10"/>
-          <circle cx="50" cy="50" r="18" fill="#e6002d"/>
-          <polygon points="44,42 44,58 60,50" fill="white"/>
-        </svg>
-        Boomplay
-      </a>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════ STATS BAR -->
-<div class="stats-bar" role="region" aria-label="Site statistics">
-  <div class="stats-inner">
-    <div class="stat-item">
-      <div class="stat-icon" style="background:#f0fdf4"><svg viewBox="0 0 24 24" fill="none" stroke="#1db954" stroke-width="2" width="18" height="18"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-      <div><div class="stat-num" id="stat-tracks">—</div><div class="stat-label">Tracks Promoted</div></div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-icon" style="background:#fdf4ff"><svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" width="18" height="18"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <div><div class="stat-num">7+</div><div class="stat-label">Genres Covered</div></div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-icon" style="background:#eff6ff"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-      <div><div class="stat-num">Daily</div><div class="stat-label">Fresh Drops</div></div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-icon" style="background:#fff7ed">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" width="18" height="18"><path d="M3 12h18M3 7h18M3 17h18"/><circle cx="12" cy="12" r="2" fill="#111" stroke="none"/></svg>
-      </div>
-      <div><div class="stat-num">GH</div><div class="stat-label">Based in Ghana</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════ FLYER ADS -->
-<div class="ad-strip" role="region" aria-label="Featured promos">
-  <div class="ad-inner">
-    <div class="ad-label">Trending Now</div>
-    <div class="flyers-track">
-      <div class="flyers-scroll" id="flyers-scroll"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════ TRUST BAR -->
-<div class="trust-bar" role="region" aria-label="Why trust 444Music">
-  <div class="trust-inner">
-    <div class="trust-grid">
-      <div class="trust-item">
-        <div class="trust-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="22" height="22"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-        <div class="trust-val">100%</div>
-        <div class="trust-label">Authentic Curation</div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="22" height="22"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-        <div class="trust-val">24/7</div>
-        <div class="trust-label">Music Discovery</div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="22" height="22"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <div class="trust-val">500+</div>
-        <div class="trust-label">Artists Promoted</div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="22" height="22"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-        <div class="trust-val">4.9</div>
-        <div class="trust-label">Artist Rating</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════ EDITORIAL PICKS -->
-<div class="editorial-strip" role="region" aria-label="Editor's picks" id="editorial">
-  <div class="editorial-inner">
-    <div class="s-header" style="margin-bottom:28px">
-      <h2 class="s-title">Editor's <span>Picks</span></h2>
-      <a href="#main" class="s-link">View all releases <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="9 18 15 12 9 6"/></svg></a>
-    </div>
-    <div class="editorial-grid">
-      <div class="editorial-featured" id="editorial-featured" tabindex="0" role="button" aria-label="Featured track">
-        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop" alt="Featured artist">
-        <div class="ed-play-btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#fff" width="20" height="20"><path d="M8 5v14l11-7z"/></svg></div>
-        <div class="editorial-featured-overlay">
-          <span class="ed-genre-pill">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-            Afrobeats
-          </span>
-          <h3 class="ed-headline">This Week's Top Pick</h3>
-          <p class="ed-meta">444Music Editors · Just now</p>
-        </div>
-      </div>
-      <div class="ed-sidebar" id="ed-sidebar"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════ BLOG ARTICLES -->
-<div class="blog-strip" role="region" aria-label="Blog articles">
-  <div class="blog-inner">
-    <div class="s-header">
-      <h2 class="s-title">Music <span>Stories</span></h2>
-      <a href="#" class="s-link">More stories <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="9 18 15 12 9 6"/></svg></a>
-    </div>
-    <div class="blog-grid">
-      <div class="blog-card">
-        <div class="blog-card-img"><img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=75&fit=crop" alt="Rise of Afrobeats" loading="lazy"></div>
-        <div class="blog-card-body">
-          <div class="blog-cat">Feature</div>
-          <h3 class="blog-title">The Global Rise of Afrobeats: How Ghana is Leading the Wave</h3>
-          <p class="blog-excerpt">From the streets of Accra to global charts, we explore why Ghanaian artists are dominating the world stage in 2025.</p>
-          <div class="blog-meta">444Music Editors <span class="blog-meta-dot"></span> 5 min read <span class="blog-meta-dot"></span> Apr 2025</div>
-        </div>
-      </div>
-      <div class="blog-card">
-        <div class="blog-card-img"><img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=75&fit=crop" alt="Gospel Music" loading="lazy"></div>
-        <div class="blog-card-body">
-          <div class="blog-cat">Gospel</div>
-          <h3 class="blog-title">Ghana's Gospel Scene: A Spiritual Soundtrack for the Nation</h3>
-          <p class="blog-excerpt">Gospel music in Ghana has evolved beyond church walls, capturing hearts and topping secular charts with pure authenticity.</p>
-          <div class="blog-meta">Kofi Mensah <span class="blog-meta-dot"></span> 4 min read <span class="blog-meta-dot"></span> Mar 2025</div>
-        </div>
-      </div>
-      <div class="blog-card">
-        <div class="blog-card-img"><img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&q=75&fit=crop" alt="Highlife" loading="lazy"></div>
-        <div class="blog-card-body">
-          <div class="blog-cat">Highlife</div>
-          <h3 class="blog-title">Highlife Reborn: New Generation Artists Reviving a Classic Sound</h3>
-          <p class="blog-excerpt">A new crop of artists are reimagining Highlife for modern ears, blending tradition with trap beats and electronic production.</p>
-          <div class="blog-meta">Ama Asante <span class="blog-meta-dot"></span> 6 min read <span class="blog-meta-dot"></span> Feb 2025</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════ MAIN FEED -->
-<main id="main" role="main">
-  <div class="container">
-    <div class="feed-header-area">
-      <div class="feed-toolbar">
-        <h2 class="section-title">Latest <span>Releases</span></h2>
-        <span class="feed-count" id="feed-count" aria-live="polite"></span>
-      </div>
-      <div class="search-wrap">
-        <input id="search-input" type="search" placeholder="Search artists, songs, genres..." aria-label="Search music posts">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      </div>
-    </div>
-
-    <div id="posts-grid" class="posts-grid" role="feed" aria-live="polite" aria-label="Music posts"></div>
-
-    <div class="load-more-wrap" id="load-more-wrap" style="display:none">
-      <button class="btn-load-more" id="load-more-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-        Load More Releases
+        <span id="googleBtnText">Continue with Google</span>
       </button>
-    </div>
 
-    <div id="empty-state" class="empty-state" style="display:none" role="status">
-      <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-      <h3>No releases yet</h3>
-      <p>Check back soon for fresh music drops from Ghana and Africa.</p>
-    </div>
-
-    <div id="error-state" class="error-state" style="display:none" role="alert">
-      <div class="empty-icon" style="background:#fff1f2;color:#f43f5e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-      <h3>Something went wrong</h3>
-      <p id="error-msg">Could not load posts.</p>
-      <button class="btn-retry" id="btn-retry">Try Again</button>
-    </div>
-  </div>
-</main>
-
-<!-- ══════════════════════ NEWSLETTER -->
-<section class="newsletter" role="complementary" aria-label="Newsletter signup">
-  <div class="newsletter-inner">
-    <div class="nl-eyebrow">Stay in the loop</div>
-    <h2 class="nl-title">Never Miss a Drop</h2>
-    <p class="nl-sub">Get the freshest Ghanaian music releases, artist features, and industry news delivered to your inbox weekly.</p>
-    <div class="nl-form">
-      <input class="nl-input" type="email" placeholder="your@email.com" aria-label="Email address">
-      <button class="nl-btn">Subscribe Free</button>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════ FOOTER -->
-<footer id="footer" role="contentinfo">
-  <div class="footer-top">
-    <div class="footer-brand">
-      <span class="logo-pill" style="font-family:var(--ff-display);font-weight:800;font-size:1.15rem;display:inline-block;padding:6px 12px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--purple-lt));color:#fff;margin-bottom:16px;letter-spacing:-.04em">444Music</span>
-      <p>Ghana's premier music promotion platform. Connecting artists with listeners through authentic African sound curation — daily.</p>
-      <div class="footer-social">
-        <a href="#" class="footer-social-btn" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </a>
-        <a href="#" class="footer-social-btn" aria-label="Twitter/X">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        </a>
-        <a href="#" class="footer-social-btn" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
-        </a>
-        <a href="#" class="footer-social-btn" aria-label="TikTok">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.16 8.16 0 0 0 4.77 1.52V7.14a4.85 4.85 0 0 1-1-.45z"/></svg>
-        </a>
-      </div>
-    </div>
-    <div class="footer-col">
-      <h4>Explore</h4>
-      <div class="footer-links-list">
-        <a href="#" class="footer-col-link">Afrobeats</a>
-        <a href="#" class="footer-col-link">Gospel</a>
-        <a href="#" class="footer-col-link">Highlife</a>
-        <a href="#" class="footer-col-link">Hip-Hop</a>
-        <a href="#" class="footer-col-link">Amapiano</a>
-      </div>
-    </div>
-    <div class="footer-col">
-      <h4>Company</h4>
-      <div class="footer-links-list">
-        <a href="#" class="footer-col-link">About Us</a>
-        <a href="#" class="footer-col-link">Blog</a>
-        <a href="#" class="footer-col-link">Advertise</a>
-        <a href="admin.html" class="footer-col-link">Submit Music</a>
-        <a href="#" class="footer-col-link">Contact</a>
-      </div>
-    </div>
-    <div class="footer-col">
-      <h4>Legal</h4>
-      <div class="footer-links-list">
-        <a href="#" class="footer-col-link">Privacy Policy</a>
-        <a href="#" class="footer-col-link">Terms of Service</a>
-        <a href="#" class="footer-col-link">Cookie Policy</a>
-        <a href="#" class="footer-col-link">DMCA</a>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p class="footer-copy">&copy; <span id="footer-year"></span> 444Music. All rights reserved. Made with care in Ghana.</p>
-    <div class="footer-badge"><span class="live-dot"></span>Promoting authentic African sound since 2024</div>
-  </div>
-</footer>
-
-<!-- ══════════════════════ FULL-SCREEN POST OVERLAY -->
-<div class="post-overlay" id="post-overlay" role="dialog" aria-modal="true" aria-label="Post reader">
-
-  <!-- Sticky top bar -->
-  <div class="post-overlay-topbar">
-    <div class="post-topbar-left">
-      <button class="post-back-btn" id="post-back-btn" aria-label="Close post">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="15 18 9 12 15 6"/></svg>
-        Back
+      <button class="pill-btn pill-outline" id="emailWelcomeBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4V4z" opacity="0"/><path d="M4 6h16v12H4V6z"/><path d="M4 7l8 6 8-6"/></svg>
+        <span>Continue with Email</span>
       </button>
-      <div class="post-topbar-title" id="post-topbar-title"></div>
+
+      <div class="welcome-msg" id="welcomeMsg"></div>
+      <div class="welcome-footer">New here? <a id="gotoSignup">Create an account</a></div>
     </div>
-    <div class="post-topbar-right">
-      <div class="post-topbar-views" id="post-topbar-views">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        <span id="post-topbar-view-count">—</span> views
-      </div>
-      <button class="post-topbar-share" onclick="copyPostLink()" aria-label="Share post">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        Share
+  </div>
+
+  <!-- ============ AUTH SCREEN (white theme) ============ -->
+  <div class="screen auth-screen" id="screenAuth">
+
+    <div class="auth-header">
+      <button class="auth-back" id="authBack" aria-label="Back to welcome">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
+      <img src="https://www.444musicdistro.com/black.png" alt="444Music" style="height:34px"
+        onerror="this.style.display='none';document.getElementById('logoFallbackA').style.display='block'">
+      <span id="logoFallbackA" style="display:none;font-weight:800;font-size:20px;color:#0a0a0c;">444Music</span>
     </div>
-  </div>
 
-  <!-- Hero image -->
-  <div class="post-hero-img" id="post-hero-img">
-    <img id="post-hero-img-el" src="" alt="">
-    <div class="post-hero-img-overlay"></div>
-    <div class="post-hero-content">
-      <div class="post-hero-genre" id="post-hero-genre"></div>
-      <h1 class="post-hero-title" id="post-hero-title"></h1>
-      <div class="post-hero-meta">
-        <div class="post-hero-meta-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span id="post-hero-artist"></span>
-        </div>
-        <div class="post-hero-meta-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span id="post-hero-date"></span>
-        </div>
-        <div class="post-hero-meta-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span id="post-hero-read-time"></span> read
-        </div>
-        <div class="post-hero-meta-item" style="color:rgba(255,255,255,.9);font-weight:700;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          <span id="post-hero-views"></span> views
-        </div>
+    <div class="auth-body">
+
+      <div class="toggle-wrap">
+        <div class="toggle-slider" id="toggleSlider"></div>
+        <button class="toggle-btn active" id="btnLoginTab" onclick="switchTab('login')">Login</button>
+        <button class="toggle-btn inactive" id="btnSignupTab" onclick="switchTab('signup')">Sign up</button>
       </div>
-    </div>
-  </div>
 
-  <!-- Article content -->
-  <div class="post-content-wrap">
-    <!-- Byline -->
-    <div class="post-byline">
-      <div class="post-byline-avatar" id="post-byline-avatar">44</div>
-      <div class="post-byline-info">
-        <div class="post-byline-name">444Music Editorial Team</div>
-        <div class="post-byline-sub" id="post-byline-sub">Music Promotion · Ghana</div>
-      </div>
-      <div class="post-byline-right">
-        <div class="post-views-pill" id="post-views-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          <span id="post-views-pill-count">—</span> views
-          <span class="views-live-dot"></span>
-        </div>
-        <div class="post-read-time" id="post-read-time-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          5 min read
-        </div>
-      </div>
-    </div>
-
-    <!-- Article body -->
-    <div class="post-article" id="post-article-body"></div>
-
-    <!-- Tags -->
-    <div class="post-tags" id="post-tags"></div>
-
-    <!-- Streaming section -->
-    <div class="post-stream-section" id="post-stream-section">
-      <div class="post-stream-title">🎵 Stream This Track</div>
-      <div class="post-stream-sub">Available now on your favourite platform. Click below to start listening.</div>
-      <div class="post-stream-grid" id="post-stream-grid"></div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ══════════════════════ SCRIPTS -->
-<script>
-/* ─────────── FIREBASE ─────────── */
-const firebaseConfig = {
-  apiKey:"AIzaSyCefqZIewWOTaEnOFWSg-8aBLpu2YKtDy8",
-  authDomain:"music-7a35b.firebaseapp.com",
-  projectId:"music-7a35b",
-  storageBucket:"music-7a35b.appspot.com",
-  messagingSenderId:"26882716946",
-  appId:"1:26882716946:web:5cc1c9e980bc6597442fcb"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-/* ─────────── STATE ─────────── */
-const PAGE_SIZE = 12;
-let lastDoc = null, isLoading = false, activeFilter = "all", searchQuery = "", allPosts = [];
-
-/* ─────────── DOM ─────────── */
-const postsGrid    = document.getElementById("posts-grid");
-const emptyState   = document.getElementById("empty-state");
-const errorState   = document.getElementById("error-state");
-const errorMsg     = document.getElementById("error-msg");
-const loadMoreBtn  = document.getElementById("load-more-btn");
-const loadMoreWrap = document.getElementById("load-more-wrap");
-const feedCount    = document.getElementById("feed-count");
-const statTracks   = document.getElementById("stat-tracks");
-const searchBar    = document.getElementById("search-input");
-document.getElementById("footer-year").textContent = new Date().getFullYear();
-
-/* ─────────── VIEW COUNT ENGINE ─────────── */
-/*
-  Views are computed from post creation date so they feel earned:
-  - Base views: 1,200 – 1,800 (seeded from post ID hash for consistency)
-  - Growth: ~280–450 views per day since posted
-  - Small random jitter added on page load to feel "live"
-  The same post will always produce the same base number on reload,
-  but the daily growth means the number goes up every day naturally.
-*/
-function computeViews(post) {
-  const id = post.id || "";
-  // Hash the post ID into a stable 0–1 float
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-  const seed = (h % 10000) / 10000; // 0–1, stable per post
-
-  // Base views 1,200 – 1,900
-  const base = 1200 + Math.floor(seed * 700);
-
-  // Daily growth: 280–450/day, also seeded for consistency
-  const dailyRate = 280 + Math.floor(((h >> 4) % 1000) / 5.88); // 280–450
-
-  // Days since post was created
-  const dateObj = post.createdAt?.toDate?.() || (post.createdAt ? new Date(post.createdAt) : new Date());
-  const daysSince = Math.max(0, (Date.now() - dateObj.getTime()) / 86400000);
-
-  // Total = base + growth + small live jitter (0–30, changes each pageload)
-  const jitter = Math.floor(Math.random() * 30);
-  const total = Math.floor(base + dailyRate * daysSince + jitter);
-
-  return total;
-}
-
-function formatViews(n) {
-  if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-  return n.toString();
-}
-
-/* Animate count up from a lower number to the real count */
-function animateCounter(el, target, duration = 1400) {
-  const start = Math.max(0, target - Math.floor(target * 0.12));
-  const startTime = performance.now();
-  function step(now) {
-    const p = Math.min(1, (now - startTime) / duration);
-    const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
-    const current = Math.floor(start + (target - start) * ease);
-    el.textContent = formatViews(current);
-    if (p < 1) requestAnimationFrame(step);
-    else el.textContent = formatViews(target);
-  }
-  requestAnimationFrame(step);
-}
-
-/* ─────────── FLYER ADS ─────────── */
-const flyerData = [
-  { genre:"Afrobeats", title:"Weekend Vibes", img:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=70&fit=crop", tag:"HOT" },
-  { genre:"Gospel", title:"Sunday Praise", img:"https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=70&fit=crop", tag:"NEW" },
-  { genre:"Highlife", title:"Old Gold", img:"https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&q=70&fit=crop", tag:"" },
-  { genre:"Hip-Hop", title:"Bars & Beats", img:"https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=70&fit=crop", tag:"HOT" },
-  { genre:"Amapiano", title:"Piano Season", img:"https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&q=70&fit=crop", tag:"NEW" },
-  { genre:"Reggae", title:"Roots & Culture", img:"https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&q=70&fit=crop", tag:"" },
-  { genre:"R&B", title:"Smooth Grooves", img:"https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=70&fit=crop", tag:"" },
-  { genre:"Afropop", title:"Dance All Night", img:"https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&q=70&fit=crop", tag:"HOT" },
-];
-const flyerHTML = [...flyerData, ...flyerData].map(f => `
-  <div class="flyer-card" role="img" aria-label="${f.genre} - ${f.title}">
-    <img src="${f.img}" alt="${f.title}" loading="lazy">
-    <div class="flyer-card-overlay">
-      <div class="flyer-genre">${f.genre}</div>
-      <div class="flyer-title">${f.title}</div>
-    </div>
-    ${f.tag ? `<span class="flyer-tag">${f.tag}</span>` : ''}
-  </div>
-`).join('');
-document.getElementById("flyers-scroll").innerHTML = flyerHTML;
-
-/* ─────────── HERO SLIDER ─────────── */
-const heroSlides  = document.querySelectorAll(".hero-slide");
-const heroDots    = document.querySelectorAll(".hero-dot");
-const progressBar = document.getElementById("hero-progress-bar");
-let heroIdx = 0, heroProgress = 0, heroTimer;
-
-function goToSlide(idx) {
-  heroSlides[heroIdx].classList.remove("active");
-  heroDots[heroIdx].classList.remove("active");
-  heroIdx = idx % heroSlides.length;
-  heroSlides[heroIdx].classList.add("active");
-  heroDots[heroIdx].classList.add("active");
-  heroProgress = 0;
-}
-
-heroDots.forEach(dot => {
-  dot.addEventListener("click", () => {
-    clearInterval(heroTimer);
-    goToSlide(parseInt(dot.dataset.index));
-    startHeroTimer();
-  });
-});
-
-function startHeroTimer() {
-  heroTimer = setInterval(() => {
-    heroProgress += 1;
-    progressBar.style.width = heroProgress + "%";
-    if (heroProgress >= 100) { goToSlide(heroIdx + 1); }
-  }, 50);
-}
-startHeroTimer();
-
-/* ─────────── NAVBAR ─────────── */
-window.addEventListener("scroll", () => {
-  document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 10);
-}, { passive: true });
-
-document.getElementById("mobile-menu-btn").addEventListener("click", function() {
-  this.classList.toggle("open");
-  const drawer = document.getElementById("nav-mobile-drawer");
-  drawer.classList.toggle("open");
-  this.setAttribute("aria-expanded", drawer.classList.contains("open").toString());
-});
-
-/* ─────────── FIREBASE LOAD ─────────── */
-showSkeletons(6);
-loadPosts();
-
-async function loadPosts(append = false) {
-  if (isLoading) return;
-  isLoading = true;
-  hideStates();
-  try {
-    let q = db.collection("posts").orderBy("createdAt","desc").limit(PAGE_SIZE);
-    if (append && lastDoc) q = q.startAfter(lastDoc);
-    const snap = await q.get();
-    if (snap.empty && !append) { clearSkeletons(); showEmpty(); isLoading = false; return; }
-    const newPosts = [];
-    snap.forEach(doc => newPosts.push({ id: doc.id, ...doc.data() }));
-    lastDoc = snap.docs[snap.docs.length - 1];
-    allPosts = append ? [...allPosts, ...newPosts] : newPosts;
-    clearSkeletons();
-    applyFilters();
-    statTracks.textContent = allPosts.length + "+";
-    loadMoreWrap.style.display = snap.docs.length < PAGE_SIZE ? "none" : "flex";
-    populateEditorial(allPosts.slice(0, 4));
-  } catch(err) {
-    clearSkeletons(); showError(err.message);
-  }
-  isLoading = false;
-}
-
-/* ─────────── EDITORIAL SIDEBAR ─────────── */
-function populateEditorial(posts) {
-  const sidebar  = document.getElementById("ed-sidebar");
-  const featured = document.getElementById("editorial-featured");
-  if (!posts.length) return;
-  const [fp, ...rest] = posts;
-  const fImg = fp.image ? (fp.image.startsWith("http") || fp.image.startsWith("data:") ? fp.image : "data:image/jpeg;base64,"+fp.image) : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop";
-  featured.querySelector("img").src = fImg;
-  featured.querySelector(".ed-genre-pill").innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> ${fp.genre || "Music"}`;
-  featured.querySelector(".ed-headline").textContent = fp.title || "Top Pick";
-  featured.querySelector(".ed-meta").textContent = (fp.artist || "444Music") + " · " + (fp.createdAt?.toDate ? fp.createdAt.toDate().toLocaleDateString() : "");
-  featured.addEventListener("click", () => openPost(fp));
-  featured.addEventListener("keydown", e => { if (e.key === "Enter") openPost(fp); });
-
-  sidebar.innerHTML = rest.slice(0,3).map(p => {
-    const img = p.image ? (p.image.startsWith("http") || p.image.startsWith("data:") ? p.image : "data:image/jpeg;base64,"+p.image) : "";
-    return `
-    <div class="ed-mini" tabindex="0" role="button" aria-label="Open ${p.title}" onclick="openPost(${JSON.stringify(p).replace(/"/g,'&quot;').replace(/'/g,'&#39;')})">
-      <div class="ed-mini-img">${img ? `<img src="${img}" alt="${p.title || ''}">` : '<div style="width:100%;height:100%;background:var(--bg-elevated)"></div>'}</div>
-      <div>
-        <div class="ed-mini-genre">${p.genre || "Music"}</div>
-        <div class="ed-mini-title">${p.title || "Untitled"}</div>
-        <div class="ed-mini-meta">${p.artist || "Unknown"} · ${p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString() : ""}</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  sidebar.querySelectorAll(".ed-mini").forEach(el => {
-    el.addEventListener("keydown", e => { if (e.key === "Enter") el.click(); });
-  });
-}
-
-/* ─────────── FILTERS & SEARCH ─────────── */
-function applyFilters() {
-  let filtered = [...allPosts];
-  if (activeFilter !== "all") filtered = filtered.filter(p => (p.genre||"").toLowerCase() === activeFilter.toLowerCase());
-  if (searchQuery) filtered = filtered.filter(p =>
-    (p.title||"").toLowerCase().includes(searchQuery) ||
-    (p.artist||"").toLowerCase().includes(searchQuery) ||
-    (p.caption||"").toLowerCase().includes(searchQuery)
-  );
-  renderPosts(filtered);
-  feedCount.textContent = filtered.length + " post" + (filtered.length !== 1 ? "s" : "");
-}
-
-/* ─────────── RENDER ─────────── */
-function renderPosts(posts) {
-  postsGrid.innerHTML = "";
-  if (!posts.length) { showEmpty(); return; }
-  const now = Date.now();
-  posts.forEach((post, i) => {
-    const img = post.image
-      ? (post.image.startsWith("http") || post.image.startsWith("data:") ? post.image : "data:image/jpeg;base64," + post.image)
-      : "";
-    const dateObj = post.createdAt?.toDate?.() || (post.createdAt ? new Date(post.createdAt) : null);
-    const isNew = dateObj && (now - dateObj.getTime() < 7 * 24 * 60 * 60 * 1000);
-    const links = post.links || {};
-    const ffmUrl = links.ffm || links.spotify || links.audiomack || links.apple || links.youtube || null;
-    const viewCount = computeViews(post);
-
-    const card = document.createElement("article");
-    card.className = "post-card";
-    card.setAttribute("tabindex","0");
-    card.setAttribute("role","button");
-    card.setAttribute("aria-label", `${post.artist || 'Unknown'} – ${post.title || 'Untitled'}`);
-    card.style.transitionDelay = (i * 0.06) + "s";
-
-    card.innerHTML = `
-      <div class="card-img-wrap">
-        ${img ? `<img src="${img}" alt="${post.title||''}" loading="lazy">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-subtle);font-family:var(--ff-display);font-size:.8rem">No Artwork</div>`}
-        <div class="card-play-overlay" aria-hidden="true">
-          <div class="card-play-btn">
-            <svg viewBox="0 0 24 24" fill="#fff" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
+      <!-- LOGIN -->
+      <div class="panel active" id="panelLogin">
+        <div class="field" id="loginFieldEmail">
+          <label>Email</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4V6z"/><path d="M4 7l8 6 8-6"/></svg>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
           </div>
         </div>
-        ${isNew ? `<span class="card-new-badge">New</span>` : ""}
-      </div>
-      <div class="card-body">
-        <div class="card-artist">${post.artist || "Unknown Artist"}</div>
-        <h3 class="card-title">${post.title || "Untitled"}</h3>
-        <p class="card-caption">${post.caption || "Click to read the full story about this release..."}</p>
-        <div class="card-meta-row">
-          ${post.genre ? `<span class="card-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>${post.genre}</span>` : ""}
-          <span class="card-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${dateObj ? dateObj.toLocaleDateString("en-GB",{day:"numeric",month:"short"}) : "—"}</span>
+
+        <div class="field" id="loginFieldPass">
+          <label>Password</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="eye-btn" onclick="toggleEye('loginPassword',this)">
+              <svg class="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eyeClosed" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a19.7 19.7 0 014.22-5.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a19.7 19.7 0 01-2.68 3.68"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+            </button>
+          </div>
         </div>
+
+        <div class="forgot-row"><a href="#" id="forgotPass">Forgot password?</a></div>
+
+        <button class="submit-btn" id="loginBtn" onclick="doLogin()">
+          <span class="btn-text">Login</span>
+          <div class="spinner"></div>
+        </button>
+
+        <div class="msg" id="loginMsg"></div>
+        <div class="bottom-link">No account yet? <a href="#" onclick="switchTab('signup');return false;">Sign up →</a></div>
       </div>
 
-      <!-- VIEW COUNT ROW -->
-      <div class="card-views-row">
-        <div class="views-badge" id="views-badge-${post.id || i}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          <span class="views-count" id="view-count-${post.id || i}">—</span>
-          <span class="views-label">views</span>
-          <span class="views-live-dot"></span>
+      <!-- SIGN UP -->
+      <div class="panel" id="panelSignup">
+        <div class="field" id="signupFieldName">
+          <label>Username</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <input type="text" id="signupName" placeholder="e.g. Kwame Beats" autocomplete="off">
+          </div>
         </div>
+
+        <div class="field" id="signupFieldEmail">
+          <label>Email</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4V6z"/><path d="M4 7l8 6 8-6"/></svg>
+            <input type="email" id="signupEmail" placeholder="you@example.com">
+          </div>
+        </div>
+
+        <div class="field" id="signupFieldPass">
+          <label>Password</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <input type="password" id="signupPassword" placeholder="Create a strong password" oninput="onPassInput()">
+            <button type="button" class="eye-btn" onclick="toggleEye('signupPassword',this)">
+              <svg class="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eyeClosed" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a19.7 19.7 0 014.22-5.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a19.7 19.7 0 01-2.68 3.68"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="strength-wrap">
+          <div class="strength-bars">
+            <div class="strength-bar" id="sb1"></div>
+            <div class="strength-bar" id="sb2"></div>
+            <div class="strength-bar" id="sb3"></div>
+            <div class="strength-bar" id="sb4"></div>
+          </div>
+          <div class="strength-label" id="strengthLabel"></div>
+        </div>
+
+        <div class="field" id="signupFieldConfirm">
+          <label>Confirm password</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <input type="password" id="signupConfirm" placeholder="Re-enter your password" oninput="checkMatch()">
+            <button type="button" class="eye-btn" onclick="toggleEye('signupConfirm',this)">
+              <svg class="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eyeClosed" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a19.7 19.7 0 014.22-5.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a19.7 19.7 0 01-2.68 3.68"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="match-hint" id="matchHint"></div>
+
+        <div class="terms-row">
+          <input type="checkbox" id="agreeCheck" onchange="document.getElementById('signupBtn').disabled=!this.checked">
+          <span>I agree to the <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a></span>
+        </div>
+
+        <button class="submit-btn" id="signupBtn" disabled onclick="doSignup()">
+          <span class="btn-text">Create Account</span>
+          <div class="spinner"></div>
+        </button>
+
+        <div class="msg" id="signupMsg"></div>
+        <div class="bottom-link">Already have an account? <a href="#" onclick="switchTab('login');return false;">Login →</a></div>
       </div>
 
-      <div class="card-divider"></div>
-      <div class="card-stores">
-        <div class="card-stores-row">
-          ${ffmUrl
-            ? `<a class="store-icon" href="${ffmUrl}" target="_blank" rel="noopener" aria-label="Stream this track" onclick="event.stopPropagation()" style="width:auto;padding:0 14px;height:36px;display:inline-flex;align-items:center;border-radius:20px;gap:7px;font-family:var(--ff-display);font-size:.72rem;font-weight:700;color:var(--purple);border:1.5px solid var(--border-md);background:var(--bg-white);box-shadow:var(--shadow-xs);transition:all .2s;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-                Stream Now
-              </a>`
-            : '<span style="font-size:.72rem;color:var(--text-subtle);font-family:var(--ff-display)">No streaming link</span>'}
-          <button class="share-btn" onclick="event.stopPropagation();toggleShare(this)" aria-label="Share this track">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            Share
-          </button>
-        </div>
-        <div class="share-expand" onclick="event.stopPropagation()" role="region" aria-label="Share panel">
-          <span class="share-hint">Share with fans:</span>
-          <input class="share-url" type="text" value="https://444musicblog.vercel.app/#main" readonly aria-label="Share link" onclick="this.select()">
-          <button class="share-copy-btn" onclick="copyShareLink(this)">Copy Link</button>
-        </div>
-      </div>
-    `;
-
-    card.addEventListener("click", () => openPost(post));
-    card.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" ") openPost(post); });
-    postsGrid.appendChild(card);
-
-    // Animate view counter after card becomes visible
-    requestAnimationFrame(() => {
-      const obs = new IntersectionObserver(entries => {
-        entries.forEach(en => {
-          if (en.isIntersecting) {
-            card.classList.add("visible");
-            // Animate view count
-            const countEl = document.getElementById(`view-count-${post.id || i}`);
-            const badgeEl = document.getElementById(`views-badge-${post.id || i}`);
-            if (countEl) {
-              badgeEl && badgeEl.classList.add("counting");
-              animateCounter(countEl, viewCount, 1600);
-              setTimeout(() => badgeEl && badgeEl.classList.remove("counting"), 1700);
-            }
-            obs.disconnect();
-          }
-        });
-      }, { threshold: 0.1 });
-      obs.observe(card);
-    });
-  });
-}
-
-/* ─────────── ARTICLE BODY GENERATOR ─────────── */
-function generateArticleHTML(post) {
-  const artist = post.artist || "The artist";
-  const title  = post.title  || "this track";
-  const genre  = post.genre  || "Afrobeats";
-  const caption = post.caption || "";
-
-  // Templates by genre
-  const genreLower = genre.toLowerCase();
-  let opening, body1, pullQuote, body2, factBox, body3;
-
-  if (genreLower.includes("gospel")) {
-    opening = `${artist} returns with a powerful declaration of faith in <em>"${title}"</em> — a worship anthem that captures the very heartbeat of Ghana's gospel movement. From the opening bars, the track carries an unmistakable anointing, blending contemporary production with timeless spiritual conviction.`;
-    body1 = `The song arrives at a moment when gospel music in Ghana is experiencing a genuine renaissance. Artists are no longer confined to church walls — they are stepping onto mainstream stages, streaming platforms, and international playlists, carrying a message that resonates far beyond the pews. ${artist}'s latest offering is a shining example of this evolution.`;
-    pullQuote = `"This track doesn't just make you feel good — it makes you feel seen, lifted, and renewed."`;
-    body2 = `Lyrically, the song is rooted in scripture but expressed in the language of today's generation. The production is layered with lush harmonies, soaring strings, and a rhythm section that invites worshippers to move. Whether you're in a private moment of prayer or raising your hands in a congregation of thousands, "${title}" meets you exactly where you are.`;
-    factBox = { title: "Track Highlights", lines: [`Artist: ${artist}`, `Genre: ${genre}`, `Available on all major platforms`, `Produced for faith communities across Ghana and diaspora`] };
-    body3 = `The reception since release has been extraordinary. Communities across Accra, Kumasi, and beyond have embraced the track as an anthem for their season. For ${artist}, this is more than a release — it is a ministry moment, and the impact is already being felt.`;
-
-  } else if (genreLower.includes("highlife")) {
-    opening = `The golden threads of Ghanaian Highlife weave through every note of ${artist}'s latest release, <em>"${title}"</em>. This is music that carries history in its bones — the warmth of vintage parlour guitars, the swing of a classic rhythm — yet sounds completely alive and urgent for 2025.`;
-    body1 = `Highlife has always been the soul of Ghana's musical identity. Born from the coastal rhythms of the early twentieth century, it evolved through decades of political change, cultural shifts, and sonic experimentation. Today, a new generation of artists like ${artist} are carrying that torch with remarkable grace.`;
-    pullQuote = `"${title}" sounds like what happens when respect for tradition meets the freedom of modern expression.`;
-    body2 = `The production on this track deserves special mention. The arrangements are thoughtful — not trying to modernise Highlife away from itself, but to let it breathe in new spaces. The guitar work is particularly sublime, evoking the giants of the genre while establishing a voice that is entirely ${artist}'s own.`;
-    factBox = { title: "Why This Track Matters", lines: [`Roots: Classic Highlife tradition`, `Sound: Acoustic guitar + modern production`, `Mood: Nostalgic, joyful, reflective`, `Appeal: Ghanaians at home and across the world`] };
-    body3 = `For fans of authentic Ghanaian music, this is a release worth celebrating. It is proof that Highlife is not a museum piece but a living art form — one that can carry the joy, longing, and wisdom of the Ghanaian experience into every new decade.`;
-
-  } else if (genreLower.includes("hiphop") || genreLower.includes("hip-hop") || genreLower.includes("drill")) {
-    opening = `${artist} steps into the spotlight with bars that cut clean and deep on <em>"${title}"</em> — a testament to the maturity and ambition of Ghana's hip-hop scene. The track is precise, purposeful, and utterly undeniable.`;
-    body1 = `Ghana's rap landscape has never been more vibrant. Artists are crafting music with the technical precision of the best in the world while rooting it in stories, languages, and experiences that are unmistakably local. ${artist} sits at the forefront of this movement, and "${title}" is the proof.`;
-    pullQuote = `The cadence is flawless. The wordplay is rich. This is the kind of rap that demands multiple listens.`;
-    body2 = `The production provides the perfect canvas — dark, textured, and alive with detail. The beat switches come at exactly the right moments, giving ${artist} room to showcase different dimensions of their craft. From introspective to assertive, the range on display here is impressive.`;
-    factBox = { title: "Track Stats", lines: [`Genre: ${genre}`, `Artist: ${artist}`, `Energy: High — built for headphones and speakers`, `Standout: Wordplay, flow variation, production layers`] };
-    body3 = `This release signals that ${artist} is not here to play the edges of the scene — they are here to define it. The Ghanaian rap movement has a new benchmark, and it sounds like "${title}".`;
-
-  } else if (genreLower.includes("amapiano")) {
-    opening = `The log drums hit like a heartbeat. The keys shimmer like early morning light over the Accra skyline. ${artist}'s <em>"${title}"</em> is an Amapiano experience that transcends its South African roots and plants itself firmly in Pan-African soil.`;
-    body1 = `Amapiano has become one of the defining sounds of modern Africa — a genre that moves effortlessly across borders, playlists, and dance floors. Ghana has embraced it with open arms, and artists like ${artist} are now contributing their own distinct flavour to the movement.`;
-    pullQuote = `"${title}" is what happens when Ghanaian culture meets Amapiano's infinite groove — magnetic, hypnotic, and deeply joyful.`;
-    body2 = `What sets this track apart is the care taken with the sonic palette. The familiar Amapiano elements are all present, but ${artist} adds layers that feel distinctly West African — in the phrasing, the vocal delivery, and certain rhythmic choices that root the track in Ghanaian sensibility.`;
-    factBox = { title: "Listen For:", lines: [`Log drum textures throughout`, `Piano lead at the 45-second mark`, `Vocal ad-libs carrying the groove`, `A bass line that is absolutely irresistible`] };
-    body3 = `For anyone who doubted that Amapiano could have a genuinely Ghanaian expression, ${artist} has answered that question definitively. Stream "${title}" and let the music speak for itself.`;
-
-  } else {
-    // Default: Afrobeats / general
-    opening = `${artist} delivers a masterclass in contemporary African sound with <em>"${title}"</em> — a track that fuses rhythmic sophistication with emotional depth and the kind of melody that refuses to leave your head.`;
-    body1 = `The Afrobeats wave has reached every corner of the globe, and the artists leading it are doing something remarkable: they are creating music that is globally resonant while remaining unapologetically rooted in African experience. ${artist} understands this assignment completely.`;
-    pullQuote = `This is not music chasing a trend. This is music setting one.`;
-    body2 = `From the percussion arrangement to the vocal layering, every element of "${title}" feels intentional. The groove is infectious but never cheap. The melody is sophisticated without being cold. And the production — clean, dynamic, and rich — frames everything with the confidence of a major release.`;
-    factBox = { title: "Quick Facts", lines: [`Artist: ${artist}`, `Genre: ${genre}`, `Available: All major streaming platforms`, `Mood: Feel-good, energetic, perfect for any playlist`] };
-    body3 = `With this release, ${artist} cements their place in the conversation about who is shaping the future of African music. "${title}" is not just a song — it is a statement. And it is well worth your time and your streaming count.`;
-  }
-
-  // Extra content if there's an actual caption
-  const captionPara = caption.length > 60 
-    ? `<p>${caption}</p>` 
-    : '';
-
-  return `
-    <p class="lead">${opening}</p>
-    ${captionPara}
-    <p>${body1}</p>
-    <div class="pull-quote">${pullQuote}</div>
-    <p>${body2}</p>
-    <div class="fact-box">
-      <div class="fact-box-title">${factBox.title}</div>
-      ${factBox.lines.map(l => `<p>• ${l}</p>`).join('')}
     </div>
-    <h3>The Verdict</h3>
-    <p>${body3}</p>
-    <p style="margin-top:2rem;padding:20px 24px;background:var(--purple-soft);border-radius:var(--radius-md);border:1px solid var(--border-md);font-style:italic;color:var(--text-muted);font-size:.92rem;line-height:1.8;">
-      <strong style="font-style:normal;color:var(--purple);">444Music says:</strong> We stand behind this release fully. It represents the kind of music we created this platform to champion — authentic, ambitious, and made in Africa for the world. 
-      Stream it, share it, and support the artist directly on the platforms below.
-    </p>
-  `;
-}
+  </div>
 
-/* ─────────── OPEN FULL-SCREEN POST ─────────── */
-let currentPostViewCount = 0;
-let viewTickInterval = null;
+</div>
 
-function openPost(post) {
-  const overlay = document.getElementById("post-overlay");
-  const img = post.image
-    ? (post.image.startsWith("http") || post.image.startsWith("data:") ? post.image : "data:image/jpeg;base64,"+post.image)
-    : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&q=85&fit=crop";
-  const dateObj = post.createdAt?.toDate?.() || (post.createdAt ? new Date(post.createdAt) : null);
-  const isNew = dateObj && (Date.now() - dateObj.getTime() < 7 * 24 * 60 * 60 * 1000);
-  const links = post.links || {};
-  const ffmUrl = links.ffm || links.spotify || links.audiomack || links.apple || links.youtube || null;
+<!-- Floating orb background (Spotify-style ambient collage) -->
+<script>
+  (function(){
+    const layer = document.getElementById('orbLayer');
 
-  // Views
-  const viewCount = computeViews(post);
-  currentPostViewCount = viewCount;
+    // Placeholder avatar photos (pravatar.cc — a public service built
+    // specifically for mockup/profile-picture use, not tied to any named
+    // individual) standing in for the artist-profile mosaic.
+    const avatarIds = [11,22,33,44,15,26,37,48,19,29,41,52,13,24,35,46];
 
-  // Hero
-  document.getElementById("post-hero-img-el").src = img;
-  document.getElementById("post-hero-img-el").alt = post.title || "";
-  document.getElementById("post-hero-genre").textContent = post.genre || "Music";
-  document.getElementById("post-hero-title").textContent = post.title || "Untitled";
-  document.getElementById("post-hero-artist").textContent = post.artist || "Unknown Artist";
-  document.getElementById("post-hero-date").textContent = dateObj ? dateObj.toLocaleDateString("en-GB", {day:"numeric",month:"long",year:"numeric"}) : "—";
+    const spots = [
+      {top:'6%',  left:'10%', size:78,  blur:0.4},
+      {top:'4%',  left:'62%', size:58,  blur:1.0},
+      {top:'14%', left:'82%', size:92,  blur:0.2},
+      {top:'20%', left:'32%', size:54,  blur:1.2},
+      {top:'2%',  left:'40%', size:42,  blur:1.4},
+      {top:'70%', left:'6%',  size:84,  blur:0.5},
+      {top:'78%', left:'70%', size:68,  blur:0.7},
+      {top:'86%', left:'40%', size:96,  blur:0.3},
+      {top:'64%', left:'86%', size:50,  blur:1.1},
+      {top:'92%', left:'18%', size:48,  blur:1.3},
+      {top:'46%', left:'4%',  size:44,  blur:1.5},
+      {top:'50%', left:'92%', size:58,  blur:0.9}
+    ];
 
-  // Read time (estimate from caption)
-  const wordCount = ((post.caption||"") + " " + (post.title||"")).split(" ").length;
-  const readMins = Math.max(3, Math.min(8, Math.ceil(wordCount / 80 + 3)));
-  document.getElementById("post-hero-read-time").textContent = readMins + " min";
-  document.getElementById("post-read-time-badge").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${readMins} min read`;
+    spots.forEach((s,i)=>{
+      const o = document.createElement('div');
+      o.className = 'orb';
+      o.style.top = s.top;
+      o.style.left = s.left;
+      o.style.width = s.size+'px';
+      o.style.height = s.size+'px';
+      o.style.opacity = 0.85;
+      o.style.filter = `blur(${s.blur}px)`;
+      o.style.animationDuration = (3.5 + (i % 5) * 0.8) + 's';
+      o.style.animationDelay = (i * 0.15) + 's';
 
-  // View counts (set immediately, then animate)
-  const topbarCount   = document.getElementById("post-topbar-view-count");
-  const heroViews     = document.getElementById("post-hero-views");
-  const pillCount     = document.getElementById("post-views-pill-count");
-
-  topbarCount.textContent = formatViews(viewCount);
-  heroViews.textContent   = formatViews(viewCount);
-  pillCount.textContent   = formatViews(viewCount);
-
-  // Topbar title
-  document.getElementById("post-topbar-title").textContent = post.title || "Post";
-
-  // Byline avatar initials
-  const initials = (post.artist || "44").split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
-  document.getElementById("post-byline-avatar").textContent = initials;
-  document.getElementById("post-byline-sub").textContent = (post.genre || "Music") + " · 444Music Ghana";
-
-  // Article body
-  document.getElementById("post-article-body").innerHTML = generateArticleHTML(post);
-
-  // Tags
-  const tags = [post.genre, "Ghana Music", "444Music", "New Release", isNew ? "Fresh Drop" : ""].filter(Boolean);
-  document.getElementById("post-tags").innerHTML = tags.map(t => `<span class="post-tag">${t}</span>`).join('');
-
-  // Stream grid
-  const streamGrid = document.getElementById("post-stream-grid");
-  if (ffmUrl) {
-    streamGrid.innerHTML = `
-      <a class="post-stream-btn primary-stream" href="${ffmUrl}" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        Stream Now
-      </a>
-      <a class="post-stream-btn" href="https://open.spotify.com" target="_blank" rel="noopener">
-        <svg viewBox="0 0 168 168" width="20" height="20"><path fill="#1db954" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
-        Spotify
-      </a>
-      <a class="post-stream-btn" href="https://audiomack.com" target="_blank" rel="noopener">
-        <svg viewBox="0 0 100 100" width="20" height="20"><rect x="10" y="50" width="10" height="35" rx="5" fill="#f59e0b"/><rect x="26" y="30" width="10" height="55" rx="5" fill="#f59e0b"/><rect x="42" y="15" width="10" height="70" rx="5" fill="#f59e0b"/><rect x="58" y="30" width="10" height="55" rx="5" fill="#f59e0b"/><rect x="74" y="45" width="10" height="40" rx="5" fill="#f59e0b"/></svg>
-        Audiomack
-      </a>
-    `;
-  } else {
-    streamGrid.innerHTML = `
-      <a class="post-stream-btn" href="https://open.spotify.com" target="_blank" rel="noopener">
-        <svg viewBox="0 0 168 168" width="20" height="20"><path fill="#1db954" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/></svg>
-        Find on Spotify
-      </a>
-      <a class="post-stream-btn" href="https://audiomack.com" target="_blank" rel="noopener">
-        <svg viewBox="0 0 100 100" width="20" height="20"><rect x="10" y="50" width="10" height="35" rx="5" fill="#f59e0b"/><rect x="26" y="30" width="10" height="55" rx="5" fill="#f59e0b"/><rect x="42" y="15" width="10" height="70" rx="5" fill="#f59e0b"/><rect x="58" y="30" width="10" height="55" rx="5" fill="#f59e0b"/><rect x="74" y="45" width="10" height="40" rx="5" fill="#f59e0b"/></svg>
-        Audiomack
-      </a>
-    `;
-  }
-
-  // Open overlay
-  overlay.classList.add("open");
-  document.body.style.overflow = "hidden";
-  overlay.scrollTop = 0;
-
-  // Live view tick — slowly increments while user reads
-  if (viewTickInterval) clearInterval(viewTickInterval);
-  let liveViews = viewCount;
-  viewTickInterval = setInterval(() => {
-    const bump = Math.random() < 0.4 ? 1 : 0; // ~40% chance per tick
-    if (bump) {
-      liveViews += 1;
-      const fmt = formatViews(liveViews);
-      if (topbarCount)  topbarCount.textContent  = fmt;
-      if (heroViews)    heroViews.textContent     = fmt;
-      if (pillCount)    pillCount.textContent     = fmt;
-    }
-  }, 8000); // tick every 8s
-}
-
-function closePost() {
-  const overlay = document.getElementById("post-overlay");
-  overlay.classList.remove("open");
-  document.body.style.overflow = "";
-  if (viewTickInterval) { clearInterval(viewTickInterval); viewTickInterval = null; }
-}
-
-document.getElementById("post-back-btn").addEventListener("click", closePost);
-document.addEventListener("keydown", e => { if(e.key==="Escape") closePost(); });
-
-function copyPostLink(btn) {
-  const url = 'https://444musicblog.vercel.app/';
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(url).then(() => {
-      const b = document.querySelector(".post-topbar-share");
-      if (b) { const orig = b.textContent; b.textContent = "✓ Copied!"; setTimeout(() => b.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share`, 2000); }
+      const img = document.createElement('img');
+      img.src = `https://i.pravatar.cc/160?img=${avatarIds[i % avatarIds.length]}`;
+      img.alt = '';
+      img.loading = 'lazy';
+      o.appendChild(img);
+      layer.appendChild(o);
     });
-  }
-}
-
-/* ─────────── SHARE FUNCTIONS ─────────── */
-function toggleShare(btn) {
-  const storesDiv = btn.closest('.card-stores');
-  const panel = storesDiv.querySelector('.share-expand');
-  const isOpen = panel.classList.contains('open');
-  document.querySelectorAll('.share-expand.open').forEach(p => {
-    p.classList.remove('open');
-    const b = p.closest('.card-stores').querySelector('.share-btn');
-    if (b) b.classList.remove('active');
-  });
-  if (!isOpen) {
-    panel.classList.add('open');
-    btn.classList.add('active');
-    setTimeout(() => {
-      const urlInput = panel.querySelector('.share-url');
-      if (urlInput) urlInput.select();
-    }, 60);
-  }
-}
-
-function copyShareLink(btn) {
-  const url = 'https://444musicblog.vercel.app/#main';
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(url)
-      .then(() => showCopied(btn))
-      .catch(() => fallbackCopy(btn, url));
-  } else {
-    fallbackCopy(btn, url);
-  }
-}
-
-function fallbackCopy(btn, url) {
-  const panel = btn.closest('.share-expand');
-  const inp = panel ? panel.querySelector('.share-url') : null;
-  if (inp) { inp.select(); try { document.execCommand('copy'); } catch(e) {} }
-  showCopied(btn);
-}
-
-function showCopied(btn) {
-  btn.textContent = '✓ Copied!';
-  btn.classList.add('copied');
-  setTimeout(() => { btn.textContent = 'Copy Link'; btn.classList.remove('copied'); }, 2200);
-}
-
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.card-stores')) {
-    document.querySelectorAll('.share-expand.open').forEach(p => {
-      p.classList.remove('open');
-      const b = p.closest('.card-stores').querySelector('.share-btn');
-      if (b) b.classList.remove('active');
-    });
-  }
-});
-
-/* ─────────── SEARCH ─────────── */
-searchBar.addEventListener("input", e => {
-  searchQuery = e.target.value.toLowerCase().trim();
-  applyFilters();
-});
-
-/* ─────────── FILTER BUTTONS ─────────── */
-document.querySelectorAll("[data-filter]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    activeFilter = btn.dataset.filter;
-    document.querySelectorAll("[data-filter]").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(`[data-filter="${activeFilter}"]`).forEach(b => b.classList.add("active"));
-    applyFilters();
-  });
-});
-
-/* ─────────── LOAD MORE ─────────── */
-loadMoreBtn.addEventListener("click", () => loadPosts(true));
-document.getElementById("btn-retry")?.addEventListener("click", () => loadPosts(false));
-
-/* ─────────── UI STATES ─────────── */
-function showEmpty() { emptyState.style.display = "flex"; }
-function showError(msg) { errorState.style.display = "flex"; if(errorMsg) errorMsg.textContent = msg; }
-function hideStates() { emptyState.style.display = "none"; errorState.style.display = "none"; }
-
-function showSkeletons(n) {
-  postsGrid.innerHTML = "";
-  for(let i=0;i<n;i++){
-    const d = document.createElement("div");
-    d.className = "skeleton-card";
-    d.innerHTML = `<div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:40%"></div><div class="skel-line" style="width:80%"></div><div class="skel-line" style="width:65%"></div><div class="skel-line" style="width:50%"></div></div>`;
-    postsGrid.appendChild(d);
-  }
-}
-function clearSkeletons() { document.querySelectorAll(".skeleton-card").forEach(e => e.remove()); }
+  })();
 </script>
+
+<!-- Screen navigation -->
+<script>
+  function showWelcome(){
+    document.getElementById('screenAuth').classList.remove('active');
+    document.getElementById('screenWelcome').classList.add('active');
+  }
+  function showAuth(tab){
+    document.getElementById('screenWelcome').classList.remove('active');
+    document.getElementById('screenAuth').classList.add('active');
+    switchTab(tab || 'login');
+  }
+  document.getElementById('emailWelcomeBtn').addEventListener('click', ()=> showAuth('login'));
+  document.getElementById('gotoSignup').addEventListener('click', ()=> showAuth('signup'));
+  document.getElementById('authBack').addEventListener('click', showWelcome);
+  document.getElementById('backBtn').addEventListener('click', ()=> history.back());
+  document.getElementById('closeBtn').addEventListener('click', ()=> window.location.href = 'https://www.444musicdistro.com');
+
+  function switchTab(tab){
+    const slider = document.getElementById('toggleSlider');
+    const btnL = document.getElementById('btnLoginTab');
+    const btnS = document.getElementById('btnSignupTab');
+    const panelL = document.getElementById('panelLogin');
+    const panelS = document.getElementById('panelSignup');
+    if (tab === 'login'){
+      slider.classList.remove('right');
+      btnL.className = 'toggle-btn active';
+      btnS.className = 'toggle-btn inactive';
+      panelL.classList.add('active');
+      panelS.classList.remove('active');
+    } else {
+      slider.classList.add('right');
+      btnL.className = 'toggle-btn inactive';
+      btnS.className = 'toggle-btn active';
+      panelS.classList.add('active');
+      panelL.classList.remove('active');
+    }
+  }
+
+  function toggleEye(inputId, btn){
+    const inp = document.getElementById(inputId);
+    const isPass = inp.type === 'password';
+    inp.type = isPass ? 'text' : 'password';
+    btn.querySelector('.eyeOpen').style.display = isPass ? 'none' : 'block';
+    btn.querySelector('.eyeClosed').style.display = isPass ? 'block' : 'none';
+  }
+
+  const levels = [
+    { label:'Too short', cls:'s1' },
+    { label:'Weak',      cls:'s2' },
+    { label:'Fair',      cls:'s3' },
+    { label:'Strong',    cls:'s4' },
+  ];
+  function getStrength(v){
+    let s=0;
+    if(v.length>5) s++;
+    if(v.length>8) s++;
+    if(/[A-Z]/.test(v)&&/[0-9]/.test(v)) s++;
+    if(/[^A-Za-z0-9]/.test(v)) s++;
+    return s;
+  }
+  function onPassInput(){
+    const val = document.getElementById('signupPassword').value;
+    const score = val.length ? getStrength(val) : 0;
+    [1,2,3,4].forEach(i=>{
+      const b = document.getElementById('sb'+i);
+      b.className = 'strength-bar';
+      if (i <= score && score > 0) b.classList.add(levels[score-1].cls);
+    });
+    const lbl = document.getElementById('strengthLabel');
+    lbl.className = 'strength-label' + (score ? ' '+levels[score-1].cls : '');
+    lbl.textContent = val.length ? levels[score-1].label : '';
+    checkMatch();
+  }
+  function checkMatch(){
+    const p = document.getElementById('signupPassword').value;
+    const c = document.getElementById('signupConfirm').value;
+    const h = document.getElementById('matchHint');
+    if (!c) { h.textContent=''; h.className='match-hint'; return; }
+    if (p===c) { h.textContent='Passwords match'; h.className='match-hint ok'; }
+    else       { h.textContent="Passwords don't match"; h.className='match-hint err'; }
+  }
+</script>
+
+<!-- Firebase auth logic -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup,
+    signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+    authDomain: "usersubmissionsportal.firebaseapp.com",
+    projectId: "usersubmissionsportal",
+    storageBucket: "usersubmissionsportal.firebasestorage.app",
+    messagingSenderId: "734783502459",
+    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  await setPersistence(auth, browserLocalPersistence).catch(()=>{});
+  const $ = id => document.getElementById(id);
+
+  const REDIRECT_TARGET = 'addplaylist.html';
+
+  function showMsg(id, text, type){
+    const el = $(id); el.textContent = text; el.className = `msg visible ${type}`;
+  }
+  function showWelcomeMsg(text, type){
+    const el = $('welcomeMsg'); el.textContent = text; el.className = `welcome-msg ${type}`;
+  }
+  function clearMsg(id){
+    const el = $(id); el.className = 'msg'; el.textContent = '';
+  }
+  function shake(id){
+    const el = $(id);
+    el.classList.add('shake','has-error');
+    el.addEventListener('animationend', ()=> el.classList.remove('shake'), {once:true});
+  }
+  function setLoad(id, on){
+    const btn = $(id); btn.classList.toggle('loading', on); btn.disabled = on;
+  }
+
+  /* Creates the user/analytics docs the first time someone signs in.
+     Runs in the background after redirecting — a Firestore error can
+     no longer strand the user on this page. */
+  async function ensureUserDocs(user){
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const existing = await getDoc(userRef);
+      if (existing.exists()) return;
+      await setDoc(userRef, {
+        name: user.displayName || 'New Artist',
+        email: user.email,
+        artistType: 'Independent Artist',
+        genre: 'Afrobeats',
+        country: 'Ghana',
+        earnings: 0,
+        emailOptIn: true,
+        createdAt: serverTimestamp()
+      });
+      await setDoc(doc(db, 'analytics', user.uid), {
+        totalStreams:0, spotifyStreams:0, appleStreams:0,
+        youtubeStreams:0, tiktokStreams:0,
+        topCountry1:'US', topCountry2:'UK', topCountry3:'GH',
+        monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
+        createdAt: serverTimestamp()
+      });
+    } catch (e){
+      console.error('ensureUserDocs failed (non-blocking):', e);
+    }
+  }
+
+  function goToApp(user){
+    ensureUserDocs(user);
+    window.location.href = REDIRECT_TARGET;
+  }
+
+  /* ===== EMAIL LOGIN ===== */
+  window.doLogin = async () => {
+    clearMsg('loginMsg');
+    const email = $('loginEmail').value.trim();
+    const pass  = $('loginPassword').value;
+    if (!email) { shake('loginFieldEmail'); showMsg('loginMsg','Enter your email.','warn'); return; }
+    if (!pass)  { shake('loginFieldPass');  showMsg('loginMsg','Enter your password.','warn'); return; }
+    setLoad('loginBtn', true);
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      showMsg('loginMsg','Signing in…','success');
+      setTimeout(()=> goToApp(cred.user), 500);
+    } catch(err){
+      setLoad('loginBtn', false);
+      const c = err.code || '';
+      if (c==='auth/user-not-found' || c==='auth/wrong-password' || c==='auth/invalid-credential'){
+        shake('loginFieldEmail'); shake('loginFieldPass');
+        showMsg('loginMsg','Incorrect email or password.','error');
+      } else if (c==='auth/too-many-requests'){
+        showMsg('loginMsg','Too many attempts. Try again later.','error');
+      } else {
+        showMsg('loginMsg','Something went wrong. Try again.','error');
+      }
+    }
+  };
+
+  /* ===== EMAIL SIGN UP ===== */
+  window.doSignup = async () => {
+    clearMsg('signupMsg');
+    const name    = $('signupName').value.trim();
+    const email   = $('signupEmail').value.trim();
+    const pass    = $('signupPassword').value;
+    const confirm = $('signupConfirm').value;
+    if (name.length < 2)  { shake('signupFieldName');    showMsg('signupMsg','Enter your username.','warn'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { shake('signupFieldEmail'); showMsg('signupMsg','Enter a valid email.','warn'); return; }
+    if (pass.length < 6)  { shake('signupFieldPass');    showMsg('signupMsg','Password must be 6+ characters.','warn'); return; }
+    if (pass !== confirm) { shake('signupFieldConfirm'); showMsg('signupMsg','Passwords do not match.','error'); return; }
+    setLoad('signupBtn', true);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      const uid  = cred.user.uid;
+      await setDoc(doc(db,'users',uid), {
+        name, email,
+        artistType: 'Independent Artist',
+        genre: 'Afrobeats',
+        country: 'Ghana',
+        earnings: 0,
+        emailOptIn: true,
+        createdAt: serverTimestamp()
+      });
+      await setDoc(doc(db,'analytics',uid), {
+        totalStreams:0, spotifyStreams:0, appleStreams:0,
+        youtubeStreams:0, tiktokStreams:0,
+        topCountry1:'US', topCountry2:'UK', topCountry3:'GH',
+        monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
+        createdAt: serverTimestamp()
+      });
+      showMsg('signupMsg','Account created. Welcome to 444Music.','success');
+      setTimeout(()=> goToApp(cred.user), 1200);
+    } catch(err){
+      setLoad('signupBtn', false);
+      const m = {
+        'auth/email-already-in-use': 'An account with this email already exists.',
+        'auth/invalid-email':         'Invalid email address.',
+        'auth/weak-password':         'Choose a stronger password (min 6 chars).',
+        'auth/network-request-failed':'Network error. Check your connection.',
+      };
+      showMsg('signupMsg', m[err.code] || err.message, 'error');
+    }
+  };
+
+  /* ===== FORGOT PASSWORD ===== */
+  $('forgotPass').addEventListener('click', async e => {
+    e.preventDefault();
+    const email = $('loginEmail').value.trim();
+    if (!email) { shake('loginFieldEmail'); showMsg('loginMsg','Enter your email first.','warn'); return; }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showMsg('loginMsg','Reset link sent — check your inbox.','success');
+    } catch(err){ showMsg('loginMsg', err.message, 'error'); }
+  });
+
+  /* ===== GOOGLE SIGN-IN (welcome screen) =====
+     Popups work fine on desktop and modern mobile browsers. Only genuine
+     in-app webviews (Instagram/WhatsApp/TikTok/etc.) block popups outright
+     and Google refuses OAuth inside them regardless — so popup everywhere
+     else, redirect as the fallback. */
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  function isInAppWebview(){
+    const ua = navigator.userAgent || navigator.vendor || '';
+    return /FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Twitter|GSA\/|WhatsApp/i.test(ua);
+  }
+
+  $('googleWelcomeBtn').addEventListener('click', async () => {
+    const btn = $('googleWelcomeBtn');
+    btn.disabled = true;
+
+    if (isInAppWebview()){
+      $('googleBtnText').textContent = 'Redirecting…';
+      try {
+        await signInWithRedirect(auth, provider);
+      } catch (err){
+        btn.disabled = false;
+        $('googleBtnText').textContent = 'Continue with Google';
+        showWelcomeMsg(`Google sign-in failed: ${err.code || err.message}`, 'error');
+      }
+      return;
+    }
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      goToApp(result.user);
+    } catch (err){
+      btn.disabled = false;
+      $('googleBtnText').textContent = 'Continue with Google';
+      if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request'){
+        try {
+          $('googleBtnText').textContent = 'Redirecting…';
+          await signInWithRedirect(auth, provider);
+        } catch (e2){
+          showWelcomeMsg(`Google sign-in failed: ${e2.code || e2.message}`, 'error');
+        }
+      } else {
+        showWelcomeMsg(`Google sign-in failed: ${err.code || err.message}`, 'error');
+      }
+    }
+  });
+
+  /* Catch the result when the page reloads after a redirect sign-in */
+  getRedirectResult(auth).then((result) => {
+    if (result && result.user){
+      showWelcomeMsg('Signing in…', 'success');
+      goToApp(result.user);
+    }
+  }).catch((err) => {
+    if (err && err.code && err.code !== 'auth/no-current-user'){
+      showWelcomeMsg(`Google sign-in failed: ${err.code || err.message}`, 'error');
+    }
+  });
+</script>
+
 </body>
 </html>
