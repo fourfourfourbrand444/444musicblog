@@ -1,792 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music – Welcome</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Listen Now</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Circular+Std:wght@400;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-  html,body{height:100%;width:100%;font-family:'DM Sans',sans-serif;overflow:hidden;background:#040405;}
-
-  .app-shell{position:relative;width:100%;height:100%;}
-
-  .screen{
-    position:absolute; inset:0;
-    display:flex; flex-direction:column;
-    opacity:0; visibility:hidden; pointer-events:none;
-    transition:opacity .32s ease;
-  }
-  .screen.active{ opacity:1; visibility:visible; pointer-events:auto; }
-
-  /* ================= WELCOME SCREEN ================= */
-  .welcome-screen{ background:#040405; overflow:hidden; }
-
-  .orbs{ position:absolute; inset:0; z-index:0; }
-  .orb{
-    position:absolute; border-radius:50%;
-    overflow:hidden;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
-    animation: drift 6s ease-in-out infinite;
-  }
-  .orb img{
-    width:100%; height:100%; object-fit:cover; display:block;
-  }
-  .orb::after{
-    content:''; position:absolute; inset:0;
-    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.08), transparent 55%);
-  }
-  @keyframes drift{
-    0%,100%{ transform:translateY(0) translateX(0) scale(1); }
-    50%{ transform:translateY(-26px) translateX(12px) scale(1.06); }
+  :root {
+    --spotify-green: #1DB954;
+    --spotify-black: #191414;
+    --spotify-white: #FFFFFF;
+    --spotify-light-gray: #B3B3B3;
+    --audiomack-orange: #FFA500;
+    --boomplay-blue: #0066FF;
   }
 
-  .vignette{
-    position:absolute; inset:0; z-index:1;
-    background:
-      radial-gradient(circle at 50% 38%, rgba(4,4,5,0) 0%, rgba(4,4,5,0.55) 46%, rgba(4,4,5,0.94) 78%, #040405 100%);
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  .top-bar{
-    position:relative; z-index:3;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:20px 18px 0;
-  }
-  .icon-btn{
-    width:36px; height:36px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.09);
-    color:#e9e9ef; cursor:pointer; transition:background .2s, transform .15s;
-  }
-  .icon-btn:hover{ background:rgba(255,255,255,0.14); }
-  .icon-btn:active{ transform:scale(0.94); }
-  .icon-btn svg{ width:16px; height:16px; }
-
-  .welcome-content{
-    position:relative; z-index:3;
-    flex:1;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:0 34px; gap:18px;
-  }
-  .logo-mark{
-    height:40px; width:auto; object-fit:contain;
-    filter:brightness(0) invert(1);
-    opacity:0.96;
-  }
-  .welcome-content h1{
-    font-size:26px; font-weight:700; color:#f4f4f8;
-    letter-spacing:-0.01em; line-height:1.25; max-width:280px;
-  }
-  .welcome-content p{
-    font-size:14px; font-weight:400; color:rgba(255,255,255,0.42);
-    line-height:1.5; max-width:270px;
+  body {
+    min-height: 100vh;
+    font-family: 'Montserrat', 'Circular Std', sans-serif;
+    background: var(--spotify-black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
   }
 
-  .welcome-actions{
-    position:relative; z-index:3;
-    padding:0 26px 30px; display:flex; flex-direction:column; gap:12px;
+  /* Stage background */
+  .bg-stage {
+    position: fixed;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1920&q=80');
+    background-size: cover;
+    background-position: center 30%;
+    z-index: 0;
   }
 
-  .pill-btn{
-    width:100%; padding:15px; border-radius:50px; border:none;
-    font-family:'DM Sans',sans-serif; font-size:14.5px; font-weight:600;
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    cursor:pointer; letter-spacing:0.01em;
-    transition:opacity .2s, transform .15s;
-  }
-  .pill-btn:active{ transform:scale(0.98); }
-  .pill-btn:disabled{ opacity:0.45; cursor:not-allowed; }
-  .pill-btn svg{ width:18px; height:18px; flex-shrink:0; }
-
-  .pill-light{ background:#ffffff; color:#0a0a0c; }
-  .pill-light:hover:not(:disabled){ opacity:0.9; }
-
-  .pill-outline{
-    background:transparent; color:#f0f0f4;
-    border:1px solid rgba(255,255,255,0.16);
-  }
-  .pill-outline:hover:not(:disabled){ background:rgba(255,255,255,0.06); }
-
-  .welcome-footer{
-    text-align:center; margin-top:6px;
-    font-size:12.5px; color:rgba(255,255,255,0.32);
-  }
-  .welcome-footer a{ color:#f4f4f8; font-weight:600; text-decoration:none; cursor:pointer; }
-  .welcome-footer a:hover{ color:#fff; }
-
-  .welcome-msg{
-    text-align:center; font-size:12.5px; min-height:16px; margin-top:2px;
-    font-weight:500;
-  }
-  .welcome-msg.error{ color:#f87171; }
-  .welcome-msg.success{ color:#4ade80; }
-
-  /* ================= AUTH SCREEN (white theme) ================= */
-  .auth-screen{ background:#ffffff; }
-
-  .auth-header{
-    display:flex; align-items:center; justify-content:center;
-    position:relative; padding:22px 18px 18px; flex-shrink:0;
-    border-bottom:1px solid #f0f0f2;
-  }
-  .auth-back{
-    position:absolute; left:16px; top:20px;
-    width:34px; height:34px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    background:#f5f5f7; border:1px solid #ececef; color:#111;
-    cursor:pointer;
-  }
-  .auth-back svg{ width:15px; height:15px; }
-  .auth-header img{ height:34px; object-fit:contain; }
-
-  .auth-body{
-    flex:1; overflow-y:auto; padding:30px 26px 34px;
-    display:flex; flex-direction:column;
+  /* Multi-layer filter overlay for Spotify mood */
+  .bg-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      160deg,
+      rgba(25, 20, 20, 0.82) 0%,
+      rgba(29, 185, 84, 0.10) 40%,
+      rgba(0,0,0,0.88) 100%
+    );
+    z-index: 1;
   }
 
-  .toggle-wrap{
-    display:flex; background:#f2f2f4; border-radius:50px; padding:4px;
-    margin-bottom:32px; position:relative; width:100%; flex-shrink:0;
+  /* Bottom vignette / fade */
+  .bg-stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, transparent 20%, rgba(0,0,0,0.75) 100%);
+    z-index: 2;
   }
-  .toggle-slider{
-    position:absolute; top:4px; left:4px;
-    width:calc(50% - 4px); height:calc(100% - 8px);
-    background:#0a0a0c; border-radius:50px;
-    transition:transform .32s cubic-bezier(.4,0,.2,1);
+
+  /* Grain texture overlay */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
   }
-  .toggle-slider.right{ transform:translateX(100%); }
-  .toggle-btn{
-    flex:1; padding:12px 0; background:none; border:none; border-radius:50px;
-    font-family:'DM Sans',sans-serif; font-size:13.5px; font-weight:600;
-    cursor:pointer; position:relative; z-index:1; transition:color .3s;
+
+  /* Page content */
+  .container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 48px 28px;
+    max-width: 420px;
+    width: 100%;
   }
-  .toggle-btn.active{ color:#fff; }
-  .toggle-btn.inactive{ color:rgba(10,10,12,0.4); }
 
-  .panel{ display:none; flex-direction:column; flex:1; }
-  .panel.active{ display:flex; animation:fadeIn .28s ease both; }
-  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
-
-  .field{ margin-bottom:22px; }
-  .field label{
-    display:block; font-size:10.5px; font-weight:700; letter-spacing:0.09em;
-    text-transform:uppercase; color:rgba(10,10,12,0.38); margin-bottom:9px;
+  /* Spotify-style logo mark at top */
+  .brand-mark {
+    margin-bottom: 6px;
+    animation: fadeDown 0.7s ease both;
   }
-  .input-row{
-    position:relative; display:flex; align-items:center;
-    border-bottom:1.5px solid #e7e7ea; transition:border-color .2s;
+
+  .brand-mark svg {
+    width: 44px;
+    height: 44px;
+    filter: drop-shadow(0 0 18px rgba(29,185,84,0.45));
   }
-  .input-row.focused, .input-row:focus-within{ border-bottom-color:#0a0a0c; }
-  .input-row svg{ width:16px; height:16px; color:rgba(10,10,12,0.32); flex-shrink:0; margin-right:8px; }
-  .input-row input{
-    flex:1; background:transparent; border:none; color:#0a0a0c;
-    font-family:'DM Sans',sans-serif; font-size:15px; font-weight:400;
-    padding:9px 0; outline:none;
+
+  /* Header */
+  .header-text {
+    text-align: center;
+    animation: fadeDown 0.7s 0.1s ease both;
+    margin-bottom: 10px;
   }
-  .input-row input::placeholder{ color:rgba(10,10,12,0.24); }
 
-  .eye-btn{
-    background:none; border:none; color:rgba(10,10,12,0.32); cursor:pointer;
-    padding:4px; display:flex; align-items:center; transition:color .2s;
+  .header-text h1 {
+    font-size: clamp(28px, 7vw, 40px);
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--spotify-white);
+    line-height: 1.1;
+    text-transform: uppercase;
   }
-  .eye-btn:hover{ color:rgba(10,10,12,0.7); }
-  .eye-btn svg{ width:17px; height:17px; margin:0; }
 
-  .forgot-row{ text-align:right; margin:-8px 0 26px; }
-  .forgot-row a{ font-size:12px; color:rgba(10,10,12,0.4); text-decoration:none; }
-  .forgot-row a:hover{ color:#0a0a0c; }
-
-  .submit-btn{
-    width:100%; padding:16px; border:none; border-radius:50px;
-    background:#0a0a0c; color:#ffffff; font-family:'DM Sans',sans-serif;
-    font-size:14.5px; font-weight:700; cursor:pointer; letter-spacing:0.02em;
-    transition:opacity .2s, transform .15s; position:relative; margin-top:auto;
+  .header-text h1 span {
+    color: var(--spotify-green);
   }
-  .submit-btn:hover:not(:disabled){ opacity:0.88; }
-  .submit-btn:active:not(:disabled){ transform:scale(0.99); }
-  .submit-btn:disabled{ opacity:0.25; cursor:not-allowed; }
-  .btn-text{ display:block; }
-  .spinner{
-    display:none; width:17px; height:17px;
-    border:2px solid rgba(255,255,255,0.25); border-top-color:#fff;
-    border-radius:50%; animation:spin .65s linear infinite; margin:0 auto;
+
+  .header-text p {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--spotify-light-gray);
   }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
-  .submit-btn.loading .btn-text{ display:none; }
-  .submit-btn.loading .spinner{ display:block; }
 
-  .msg{
-    font-size:12px; text-align:center; margin-top:14px; min-height:16px;
-    opacity:0; transition:opacity .3s; font-weight:500;
+  /* Divider line */
+  .divider {
+    width: 48px;
+    height: 2px;
+    background: var(--spotify-green);
+    border-radius: 2px;
+    margin-bottom: 4px;
+    animation: fadeIn 0.7s 0.2s ease both;
   }
-  .msg.visible{ opacity:1; }
-  .msg.error{ color:#e0483e; }
-  .msg.success{ color:#1fa15c; }
-  .msg.warn{ color:#c47a12; }
 
-  .bottom-link{
-    text-align:center; margin-top:20px; font-size:13px; color:rgba(10,10,12,0.4);
+  /* Separator for submit section */
+  .section-sep {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeIn 0.7s 0.6s ease both;
   }
-  .bottom-link a{ color:#0a0a0c; font-weight:600; text-decoration:none; }
-  .bottom-link a:hover{ opacity:0.7; }
 
-  .strength-wrap{ margin:-14px 0 20px; }
-  .strength-bars{ display:flex; gap:4px; margin-bottom:5px; }
-  .strength-bar{ flex:1; height:3px; background:#eeeef0; border-radius:2px; transition:background .35s; }
-  .strength-bar.s1{ background:#e0483e; }
-  .strength-bar.s2{ background:#d97f1c; }
-  .strength-bar.s3{ background:#c9a400; }
-  .strength-bar.s4{ background:#1fa15c; }
-  .strength-label{ font-size:10.5px; color:rgba(10,10,12,0.32); letter-spacing:0.03em; }
-  .strength-label.s1{ color:#e0483e; }
-  .strength-label.s2{ color:#d97f1c; }
-  .strength-label.s3{ color:#c9a400; }
-  .strength-label.s4{ color:#1fa15c; }
-
-  .match-hint{ font-size:11.5px; min-height:14px; margin:-14px 0 18px; }
-  .match-hint.ok{ color:#1fa15c; }
-  .match-hint.err{ color:#e0483e; }
-
-  .terms-row{ display:flex; align-items:flex-start; gap:10px; margin-bottom:24px; }
-  .terms-row input[type="checkbox"]{ width:15px; height:15px; accent-color:#0a0a0c; cursor:pointer; flex-shrink:0; margin-top:1px; }
-  .terms-row span{ font-size:12px; color:rgba(10,10,12,0.45); line-height:1.4; }
-  .terms-row a{ color:#0a0a0c; text-decoration:none; font-weight:600; }
-
-  @keyframes shake{
-    0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-5px); }
-    40%{ transform:translateX(5px); } 60%{ transform:translateX(-3px); } 80%{ transform:translateX(3px); }
+  .section-sep::before,
+  .section-sep::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.12);
   }
-  .shake{ animation:shake .35s ease; }
-  .has-error .input-row{ border-bottom-color:#e0483e !important; }
 
-  .auth-body::-webkit-scrollbar{ width:3px; }
-  .auth-body::-webkit-scrollbar-thumb{ background:#eee; border-radius:3px; }
+  .section-sep span {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    white-space: nowrap;
+  }
+
+  /* Buttons */
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 16px 24px;
+    border-radius: 56px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    transition: transform 0.18s cubic-bezier(.34,1.56,.64,1), box-shadow 0.18s ease, filter 0.18s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    background: rgba(255,255,255,0.08);
+    transition: opacity 0.18s;
+  }
+
+  .btn:hover::after { opacity: 1; }
+
+  .btn:hover {
+    transform: scale(1.035) translateY(-2px);
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  /* Icon wrapper */
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .btn-label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+  }
+
+  .btn-label span.service {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.72;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .btn-label span.action {
+    font-size: 14.5px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-arrow {
+    margin-left: auto;
+    opacity: 0.7;
+    font-size: 18px;
+    transition: transform 0.18s;
+  }
+
+  .btn:hover .btn-arrow {
+    transform: translateX(4px);
+    opacity: 1;
+  }
+
+  /* Spotify button */
+  .btn-spotify {
+    background: var(--spotify-green);
+    color: #000;
+    box-shadow: 0 6px 36px rgba(29,185,84,0.38), 0 2px 8px rgba(0,0,0,0.4);
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-spotify:hover {
+    box-shadow: 0 10px 48px rgba(29,185,84,0.55), 0 2px 12px rgba(0,0,0,0.5);
+  }
+
+  .btn-spotify .btn-icon {
+    background: rgba(0,0,0,0.18);
+  }
+
+  /* Audiomack button */
+  .btn-audiomack {
+    background: #FF6600;
+    color: #fff;
+    box-shadow: 0 6px 36px rgba(255,102,0,0.35), 0 2px 8px rgba(0,0,0,0.4);
+    animation: fadeUp 0.6s 0.42s ease both;
+  }
+
+  .btn-audiomack:hover {
+    box-shadow: 0 10px 48px rgba(255,102,0,0.5), 0 2px 12px rgba(0,0,0,0.5);
+  }
+
+  .btn-audiomack .btn-icon {
+    background: rgba(0,0,0,0.15);
+  }
+
+  /* Boomplay button */
+  .btn-boomplay {
+    background: #fff;
+    color: #111;
+    box-shadow: 0 6px 36px rgba(255,255,255,0.18), 0 2px 8px rgba(0,0,0,0.4);
+    animation: fadeUp 0.6s 0.54s ease both;
+  }
+
+  .btn-boomplay:hover {
+    box-shadow: 0 10px 48px rgba(255,255,255,0.28), 0 2px 12px rgba(0,0,0,0.5);
+  }
+
+  .btn-boomplay .btn-icon {
+    background: rgba(0,0,0,0.07);
+  }
+
+  .btn-boomplay .btn-label span.service {
+    opacity: 0.5;
+    color: #333;
+  }
+
+  /* Submit Song button */
+  .btn-submit {
+    background: linear-gradient(135deg, #2a1a4e 0%, #1a0e3a 100%);
+    color: #fff;
+    border: 1.5px solid rgba(168, 100, 255, 0.45);
+    box-shadow: 0 6px 36px rgba(140, 60, 255, 0.28), 0 2px 8px rgba(0,0,0,0.5);
+    animation: fadeUp 0.6s 0.72s ease both;
+  }
+
+  .btn-submit:hover {
+    box-shadow: 0 10px 48px rgba(140, 60, 255, 0.48), 0 2px 12px rgba(0,0,0,0.6);
+    border-color: rgba(168, 100, 255, 0.75);
+  }
+
+  .btn-submit .btn-icon {
+    background: rgba(140, 60, 255, 0.22);
+  }
+
+  .btn-submit .btn-label span.service {
+    color: rgba(200, 160, 255, 0.8);
+    opacity: 1;
+  }
+
+  .btn-submit .btn-label span.action {
+    color: #fff;
+  }
+
+  .btn-submit .btn-arrow {
+    color: rgba(180, 130, 255, 0.85);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 10px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.28);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
+    animation: fadeIn 0.7s 0.9s ease both;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Pulse glow on spotlight */
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+  }
+
+  .spotlight {
+    position: fixed;
+    z-index: 2;
+    top: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 340px;
+    height: 520px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(29,185,84,0.13) 0%, transparent 70%);
+    pointer-events: none;
+    animation: glow-pulse 4s ease-in-out infinite;
+  }
 </style>
 </head>
 <body>
 
-<div class="app-shell">
+<div class="bg-stage"></div>
+<div class="spotlight"></div>
+<div class="grain"></div>
 
-  <!-- ============ WELCOME SCREEN ============ -->
-  <div class="screen welcome-screen active" id="screenWelcome">
+<div class="container">
 
-    <div class="orbs" id="orbLayer"></div>
-    <div class="vignette"></div>
-
-    <div class="top-bar">
-      <button class="icon-btn" id="backBtn" aria-label="Back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <button class="icon-btn" id="closeBtn" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-
-    <div class="welcome-content">
-      <img class="logo-mark" src="https://www.444musicdistro.com/black.png" alt="444Music"
-        onerror="this.style.display='none';document.getElementById('logoFallbackW').style.display='block'">
-      <span id="logoFallbackW" style="display:none;font-weight:800;font-size:22px;color:#f4f4f8;letter-spacing:-0.5px;">444Music</span>
-      <h1>Get your song playlisted</h1>
-      <p>Submit your music and get discovered by curators, playlists, and blogs worldwide.</p>
-    </div>
-
-    <div class="welcome-actions">
-      <button class="pill-btn pill-light" id="googleWelcomeBtn">
-        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
-          <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
-          <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
-        </svg>
-        <span id="googleBtnText">Continue with Google</span>
-      </button>
-
-      <button class="pill-btn pill-outline" id="emailWelcomeBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4V4z" opacity="0"/><path d="M4 6h16v12H4V6z"/><path d="M4 7l8 6 8-6"/></svg>
-        <span>Continue with Email</span>
-      </button>
-
-      <div class="welcome-msg" id="welcomeMsg"></div>
-      <div class="welcome-footer">New here? <a id="gotoSignup">Create an account</a></div>
-    </div>
+  <!-- Music note / brand icon -->
+  <div class="brand-mark">
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="22" cy="22" r="22" fill="#1DB954"/>
+      <path d="M13 17.5C18.6 15.2 26.4 15.8 31 18.5" stroke="white" stroke-width="2.8" stroke-linecap="round"/>
+      <path d="M14.5 22.5C19.4 20.6 25.6 21.1 29.5 23.5" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M16.2 27C20.2 25.5 24.8 25.9 27.8 27.8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
   </div>
 
-  <!-- ============ AUTH SCREEN (white theme) ============ -->
-  <div class="screen auth-screen" id="screenAuth">
-
-    <div class="auth-header">
-      <button class="auth-back" id="authBack" aria-label="Back to welcome">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <img src="https://www.444musicdistro.com/black.png" alt="444Music" style="height:34px"
-        onerror="this.style.display='none';document.getElementById('logoFallbackA').style.display='block'">
-      <span id="logoFallbackA" style="display:none;font-weight:800;font-size:20px;color:#0a0a0c;">444Music</span>
-    </div>
-
-    <div class="auth-body">
-
-      <div class="toggle-wrap">
-        <div class="toggle-slider" id="toggleSlider"></div>
-        <button class="toggle-btn active" id="btnLoginTab" onclick="switchTab('login')">Login</button>
-        <button class="toggle-btn inactive" id="btnSignupTab" onclick="switchTab('signup')">Sign up</button>
-      </div>
-
-      <!-- LOGIN -->
-      <div class="panel active" id="panelLogin">
-        <div class="field" id="loginFieldEmail">
-          <label>Email</label>
-          <div class="input-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4V6z"/><path d="M4 7l8 6 8-6"/></svg>
-            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
-          </div>
-        </div>
-
-        <div class="field" id="loginFieldPass">
-          <label>Password</label>
-          <div class="input-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
-            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
-            <button type="button" class="eye-btn" onclick="toggleEye('loginPassword',this)">
-              <svg class="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              <svg class="eyeClosed" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a19.7 19.7 0 014.22-5.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a19.7 19.7 0 01-2.68 3.68"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="forgot-row"><a href="#" id="forgotPass">Forgot password?</a></div>
-
-        <button class="submit-btn" id="loginBtn" onclick="doLogin()">
-          <span class="btn-text">Login</span>
-          <div class="spinner"></div>
-        </button>
-
-        <div class="msg" id="loginMsg"></div>
-        <div class="bottom-link">No account yet? <a href="#" onclick="switchTab('signup');return false;">Sign up →</a></div>
-      </div>
-
-      <!-- SIGN UP -->
-      <div class="panel" id="panelSignup">
-        <div class="field" id="signupFieldName">
-          <label>Username</label>
-          <div class="input-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
-            <input type="text" id="signupName" placeholder="e.g. Kwame Beats" autocomplete="off">
-          </div>
-        </div>
-
-        <div class="field" id="signupFieldEmail">
-          <label>Email</label>
-          <div class="input-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4V6z"/><path d="M4 7l8 6 8-6"/></svg>
-            <input type="email" id="signupEmail" placeholder="you@example.com">
-          </div>
-        </div>
-
-        <div class="field" id="signupFieldPass">
-          <label>Password</label>
-          <div class="input-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
-            <input type="password" id="signupPassword" placeholder="Create a strong password" oninput="onPassInput()">
-            <button type="button" class="eye-btn" onclick="toggleEye('signupPassword',this)">
-              <svg class="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              <svg class="eyeClosed" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a19.7 19.7 0 014.22-5.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a19.7 19.7 0 01-2.68 3.68"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="strength-wrap">
-          <div class="strength-bars">
-            <div class="strength-bar" id="sb1"></div>
-            <div class="strength-bar" id="sb2"></div>
-            <div class="strength-bar" id="sb3"></div>
-            <div class="strength-bar" id="sb4"></div>
-          </div>
-          <div class="strength-label" id="strengthLabel"></div>
-        </div>
-
-        <div class="field" id="signupFieldConfirm">
-          <label>Confirm password</label>
-          <div class="input-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
-            <input type="password" id="signupConfirm" placeholder="Re-enter your password" oninput="checkMatch()">
-            <button type="button" class="eye-btn" onclick="toggleEye('signupConfirm',this)">
-              <svg class="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              <svg class="eyeClosed" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a19.7 19.7 0 014.22-5.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a19.7 19.7 0 01-2.68 3.68"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="match-hint" id="matchHint"></div>
-
-        <div class="terms-row">
-          <input type="checkbox" id="agreeCheck" onchange="document.getElementById('signupBtn').disabled=!this.checked">
-          <span>I agree to the <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a></span>
-        </div>
-
-        <button class="submit-btn" id="signupBtn" disabled onclick="doSignup()">
-          <span class="btn-text">Create Account</span>
-          <div class="spinner"></div>
-        </button>
-
-        <div class="msg" id="signupMsg"></div>
-        <div class="bottom-link">Already have an account? <a href="#" onclick="switchTab('login');return false;">Login →</a></div>
-      </div>
-
-    </div>
+  <div class="header-text">
+    <h1>Submit to <span>Our</span> PLAYLIST</h1>
+    <p>Choose your platform below</p>
   </div>
 
+  <div class="divider"></div>
+
+  <!-- Spotify -->
+  <a class="btn btn-spotify" href="aim1.html" target="_blank" rel="noopener">
+    <div class="btn-icon">
+      <svg width="22" height="22" viewBox="0 0 168 168" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000" d="M83.996 0C37.622 0 0 37.618 0 83.995c0 46.38 37.622 84 83.996 84 46.381 0 84.006-37.62 84.006-84C168.002 37.618 130.377 0 83.996 0zm38.4 121.11c-1.504 2.463-4.715 3.24-7.178 1.73-19.662-12.01-44.414-14.726-73.566-8.067-2.809.644-5.61-1.116-6.252-3.924-.646-2.81 1.11-5.608 3.924-6.254 31.9-7.293 59.263-4.154 81.337 9.334 2.46 1.51 3.24 4.72 1.735 7.181zm10.25-22.805c-1.89 3.075-5.91 4.045-8.98 2.155-22.51-13.839-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.906-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.975zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.733 2.739z"/>
+      </svg>
+    </div>
+    <div class="btn-label">
+      <span class="service">Add to</span>
+      <span class="action">Spotify Playlist</span>
+    </div>
+    <span class="btn-arrow">→</span>
+  </a>
+
+  <!-- Audiomack -->
+  <a class="btn btn-audiomack" href="aim2.html" target="_blank" rel="noopener">
+    <div class="btn-icon">
+      <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" rx="12" fill="none"/>
+        <rect x="10" y="50" width="10" height="35" rx="5" fill="white"/>
+        <rect x="26" y="30" width="10" height="55" rx="5" fill="white"/>
+        <rect x="42" y="15" width="10" height="70" rx="5" fill="white"/>
+        <rect x="58" y="30" width="10" height="55" rx="5" fill="white"/>
+        <rect x="74" y="45" width="10" height="40" rx="5" fill="white" opacity="0.85"/>
+        <circle cx="89" cy="20" r="7" fill="white" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="btn-label">
+      <span class="service">Add to</span>
+      <span class="action">Audiomack Playlist</span>
+    </div>
+    <span class="btn-arrow">→</span>
+  </a>
+
+  <!-- Boomplay -->
+  <a class="btn btn-boomplay" href="aim3.html" target="_blank" rel="noopener">
+    <div class="btn-icon">
+      <svg width="26" height="26" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="44" fill="none" stroke="#E6002D" stroke-width="10"/>
+        <circle cx="50" cy="50" r="18" fill="#E6002D"/>
+        <polygon points="44,42 44,58 60,50" fill="white"/>
+      </svg>
+    </div>
+    <div class="btn-label">
+      <span class="service">Add to </span>
+      <span class="action">Boomplay Playlist</span>
+    </div>
+    <span class="btn-arrow" style="color:#333;">→</span>
+  </a>
+
+  <!-- Section separator -->
+  <div class="section-sep">
+    <span>Need a Distribution?</span>
+  </div>
+
+  <!-- Submit My Song -->
+  <a class="btn btn-submit" href="index.html">
+    <div class="btn-icon">
+      <!-- Upload / music note submit icon -->
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Music note base -->
+        <path d="M9 18V6l12-2v12" stroke="rgba(200,160,255,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Upload arrow on the note stem area -->
+        <circle cx="6" cy="18" r="3" stroke="rgba(200,160,255,0.9)" stroke-width="1.8"/>
+        <circle cx="18" cy="16" r="3" stroke="rgba(200,160,255,0.9)" stroke-width="1.8"/>
+        <!-- Small upload spark -->
+        <path d="M20.5 5L22 3.5M17.5 4L17 2M22 7L23.5 7" stroke="rgba(200,160,255,0.6)" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="btn-label">
+      <span class="service">Want to</span>
+      <span class="action">Distribute Your Song</span>
+    </div>
+    <span class="btn-arrow">→</span>
+  </a>
+
+  <div class="footer">© 444 Music · All rights reserved</div>
 </div>
-
-<!-- Floating orb background (Spotify-style ambient collage) -->
-<script>
-  (function(){
-    const layer = document.getElementById('orbLayer');
-
-    // Placeholder avatar photos (pravatar.cc — a public service built
-    // specifically for mockup/profile-picture use, not tied to any named
-    // individual) standing in for the artist-profile mosaic.
-    const avatarIds = [11,22,33,44,15,26,37,48,19,29,41,52,13,24,35,46];
-
-    const spots = [
-      {top:'6%',  left:'10%', size:78,  blur:0.4},
-      {top:'4%',  left:'62%', size:58,  blur:1.0},
-      {top:'14%', left:'82%', size:92,  blur:0.2},
-      {top:'20%', left:'32%', size:54,  blur:1.2},
-      {top:'2%',  left:'40%', size:42,  blur:1.4},
-      {top:'70%', left:'6%',  size:84,  blur:0.5},
-      {top:'78%', left:'70%', size:68,  blur:0.7},
-      {top:'86%', left:'40%', size:96,  blur:0.3},
-      {top:'64%', left:'86%', size:50,  blur:1.1},
-      {top:'92%', left:'18%', size:48,  blur:1.3},
-      {top:'46%', left:'4%',  size:44,  blur:1.5},
-      {top:'50%', left:'92%', size:58,  blur:0.9}
-    ];
-
-    spots.forEach((s,i)=>{
-      const o = document.createElement('div');
-      o.className = 'orb';
-      o.style.top = s.top;
-      o.style.left = s.left;
-      o.style.width = s.size+'px';
-      o.style.height = s.size+'px';
-      o.style.opacity = 0.85;
-      o.style.filter = `blur(${s.blur}px)`;
-      o.style.animationDuration = (3.5 + (i % 5) * 0.8) + 's';
-      o.style.animationDelay = (i * 0.15) + 's';
-
-      const img = document.createElement('img');
-      img.src = `https://i.pravatar.cc/160?img=${avatarIds[i % avatarIds.length]}`;
-      img.alt = '';
-      img.loading = 'lazy';
-      o.appendChild(img);
-      layer.appendChild(o);
-    });
-  })();
-</script>
-
-<!-- Screen navigation -->
-<script>
-  function showWelcome(){
-    document.getElementById('screenAuth').classList.remove('active');
-    document.getElementById('screenWelcome').classList.add('active');
-  }
-  function showAuth(tab){
-    document.getElementById('screenWelcome').classList.remove('active');
-    document.getElementById('screenAuth').classList.add('active');
-    switchTab(tab || 'login');
-  }
-  document.getElementById('emailWelcomeBtn').addEventListener('click', ()=> showAuth('login'));
-  document.getElementById('gotoSignup').addEventListener('click', ()=> showAuth('signup'));
-  document.getElementById('authBack').addEventListener('click', showWelcome);
-  document.getElementById('backBtn').addEventListener('click', ()=> history.back());
-  document.getElementById('closeBtn').addEventListener('click', ()=> window.location.href = 'https://www.444musicdistro.com');
-
-  function switchTab(tab){
-    const slider = document.getElementById('toggleSlider');
-    const btnL = document.getElementById('btnLoginTab');
-    const btnS = document.getElementById('btnSignupTab');
-    const panelL = document.getElementById('panelLogin');
-    const panelS = document.getElementById('panelSignup');
-    if (tab === 'login'){
-      slider.classList.remove('right');
-      btnL.className = 'toggle-btn active';
-      btnS.className = 'toggle-btn inactive';
-      panelL.classList.add('active');
-      panelS.classList.remove('active');
-    } else {
-      slider.classList.add('right');
-      btnL.className = 'toggle-btn inactive';
-      btnS.className = 'toggle-btn active';
-      panelS.classList.add('active');
-      panelL.classList.remove('active');
-    }
-  }
-
-  function toggleEye(inputId, btn){
-    const inp = document.getElementById(inputId);
-    const isPass = inp.type === 'password';
-    inp.type = isPass ? 'text' : 'password';
-    btn.querySelector('.eyeOpen').style.display = isPass ? 'none' : 'block';
-    btn.querySelector('.eyeClosed').style.display = isPass ? 'block' : 'none';
-  }
-
-  const levels = [
-    { label:'Too short', cls:'s1' },
-    { label:'Weak',      cls:'s2' },
-    { label:'Fair',      cls:'s3' },
-    { label:'Strong',    cls:'s4' },
-  ];
-  function getStrength(v){
-    let s=0;
-    if(v.length>5) s++;
-    if(v.length>8) s++;
-    if(/[A-Z]/.test(v)&&/[0-9]/.test(v)) s++;
-    if(/[^A-Za-z0-9]/.test(v)) s++;
-    return s;
-  }
-  function onPassInput(){
-    const val = document.getElementById('signupPassword').value;
-    const score = val.length ? getStrength(val) : 0;
-    [1,2,3,4].forEach(i=>{
-      const b = document.getElementById('sb'+i);
-      b.className = 'strength-bar';
-      if (i <= score && score > 0) b.classList.add(levels[score-1].cls);
-    });
-    const lbl = document.getElementById('strengthLabel');
-    lbl.className = 'strength-label' + (score ? ' '+levels[score-1].cls : '');
-    lbl.textContent = val.length ? levels[score-1].label : '';
-    checkMatch();
-  }
-  function checkMatch(){
-    const p = document.getElementById('signupPassword').value;
-    const c = document.getElementById('signupConfirm').value;
-    const h = document.getElementById('matchHint');
-    if (!c) { h.textContent=''; h.className='match-hint'; return; }
-    if (p===c) { h.textContent='Passwords match'; h.className='match-hint ok'; }
-    else       { h.textContent="Passwords don't match"; h.className='match-hint err'; }
-  }
-</script>
-
-<!-- Firebase auth logic -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-    sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup,
-    signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const app = initializeApp({
-    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-    authDomain: "usersubmissionsportal.firebaseapp.com",
-    projectId: "usersubmissionsportal",
-    storageBucket: "usersubmissionsportal.firebasestorage.app",
-    messagingSenderId: "734783502459",
-    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-  });
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
-  await setPersistence(auth, browserLocalPersistence).catch(()=>{});
-  const $ = id => document.getElementById(id);
-
-  const REDIRECT_TARGET = 'addplaylist.html';
-
-  function showMsg(id, text, type){
-    const el = $(id); el.textContent = text; el.className = `msg visible ${type}`;
-  }
-  function showWelcomeMsg(text, type){
-    const el = $('welcomeMsg'); el.textContent = text; el.className = `welcome-msg ${type}`;
-  }
-  function clearMsg(id){
-    const el = $(id); el.className = 'msg'; el.textContent = '';
-  }
-  function shake(id){
-    const el = $(id);
-    el.classList.add('shake','has-error');
-    el.addEventListener('animationend', ()=> el.classList.remove('shake'), {once:true});
-  }
-  function setLoad(id, on){
-    const btn = $(id); btn.classList.toggle('loading', on); btn.disabled = on;
-  }
-
-  /* Creates the user/analytics docs the first time someone signs in.
-     Runs in the background after redirecting — a Firestore error can
-     no longer strand the user on this page. */
-  async function ensureUserDocs(user){
-    try {
-      const userRef = doc(db, 'users', user.uid);
-      const existing = await getDoc(userRef);
-      if (existing.exists()) return;
-      await setDoc(userRef, {
-        name: user.displayName || 'New Artist',
-        email: user.email,
-        artistType: 'Independent Artist',
-        genre: 'Afrobeats',
-        country: 'Ghana',
-        earnings: 0,
-        emailOptIn: true,
-        createdAt: serverTimestamp()
-      });
-      await setDoc(doc(db, 'analytics', user.uid), {
-        totalStreams:0, spotifyStreams:0, appleStreams:0,
-        youtubeStreams:0, tiktokStreams:0,
-        topCountry1:'US', topCountry2:'UK', topCountry3:'GH',
-        monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
-        createdAt: serverTimestamp()
-      });
-    } catch (e){
-      console.error('ensureUserDocs failed (non-blocking):', e);
-    }
-  }
-
-  function goToApp(user){
-    ensureUserDocs(user);
-    window.location.href = REDIRECT_TARGET;
-  }
-
-  /* ===== EMAIL LOGIN ===== */
-  window.doLogin = async () => {
-    clearMsg('loginMsg');
-    const email = $('loginEmail').value.trim();
-    const pass  = $('loginPassword').value;
-    if (!email) { shake('loginFieldEmail'); showMsg('loginMsg','Enter your email.','warn'); return; }
-    if (!pass)  { shake('loginFieldPass');  showMsg('loginMsg','Enter your password.','warn'); return; }
-    setLoad('loginBtn', true);
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
-      showMsg('loginMsg','Signing in…','success');
-      setTimeout(()=> goToApp(cred.user), 500);
-    } catch(err){
-      setLoad('loginBtn', false);
-      const c = err.code || '';
-      if (c==='auth/user-not-found' || c==='auth/wrong-password' || c==='auth/invalid-credential'){
-        shake('loginFieldEmail'); shake('loginFieldPass');
-        showMsg('loginMsg','Incorrect email or password.','error');
-      } else if (c==='auth/too-many-requests'){
-        showMsg('loginMsg','Too many attempts. Try again later.','error');
-      } else {
-        showMsg('loginMsg','Something went wrong. Try again.','error');
-      }
-    }
-  };
-
-  /* ===== EMAIL SIGN UP ===== */
-  window.doSignup = async () => {
-    clearMsg('signupMsg');
-    const name    = $('signupName').value.trim();
-    const email   = $('signupEmail').value.trim();
-    const pass    = $('signupPassword').value;
-    const confirm = $('signupConfirm').value;
-    if (name.length < 2)  { shake('signupFieldName');    showMsg('signupMsg','Enter your username.','warn'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { shake('signupFieldEmail'); showMsg('signupMsg','Enter a valid email.','warn'); return; }
-    if (pass.length < 6)  { shake('signupFieldPass');    showMsg('signupMsg','Password must be 6+ characters.','warn'); return; }
-    if (pass !== confirm) { shake('signupFieldConfirm'); showMsg('signupMsg','Passwords do not match.','error'); return; }
-    setLoad('signupBtn', true);
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, email, pass);
-      const uid  = cred.user.uid;
-      await setDoc(doc(db,'users',uid), {
-        name, email,
-        artistType: 'Independent Artist',
-        genre: 'Afrobeats',
-        country: 'Ghana',
-        earnings: 0,
-        emailOptIn: true,
-        createdAt: serverTimestamp()
-      });
-      await setDoc(doc(db,'analytics',uid), {
-        totalStreams:0, spotifyStreams:0, appleStreams:0,
-        youtubeStreams:0, tiktokStreams:0,
-        topCountry1:'US', topCountry2:'UK', topCountry3:'GH',
-        monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
-        createdAt: serverTimestamp()
-      });
-      showMsg('signupMsg','Account created. Welcome to 444Music.','success');
-      setTimeout(()=> goToApp(cred.user), 1200);
-    } catch(err){
-      setLoad('signupBtn', false);
-      const m = {
-        'auth/email-already-in-use': 'An account with this email already exists.',
-        'auth/invalid-email':         'Invalid email address.',
-        'auth/weak-password':         'Choose a stronger password (min 6 chars).',
-        'auth/network-request-failed':'Network error. Check your connection.',
-      };
-      showMsg('signupMsg', m[err.code] || err.message, 'error');
-    }
-  };
-
-  /* ===== FORGOT PASSWORD ===== */
-  $('forgotPass').addEventListener('click', async e => {
-    e.preventDefault();
-    const email = $('loginEmail').value.trim();
-    if (!email) { shake('loginFieldEmail'); showMsg('loginMsg','Enter your email first.','warn'); return; }
-    try {
-      await sendPasswordResetEmail(auth, email);
-      showMsg('loginMsg','Reset link sent — check your inbox.','success');
-    } catch(err){ showMsg('loginMsg', err.message, 'error'); }
-  });
-
-  /* ===== GOOGLE SIGN-IN (welcome screen) =====
-     Popups work fine on desktop and modern mobile browsers. Only genuine
-     in-app webviews (Instagram/WhatsApp/TikTok/etc.) block popups outright
-     and Google refuses OAuth inside them regardless — so popup everywhere
-     else, redirect as the fallback. */
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: 'select_account' });
-
-  function isInAppWebview(){
-    const ua = navigator.userAgent || navigator.vendor || '';
-    return /FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Twitter|GSA\/|WhatsApp/i.test(ua);
-  }
-
-  $('googleWelcomeBtn').addEventListener('click', async () => {
-    const btn = $('googleWelcomeBtn');
-    btn.disabled = true;
-
-    if (isInAppWebview()){
-      $('googleBtnText').textContent = 'Redirecting…';
-      try {
-        await signInWithRedirect(auth, provider);
-      } catch (err){
-        btn.disabled = false;
-        $('googleBtnText').textContent = 'Continue with Google';
-        showWelcomeMsg(`Google sign-in failed: ${err.code || err.message}`, 'error');
-      }
-      return;
-    }
-
-    try {
-      const result = await signInWithPopup(auth, provider);
-      goToApp(result.user);
-    } catch (err){
-      btn.disabled = false;
-      $('googleBtnText').textContent = 'Continue with Google';
-      if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request'){
-        try {
-          $('googleBtnText').textContent = 'Redirecting…';
-          await signInWithRedirect(auth, provider);
-        } catch (e2){
-          showWelcomeMsg(`Google sign-in failed: ${e2.code || e2.message}`, 'error');
-        }
-      } else {
-        showWelcomeMsg(`Google sign-in failed: ${err.code || err.message}`, 'error');
-      }
-    }
-  });
-
-  /* Catch the result when the page reloads after a redirect sign-in */
-  getRedirectResult(auth).then((result) => {
-    if (result && result.user){
-      showWelcomeMsg('Signing in…', 'success');
-      goToApp(result.user);
-    }
-  }).catch((err) => {
-    if (err && err.code && err.code !== 'auth/no-current-user'){
-      showWelcomeMsg(`Google sign-in failed: ${err.code || err.message}`, 'error');
-    }
-  });
-</script>
 
 </body>
 </html>
